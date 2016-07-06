@@ -76,7 +76,7 @@
     }
     NSDictionary *dic = @{
                           @"app_key" : url,
-                          @"u_id" : [PersonInfoModel shareInstance].uID,
+                          @"u_id" : [UserModel shareInstance].u_id,
                           @"star_level" : [NSString stringWithFormat:@"%d",(int)starPosition],
                           @"order_id" : _orderId,
                           @"goods_id" : _goods_id,

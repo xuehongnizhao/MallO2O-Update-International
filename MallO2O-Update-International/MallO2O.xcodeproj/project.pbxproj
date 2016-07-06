@@ -25,6 +25,7 @@
 		04225F3F1B3418E00070D4AB /* MyOrderViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04225F3E1B3418E00070D4AB /* MyOrderViewController.m */; };
 		04265FF41B17F6B9004E92DD /* Default-568h@2x.png.png in Resources */ = {isa = PBXBuildFile; fileRef = 04265FF31B17F6B9004E92DD /* Default-568h@2x.png.png */; };
 		0429D9931B25A68C0077618B /* SelectSonModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0429D9921B25A68C0077618B /* SelectSonModel.m */; };
+		042B567F1D2CB29500B91DDC /* UserModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 042B567E1D2CB29500B91DDC /* UserModel.m */; };
 		042CF0321BB01BE3001EC155 /* MapShopTurnView.m in Sources */ = {isa = PBXBuildFile; fileRef = 042CF0311BB01BE3001EC155 /* MapShopTurnView.m */; };
 		0433B4CF1D2B9016008E11F6 /* jpush-ios-2.1.8.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0433B4CD1D2B9016008E11F6 /* jpush-ios-2.1.8.a */; };
 		043B7B081B16FC4800E86F24 /* SpecialViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 043B7B071B16FC4800E86F24 /* SpecialViewController.m */; };
@@ -383,6 +384,8 @@
 		04265FF31B17F6B9004E92DD /* Default-568h@2x.png.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png.png"; sourceTree = "<group>"; };
 		0429D9911B25A68C0077618B /* SelectSonModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectSonModel.h; sourceTree = "<group>"; };
 		0429D9921B25A68C0077618B /* SelectSonModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SelectSonModel.m; sourceTree = "<group>"; };
+		042B567D1D2CB29500B91DDC /* UserModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserModel.h; sourceTree = "<group>"; };
+		042B567E1D2CB29500B91DDC /* UserModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserModel.m; sourceTree = "<group>"; };
 		042CF0301BB01BE3001EC155 /* MapShopTurnView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapShopTurnView.h; sourceTree = "<group>"; };
 		042CF0311BB01BE3001EC155 /* MapShopTurnView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MapShopTurnView.m; sourceTree = "<group>"; };
 		0433B4CD1D2B9016008E11F6 /* jpush-ios-2.1.8.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "jpush-ios-2.1.8.a"; sourceTree = "<group>"; };
@@ -2059,6 +2062,8 @@
 		268668A11C4E192F007C4603 /* personInfo */ = {
 			isa = PBXGroup;
 			children = (
+				042B567D1D2CB29500B91DDC /* UserModel.h */,
+				042B567E1D2CB29500B91DDC /* UserModel.m */,
 				268668A21C4E194D007C4603 /* PersonInfoModel.h */,
 				268668A31C4E194D007C4603 /* PersonInfoModel.m */,
 			);
@@ -3270,6 +3275,7 @@
 				46065E281C805868001FF169 /* SwpPingView.m in Sources */,
 				049F6B2B1BA839700028283C /* AddAdrsCellView.m in Sources */,
 				46065E5D1C83CD8D001FF169 /* TabBarViewController.m in Sources */,
+				042B567F1D2CB29500B91DDC /* UserModel.m in Sources */,
 				04A58D891B29713A0080A8E4 /* PointHisTableViewCell.m in Sources */,
 				46D0D8311B14004500E388FC /* main.m in Sources */,
 				04EF2EEA1B25888B0002AC24 /* TabCateModel.m in Sources */,

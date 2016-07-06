@@ -35,8 +35,10 @@
 #define IS_USE_BASE64 @"YES"
 
 #define IS_REMEBER @"Remember"
-#define IsLogin @"Login"
 
+#define AUTOLOGIN @"AUTOLOGIN"
+
+#define URLFilter @"urlfilter"
 
 #define alphaGray [UIColor colorWithRed:109/255.0 green:109/255.0 blue:109/255.0 alpha:0.3]
 

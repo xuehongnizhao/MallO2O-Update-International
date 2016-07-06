@@ -37,7 +37,7 @@
     for (MallO2OBaseViewController *vc in array) {
         if ([vc isMemberOfClass:[OrderDetailViewController class]]) {
             OrderDetailViewController *viewController = (OrderDetailViewController *)vc;
-            [viewController reloadWebView:[NSString stringWithFormat:@"http://b2c.yitaoo2o.com/phone_web/yi_goods/yy_goods?u_id=%@",[PersonInfoModel shareInstance].uID]];
+            [viewController reloadWebView:[NSString stringWithFormat:@"http://b2c.yitaoo2o.com/phone_web/yi_goods/yy_goods?u_id=%@",[UserModel shareInstance].u_id]];
             [self.navigationController popToViewController:viewController animated:YES];
             return;
         }
@@ -60,7 +60,7 @@
     
 - (IBAction)clickHistoryButton:(id)sender {
     OrderDetailViewController *viewController = [[OrderDetailViewController alloc] init];
-    viewController.webUrl = [@"http://b2c.yitaoo2o.com/phone_web/yi_goods/yy_list" stringByAppendingFormat:@"?u_id=%@",[PersonInfoModel shareInstance].uID];
+    viewController.webUrl = [@"http://b2c.yitaoo2o.com/phone_web/yi_goods/yy_list" stringByAppendingFormat:@"?u_id=%@",[UserModel shareInstance].u_id];
     viewController.webTitle = @"参与记录";
     viewController.canGoRoot = YES;
     [self.navigationController pushViewController:viewController animated:YES];

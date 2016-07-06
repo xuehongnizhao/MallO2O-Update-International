@@ -69,7 +69,7 @@
     NSDictionary *dic = @{
                           @"app_key" : url,
 //                          @"u_id"    : GetUserDefault(U_ID),
-                          @"u_id"    : [PersonInfoModel shareInstance].uID,
+                          @"u_id"    : [UserModel shareInstance].u_id,
                           @"page"    : [NSString stringWithFormat:@"%d",page]
                           };
     [self swpPublicTooGetDataToServer:url parameters:dic isEncrypt:self.swpNetwork.swpNetworkEncrypt swpResultSuccess:^(id  _Nonnull resultObject) {

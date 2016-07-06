@@ -55,12 +55,10 @@
         NSString *url = [SwpTools swpToolGetInterfaceURL:@"user_point"];
         NSDictionary *dic = @{
                               @"app_key" : url,
-//                              @"u_id" : GetUserDefault(U_ID)
-                              @"u_id"    : [PersonInfoModel shareInstance].uID
+                              @"u_id"    : [UserModel shareInstance].u_id
                               };
         
         [SwpRequest swpPOST:url parameters:dic isEncrypt:self.swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
-            [PersonInfoModel shareInstance].myJifen = resultObject[@"obj"];
             [self.navigationController popToRootViewControllerAnimated:YES];
         } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
             [self.navigationController popToRootViewControllerAnimated:YES];
@@ -139,7 +137,7 @@
         [UZCommonMethod callPhone:telNumber superView:self.view];
     }
     if ([[url scheme] isEqualToString:@"gopay"]) {
-        if ([GetUserDefault(IsLogin) boolValue]) {
+        if ([GetUserDefault(AUTOLOGIN) boolValue]) {
             NSString *str = [NSString stringWithFormat:@"%@",url];
             str = [str substringFromIndex:8];
             NSLog(@"%@",str);
@@ -198,9 +196,9 @@
                 [self.navigationController pushViewController:viewController animated:YES];
                 return ;
             }
-            PersonInfoModel *info = [PersonInfoModel shareInstance];
-            float moneyd = [info.myMoney floatValue] + [money floatValue];
-            info.myMoney = [NSString stringWithFormat:@"%.2f",moneyd];
+//            UserModel *info = [PersonInfoModel shareInstance];
+//            float moneyd = [info.myMoney floatValue] + [money floatValue];
+//            info.myMoney = [NSString stringWithFormat:@"%.2f",moneyd];
             RechargeSuccessViewController *viewController = [[RechargeSuccessViewController alloc] init];
             viewController.payMoneyText = [NSString stringWithFormat:@"成功充值%@元",inputMoney];
             viewController.successType = @"1";
@@ -321,14 +319,7 @@
             
             //判断支付成功 去跳转到支付成功页面  ---访问后台接口为准
             if ([resultDic[@"resultStatus"] integerValue] == 9000 && is_success) {
-                //                GroupPaySuccessViewController *firVC = [[GroupPaySuccessViewController alloc] init];
-                //                [firVC setHiddenTabbar:YES];
-                //                [firVC setNavBarTitle:@"支付成功" withFont:14.0f];
-                //                firVC.passArray = array;
-                //                firVC.order_id = order_ids;
-                //                firVC.messageDict  = self.dict;
-                //                //firVC.info = self.info;
-                //                [self.navigationController pushViewController:firVC animated:YES];
+
                 [self.webView reload];
             }else
             [self.webView reload];

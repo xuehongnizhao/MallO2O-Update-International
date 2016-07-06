@@ -133,7 +133,7 @@
 //    }
     NSDictionary *dic = @{
                           @"app_key" : url,
-                          @"u_id" : [PersonInfoModel shareInstance].uID,
+                          @"u_id" : [UserModel shareInstance].u_id,
                           @"shop_id" : _shopId
                           };
     
@@ -274,7 +274,7 @@
  判断商家是否已经收藏
  */
 - (void)setCollectionStatusFromNet{
-    if ([GetUserDefault(IsLogin) boolValue] == NO) {
+    if ([GetUserDefault(AUTOLOGIN) boolValue] == NO) {
         LoginViewController *viewController = [[LoginViewController alloc] init];
         [viewController setBackButton];
         [self.navigationController pushViewController:viewController animated:YES];
@@ -285,7 +285,7 @@
         self.isCollect = @"1";
         NSDictionary *dic = @{
                               @"app_key" : url,
-                              @"u_id" : [PersonInfoModel shareInstance].uID,
+                              @"u_id" : [UserModel shareInstance].u_id,
                               @"shop_id" : _shopId
                               };
         
@@ -304,7 +304,7 @@
         NSDictionary *dic = @{
                               @"app_key" : url,
                               @"shop_id" : _shopId,
-                              @"u_id" : [PersonInfoModel shareInstance].uID
+                              @"u_id" : [UserModel shareInstance].u_id
                               };
         [self swpPublicTooGetDataToServer:url parameters:dic isEncrypt:self.swpNetwork.swpNetworkEncrypt swpResultSuccess:^(id  _Nonnull resultObject) {
             [SVProgressHUD showSuccessWithStatus:resultObject[@"message"]];

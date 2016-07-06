@@ -149,7 +149,7 @@
     NSDictionary *dic = @{
                           @"app_key" : url,
 //                          @"u_id"    : GetUserDefault(U_ID),
-                          @"u_id"    : [PersonInfoModel shareInstance].uID,
+                          @"u_id"    : [UserModel shareInstance].u_id,
                           @"page"    : [NSString stringWithFormat:@"%d",page]
                           };
     [SwpRequest swpPOST:url parameters:dic isEncrypt:YES swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
@@ -244,7 +244,7 @@
     NSDictionary *dic = @{
                           @"app_key"    : url,
 //                          @"u_id"       : GetUserDefault(U_ID),
-                          @"u_id"       : [PersonInfoModel shareInstance].uID,
+                          @"u_id"       : [UserModel shareInstance].u_id,
                           @"address_id" : model.addressId
                           };
     

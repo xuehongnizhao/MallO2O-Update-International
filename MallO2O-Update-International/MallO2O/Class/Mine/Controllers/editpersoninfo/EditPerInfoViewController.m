@@ -138,23 +138,23 @@
 //    NSDictionary *infoDic = GetUserDefault(Person_Info);
     if (_sexString == nil || [_sexString isEqualToString:@""]) {
 //        _sexString = infoDic[@"sex"];
-        _sexString = [PersonInfoModel shareInstance].sex;
+        _sexString = [UserModel shareInstance].sex;
     }
     if (_userName == nil || [_userName isEqualToString:@""]) {
 //        _userName = infoDic[@"user_nickname"];
-        _userName = [PersonInfoModel shareInstance].nickName;
+        _userName = [UserModel shareInstance].user_name;
     }
     
     NSDictionary *dic = @{
                           @"app_key" : url,
                           @"sex"     : _sexString,
                           @"user_nickname" : _userName,
-                          @"u_id"    : [PersonInfoModel shareInstance].uID
+                          @"u_id"    : [UserModel shareInstance].u_id
                           };
 
     [self swpPublicTooGetDataToServer:url parameters:dic isEncrypt:self.swpNetwork.swpNetworkEncrypt swpResultSuccess:^(id  _Nonnull resultObject) {
-        [PersonInfoModel shareInstance].sex = _sexString;
-        [PersonInfoModel shareInstance].nickName = _userName;
+        [UserModel shareInstance].sex = _sexString;
+        [UserModel shareInstance].user_name = _userName;
         NSLog(@"%@",dic);
         [self.navigationController popViewControllerAnimated:YES];
     } swpResultError:^(id  _Nonnull resultObject, NSString * _Nonnull errorMessage) {
@@ -177,18 +177,17 @@
     cell.typeText = typeArray[indexPath.row];
     switch (indexPath.row) {
         case 0:
-//            cell.imgUrl = [GetUserDefault(Person_Info) objectForKey:@"user_pic"];
-            cell.imgUrl = [PersonInfoModel shareInstance].userPhoto;
+            cell.imgUrl = [UserModel shareInstance].user_pic;
             break;
             
         case 1:
-//            cell.userName = [GetUserDefault(Person_Info) objectForKey:@"user_nickname"];
-            cell.userName = [PersonInfoModel shareInstance].nickName;
+
+            cell.userName = [UserModel shareInstance].user_name;
             break;
             
         case 2:
-//            cell.sexString = [GetUserDefault(Person_Info) objectForKey:@"sex"];
-            cell.sexString = [PersonInfoModel shareInstance].sex;
+
+            cell.sexString = [UserModel shareInstance].sex;
             break;
             
         default:
@@ -286,13 +285,13 @@
     NSString *url = [SwpTools swpToolGetInterfaceURL:@"yz_upload_pic"];
     NSDictionary *dic = @{
                           @"app_key" : url,
-                          @"u_id"    : [PersonInfoModel shareInstance].uID
+                          @"u_id"    : [UserModel shareInstance].u_id
                           };
     NSLog(@"%@",data);
     [SwpRequest swpPOSTAddFile:url parameters:dic isEncrypt:self.swpNetwork.swpNetworkEncrypt fileName:@"pic" fileData:data swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
         NSLog(@"%@",resultObject);
         if ([resultObject[@"code"] integerValue] == 200) {
-            [PersonInfoModel shareInstance].userPhoto = resultObject[@"obj"][@"user_pic"];
+            [UserModel shareInstance].user_pic = resultObject[@"obj"][@"user_pic"];
             [SVProgressHUD showSuccessWithStatus:resultObject[@"message"]];
         } else {
             [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];

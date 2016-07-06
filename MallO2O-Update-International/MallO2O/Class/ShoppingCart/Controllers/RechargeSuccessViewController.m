@@ -29,7 +29,7 @@
     for (MallO2OBaseViewController *vc in array) {
         if ([vc isMemberOfClass:[OrderDetailViewController class]]) {
             OrderDetailViewController *viewController = (OrderDetailViewController *)vc;
-            [viewController reloadWebView:[NSString stringWithFormat:@"http://b2c.yitaoo2o.com/phone_web/yi_goods/yy_goods?u_id=%@",[PersonInfoModel shareInstance].uID]];
+            [viewController reloadWebView:[NSString stringWithFormat:@"http://b2c.yitaoo2o.com/phone_web/yi_goods/yy_goods?u_id=%@",[UserModel shareInstance].u_id]];
             [self.navigationController popToViewController:viewController animated:YES];
             return;
         }
@@ -44,14 +44,14 @@
 - (IBAction)rechargeHistory:(id)sender {
 //    if ([self.successType integerValue] == 1) {
 //        OrderDetailViewController *viewController = [[OrderDetailViewController alloc] init];
-//        viewController.webUrl = [NSString stringWithFormat:@"http://o2omall.youzhiapp.com/action/ac_shop/chongzhi_list?u_id=%@",[PersonInfoModel shareInstance].uID];
+//        viewController.webUrl = [NSString stringWithFormat:@"http://o2omall.youzhiapp.com/action/ac_shop/chongzhi_list?u_id=%@",[UserModel shareInstance].u_id];
 //        viewController.webTitle = @"消费记录";
 //        viewController.canGoRoot = YES;
 //        [self.navigationController pushViewController:viewController animated:YES];
 //        return;
 //    }
     OrderDetailViewController *viewController = [[OrderDetailViewController alloc] init];
-    viewController.webUrl = [NSString stringWithFormat:@"http://b2c.yitaoo2o.com/action/ac_shop/chongzhi_list?u_id=%@",[PersonInfoModel shareInstance].uID];
+    viewController.webUrl = [NSString stringWithFormat:@"http://b2c.yitaoo2o.com/action/ac_shop/chongzhi_list?u_id=%@",[UserModel shareInstance].u_id];
     viewController.webTitle = @"充值记录";
     viewController.canGoRoot = YES;
     [self.navigationController pushViewController:viewController animated:YES];

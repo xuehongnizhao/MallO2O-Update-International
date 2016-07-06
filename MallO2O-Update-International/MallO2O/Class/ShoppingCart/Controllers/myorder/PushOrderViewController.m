@@ -43,7 +43,7 @@ static NSString *cellID = @"pushOrderCell";
 
 @property (strong ,nonatomic) UIView *commitView;
 
-@property (strong ,nonatomic) PersonInfoModel *personInfoModel;
+@property (strong ,nonatomic) UserModel *personInfoModel;
 
 @end
 
@@ -106,7 +106,7 @@ static NSString *cellID = @"pushOrderCell";
     /**
         列表显示的一些东西  顺序有点乱
      */
-    self.personInfoModel = [PersonInfoModel shareInstance];
+    self.personInfoModel = [UserModel shareInstance];
     pointNumber = [[NSString alloc] init];
     payTypeName = [[NSString alloc] init];
     payTypeName = @"支付宝";
@@ -219,18 +219,18 @@ static NSString *cellID = @"pushOrderCell";
  *  获取支付金额
  */
 - (void)setTotalMoney{
-    if ([[PersonInfoModel shareInstance].myMoney floatValue] >= ([_shopCarArray[0] floatValue]+ [_shopCarArray[1] floatValue])) {
-        _totalMoneyLabel.text = [NSString stringWithFormat:@"￥%0.2f元  (余额支付)", ([_shopCarArray[0] floatValue]+ [_shopCarArray[1] floatValue])];
-    }else{
-        _totalMoneyLabel.text = [NSString stringWithFormat:@"%0.2f",( [_shopCarArray[0] floatValue] + [_shopCarArray[1] floatValue] - [[PersonInfoModel shareInstance].myMoney floatValue])];
-    }
+//    if ([[UserModel shareInstance].myMoney floatValue] >= ([_shopCarArray[0] floatValue]+ [_shopCarArray[1] floatValue])) {
+//        _totalMoneyLabel.text = [NSString stringWithFormat:@"￥%0.2f元  (余额支付)", ([_shopCarArray[0] floatValue]+ [_shopCarArray[1] floatValue])];
+//    }else{
+//        _totalMoneyLabel.text = [NSString stringWithFormat:@"%0.2f",( [_shopCarArray[0] floatValue] + [_shopCarArray[1] floatValue] - [[UserModel shareInstance].myMoney floatValue])];
+//    }
 }
 
 #pragma mark 点击提交按钮
 - (void)clickCommitButton{
     NSLog(@"%@",dic);
     _commitButton.enabled = NO;
-    [SVProgressHUD showWithStatus:@"提交订单中..." maskType:1];
+    [SVProgressHUD showWithStatus:@"提交订单中..."];
     [self getInfoFromTableView];
 //    [self clientAlipay];
 }
@@ -297,7 +297,7 @@ static NSString *cellID = @"pushOrderCell";
 - (NSString *)settingMyMoney{
     NSString *useMoney = [[NSString alloc] init];
     myMoney = [[NSString alloc] init];
-    myMoney = [PersonInfoModel shareInstance].myMoney;
+//    myMoney = [PersonInfoModel shareInstance].myMoney;
     NSString *totalMoney = [NSString stringWithFormat:@"%f",([_shopCarArray[0] floatValue] + [_shopCarArray[1] floatValue])];
     if ([myMoney floatValue] >= [totalMoney floatValue]) {
         useMoney = [NSString stringWithFormat:@"%0.2f",[totalMoney floatValue]];
@@ -357,7 +357,7 @@ static NSString *cellID = @"pushOrderCell";
         PushOrderBTableViewCell *cell = [PushOrderBTableViewCell cellOfTableView:tableView cellForRowAtIndexPath:indexPath forCellReuseIdentifier:@"moneyCell"];
         NSArray *array = [NSArray array];
         NSDictionary *dic1 = @{
-                               @"typeDetail" : [NSLocalizedString(@"Money", nil) stringByAppendingString:[PersonInfoModel shareInstance].myMoney],
+//                               @"typeDetail" : [NSLocalizedString(@"Money", nil) stringByAppendingString:[PersonInfoModel shareInstance].myMoney],
                                @"typeName"   : NSLocalizedString(@"pushOrderCellPlaceholderAccountBalances", nil),
                                };
         NSDictionary *dic2 = @{
@@ -404,7 +404,7 @@ static NSString *cellID = @"pushOrderCell";
         }else{
             PointNumTableViewCell *cell = [PointNumTableViewCell cellOfTableView:tableView cellForRowAtIndex:indexPath];
 //            NSMutableDictionary *pointDic = GetUserDefault(Person_Info);[pointDic objectForKey:@"integral"]
-            cell.pointString = [[PersonInfoModel shareInstance].myJifen stringByAppendingString:@"积分"];
+//            cell.pointString = [[PersonInfoModel shareInstance].myJifen stringByAppendingString:@"积分"];
             return cell;
         }
         
@@ -495,10 +495,10 @@ static NSString *cellID = @"pushOrderCell";
     if (idexPath.row == 2) {
         userMyMoney = [NSString stringWithFormat:@"%@0.00", NSLocalizedString(@"Money", nil)];//@"0.00元";
     }else{
-        userMyMoney = [NSLocalizedString(@"Money", nil) stringByAppendingString: [PersonInfoModel shareInstance].myMoney];
+//        userMyMoney = [NSLocalizedString(@"Money", nil) stringByAppendingString: [PersonInfoModel shareInstance].myMoney];
     }
     NSDictionary *dic1 = @{
-                           @"typeDetail":[NSLocalizedString(@"Money", nil) stringByAppendingString: [PersonInfoModel shareInstance].myMoney],
+//                           @"typeDetail":[NSLocalizedString(@"Money", nil) stringByAppendingString: [PersonInfoModel shareInstance].myMoney],
                            @"typeName" : NSLocalizedString(@"pushOrderCellPlaceholderAccountBalances", nil),
                            };
     NSDictionary *dic2 = @{
@@ -643,7 +643,7 @@ static NSString *cellID = @"pushOrderCell";
             NSDictionary *orderDic = @{
                                        @"app_key" : url,
                                        @"pay_type" : payType,
-                                       @"u_id"    : self.personInfoModel.uID,
+                                       @"u_id"    : self.personInfoModel.u_id,
                                        @"consignee" : [personInfo objectForKey:@"consignee"],
                                        @"mobile"   : [personInfo objectForKey:@"phone_tel"],
                                        @"address"  : [personInfo objectForKey:@"address"],
@@ -678,9 +678,9 @@ static NSString *cellID = @"pushOrderCell";
                         [self.navigationController pushViewController:viewController animated:YES];
                         //                        if ([isUseMoney isEqualToString:@"1"]) {
                         if (![payTypeName isEqualToString:@"货到付款"]) {
-                            NSString *payMyMoney = [self settingMyMoney];
-                            NSString *personMoney = [PersonInfoModel shareInstance].myMoney;
-                            [PersonInfoModel shareInstance].myMoney = [NSString stringWithFormat:@"%0.2f",[personMoney floatValue] - [payMyMoney floatValue]];
+//                            NSString *payMyMoney = [self settingMyMoney];
+//                            NSString *personMoney = [PersonInfoModel shareInstance].myMoney;
+//                            [PersonInfoModel shareInstance].myMoney = [NSString stringWithFormat:@"%0.2f",[personMoney floatValue] - [payMyMoney floatValue]];
                         }
                         //                        }
                     }
@@ -716,9 +716,9 @@ static NSString *cellID = @"pushOrderCell";
             viewController.webUrl = [alipayOrderDic objectForKey:@"url"];
             [self.navigationController pushViewController:viewController animated:YES];
             if ([isUseMoney isEqualToString:@"0"]) {
-                NSString *payMyMoney = [self settingMyMoney];
-                NSString *personMoney = [PersonInfoModel shareInstance].myMoney;
-                [PersonInfoModel shareInstance].myMoney = [NSString stringWithFormat:@"%0.2f",[personMoney floatValue] - [payMyMoney floatValue]];
+//                NSString *payMyMoney = [self settingMyMoney];
+//                NSString *personMoney = [PersonInfoModel shareInstance].myMoney;
+//                [PersonInfoModel shareInstance].myMoney = [NSString stringWithFormat:@"%0.2f",[personMoney floatValue] - [payMyMoney floatValue]];
             }
         } else {
             // 支付失败或取消

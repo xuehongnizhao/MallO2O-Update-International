@@ -165,7 +165,7 @@
  */
 - (void)messageButton{
     NSLog(@"未定功能  暂时添加点击事件");
-    if ([GetUserDefault(IsLogin) boolValue] == NO) {
+    if ([GetUserDefault(AUTOLOGIN) boolValue] == NO) {
         LoginViewController *viewController = [[LoginViewController alloc] init];
         [viewController setBackButton];
         [self.navigationController pushViewController:viewController animated:YES];
@@ -237,24 +237,23 @@
 - (void)getCollectionNum{
     collectionNum = @"0";
     collectShopNum = @"0";
-    PersonInfoModel *model = [PersonInfoModel shareInstance];
     NSString *url = [SwpTools swpToolGetInterfaceURL:@"user_four_info"];
-    if ([[PersonInfoModel shareInstance].uID isEqualToString:@"0"] || [PersonInfoModel shareInstance].uID.length == 0) {
+    if ([[UserModel shareInstance].u_id isEqualToString:@"0"] || [UserModel shareInstance].u_id.length == 0) {
         return;
     }
     NSDictionary *jifenDic = @{
                                @"app_key" : url,
-                               @"u_id"    : [PersonInfoModel shareInstance].uID
+                               @"u_id"    : [UserModel shareInstance].u_id
                                };
     
-    if ([GetUserDefault(IsLogin) boolValue]) {
+    if ([GetUserDefault(AUTOLOGIN) boolValue]) {
         [self swpPublicTooGetDataToServer:url parameters:jifenDic isEncrypt:self.swpNetwork.swpNetworkEncrypt swpResultSuccess:^(id  _Nonnull resultObject) {
             if (resultObject[@"obj"][@"goods_num"] == nil || [resultObject[@"obj"][@"goods_num"] isEqualToString:@""]) {
                 return;
             }
             collectionNum = resultObject[@"obj"][@"goods_num"];
             collectShopNum = resultObject[@"obj"][@"shop_num"];
-            model.myMoney = resultObject[@"obj"][@"my_money"];
+            
             [self.mineTableView reloadData];
         } swpResultError:^(id  _Nonnull resultObject, NSString * _Nonnull errorMessage) {
             [SVProgressHUD showErrorWithStatus:errorMessage];
@@ -302,13 +301,12 @@
         cell.imgView.image = [UIImage imageNamed:@"per_2"];
         cell.nameLabel.text = NSLocalizedString(@"mineMyWallet", nil);
         cell.nameLabel.font = [UIFont systemFontOfSize:16];
-        cell.moneyLabel.text = [NSString stringWithFormat:@"%@%@", NSLocalizedString(@"Money", nil), [PersonInfoModel shareInstance].myMoney];
         cell.yueLabel.text = NSLocalizedString(@"mineBalance", nil);
         return cell;
     }
     PersonInfoTableViewCell *cell = [PersonInfoTableViewCell cellOfTableView:tableView cellForRowAtIndexPath:indexPath];
     NSDictionary *dic = [NSDictionary dictionary];
-    if ([GetUserDefault(IsLogin) boolValue] == YES) {
+    if ([GetUserDefault(AUTOLOGIN) boolValue] == YES) {
         //个人信息
 //        dic = GetUserDefault(Person_Info);
     }else{
@@ -319,12 +317,11 @@
                               };
     }
     NSArray *array = @[
-                       @{@"type":NSLocalizedString(@"mineMyPoints", nil),
-                         @"detail":[PersonInfoModel shareInstance].myJifen},
-                       @{@"type":NSLocalizedString(@"mineBusinessCollection", nil),
-                         @"detail":collectShopNum},
-                       @{@"type":NSLocalizedString(@"mineGoodsCollection", nil),
-                         @"detail":collectionNum}
+//                       @{@"type":NSLocalizedString(@"mineMyPoints", nil)},
+//                       @{@"type":NSLocalizedString(@"mineBusinessCollection", nil),
+//                         @"detail":collectShopNum},
+//                       @{@"type":NSLocalizedString(@"mineGoodsCollection", nil),
+//                         @"detail":collectionNum}
                        ];
     [self clickPersonInfoCell:cell];
     cell.array = array;
@@ -335,7 +332,7 @@
 - (void)clickPersonInfoCell:(PersonInfoTableViewCell *)cell{
     __weak typeof (MineViewController *) vc = self;
     [cell getIndex:^(NSInteger index) {
-        if ([GetUserDefault(IsLogin) boolValue] == NO) {
+        if ([GetUserDefault(AUTOLOGIN) boolValue] == NO) {
             LoginViewController *vc = [[LoginViewController alloc] init];
             [self.navigationController pushViewController:vc animated:YES];
             [vc setBackButton];
@@ -363,7 +360,7 @@
 - (void)clickCell:(MineCateTableViewCell *)cell{
     __weak typeof (MineViewController *) vc = self;
     [cell getIndex:^(NSInteger index) {
-        if ([GetUserDefault(IsLogin) boolValue] == NO) {
+        if ([GetUserDefault(AUTOLOGIN) boolValue] == NO) {
             LoginViewController *viewController = [[LoginViewController alloc] init];
             [viewController setBackButton];
             [self.navigationController pushViewController:viewController animated:YES];
@@ -387,7 +384,7 @@
             {
                 OrderDetailViewController *viewController = [[OrderDetailViewController alloc] init];
                 viewController.webTitle = NSLocalizedString(@"rechargeCenterNavigationTitle", nil);
-                viewController.webUrl = [NSString stringWithFormat:@"http://b2c.yitaoo2o.com/action/ac_shop/cz_card?u_id=%@",[PersonInfoModel shareInstance].uID];
+                viewController.webUrl = [NSString stringWithFormat:@"http://b2c.yitaoo2o.com/action/ac_shop/cz_card?u_id=%@",[UserModel shareInstance].u_id];
                 [self.navigationController pushViewController: viewController animated:YES];
             }
                 break;
@@ -396,7 +393,7 @@
             {
                 OrderDetailViewController *viewController = [[OrderDetailViewController alloc] init];
                 viewController.webTitle = NSLocalizedString(@"rechargeRecordNavigationTitle", nil);
-                viewController.webUrl = [NSString stringWithFormat:@"http://b2c.yitaoo2o.com/action/ac_shop/chongzhi_list?u_id=%@",[PersonInfoModel shareInstance].uID];
+                viewController.webUrl = [NSString stringWithFormat:@"http://b2c.yitaoo2o.com/action/ac_shop/chongzhi_list?u_id=%@",[UserModel shareInstance].u_id];
                 [self.navigationController pushViewController:viewController animated:YES];
             }
                 break;
@@ -473,7 +470,7 @@
     跳转编辑个人信息页面
  */
 - (void)personBackground{
-    if ([GetUserDefault(IsLogin) boolValue]) {
+    if ([GetUserDefault(AUTOLOGIN) boolValue]) {
         EditPerInfoViewController *viewController = [[EditPerInfoViewController alloc] init];
         [self.navigationController pushViewController:viewController animated:YES];
     }else{
@@ -488,7 +485,7 @@
     设置header内部控件
  */
 - (void)addHeaderUI:(UIView *)view{
-    if ([GetUserDefault(IsLogin) boolValue] == YES) {
+    if ([GetUserDefault(AUTOLOGIN) boolValue] == YES) {
         //个人信息
 //        NSDictionary *dic = GetUserDefault(Person_Info);
         NSDictionary *dic = [NSDictionary dictionary];
@@ -509,8 +506,8 @@
  *  @param view 父视图
  */
 - (void)setInfo:(NSDictionary *)dic infView:(UIView *)view{
-    if ([[PersonInfoModel shareInstance].nickName isEqualToString:@""] || [PersonInfoModel shareInstance].nickName == nil) {
-        [PersonInfoModel shareInstance].nickName = NSLocalizedString(@"mineClickOnLogin", nil);
+    if ([[UserModel shareInstance].user_name isEqualToString:@""] || [UserModel shareInstance].user_name == nil) {
+        [UserModel shareInstance].user_name = NSLocalizedString(@"mineClickOnLogin", nil);
     }
     UIImageView *imgView = [[UIImageView alloc] initForAutoLayout];
     [view addSubview:imgView];
@@ -518,7 +515,7 @@
     [imgView autoSetDimension:ALDimensionHeight toSize:84 * Balance_Heith];
     [imgView autoSetDimension:ALDimensionWidth toSize:84 * Balance_Heith];
     [imgView autoAlignAxisToSuperviewAxis:ALAxisVertical];
-    [imgView sd_setImageWithURL:[NSURL URLWithString:[PersonInfoModel shareInstance].userPhoto] placeholderImage:[UIImage imageNamed:@"person_default"]];
+    [imgView sd_setImageWithURL:[NSURL URLWithString:[UserModel shareInstance].user_pic] placeholderImage:[UIImage imageNamed:@"person_default"]];
     imgView.layer.cornerRadius = 42 * Balance_Heith;
     imgView.layer.masksToBounds = YES;
     
@@ -529,11 +526,11 @@
     [vipImage autoSetDimension:ALDimensionHeight toSize:18];
     [vipImage autoSetDimension:ALDimensionWidth toSize:48];
 //    vipImage.layer.borderWidth = 1;
-    [[PersonInfoModel shareInstance].isVip isEqualToString:@"0"] || [PersonInfoModel shareInstance].isVip == nil ? (vipImage.image = [UIImage imageNamed:@"no_vip"]) : (vipImage.image = [UIImage imageNamed:@"vip"]);
+//    [[UserModel shareInstance].isVip isEqualToString:@"0"] || [PersonInfoModel shareInstance].isVip == nil ? (vipImage.image = [UIImage imageNamed:@"no_vip"]) : (vipImage.image = [UIImage imageNamed:@"vip"]);
     
     UILabel *perNameLabel = [[UILabel alloc] init];
     perNameLabel.textAlignment = NSTextAlignmentCenter;
-    [self setLabel:perNameLabel withFrame:CGRectMake(0 * Balance_Width, 115 * Balance_Heith, SCREEN_WIDTH, 30 * Balance_Heith) andText:[PersonInfoModel shareInstance].nickName];
+    [self setLabel:perNameLabel withFrame:CGRectMake(0 * Balance_Width, 115 * Balance_Heith, SCREEN_WIDTH, 30 * Balance_Heith) andText:[UserModel shareInstance].user_name];
     perNameLabel.font = [UIFont systemFontOfSize:16];
     [view addSubview:perNameLabel];
 }
@@ -551,8 +548,8 @@
     选择cell
  */
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    NSLog(@"%@",GetUserDefault(IsLogin));
-    if ([GetUserDefault(IsLogin) boolValue] == NO) {
+    NSLog(@"%@",GetUserDefault(AUTOLOGIN));
+    if ([GetUserDefault(AUTOLOGIN) boolValue] == NO) {
         LoginViewController *viewController = [[LoginViewController alloc] init];
         [viewController setBackButton];
         [self.navigationController pushViewController:viewController animated:YES];
@@ -567,7 +564,7 @@
             if (indexPath.row == 0) {
                 OrderDetailViewController *viewController = [[OrderDetailViewController alloc] init];
                 viewController.webTitle = NSLocalizedString(@"rechargeCenterNavigationTitle", nil);
-                viewController.webUrl = [NSString stringWithFormat:@"http://b2c.yitaoo2o.com/action/ac_shop/cz_card?u_id=%@",[PersonInfoModel shareInstance].uID];
+                viewController.webUrl = [NSString stringWithFormat:@"http://b2c.yitaoo2o.com/action/ac_shop/cz_card?u_id=%@",[UserModel shareInstance].u_id];
                 [self.navigationController pushViewController: viewController animated:YES];
             }
         }
@@ -576,7 +573,7 @@
             if (indexPath.row == 0) {
                 OrderDetailViewController *viewController = [[OrderDetailViewController alloc] init];
                 viewController.webTitle = NSLocalizedString(@"oneDollarForMeNavigationTitle", nil);
-                viewController.webUrl = [@"http://b2c.yitaoo2o.com/phone_web/yi_goods/yy_list" stringByAppendingFormat:@"?u_id=%@",[PersonInfoModel shareInstance].uID];
+                viewController.webUrl = [@"http://b2c.yitaoo2o.com/phone_web/yi_goods/yy_list" stringByAppendingFormat:@"?u_id=%@",[UserModel shareInstance].u_id];
                 [self.navigationController pushViewController:viewController animated:YES];
             }
             if (indexPath.row == 1) {

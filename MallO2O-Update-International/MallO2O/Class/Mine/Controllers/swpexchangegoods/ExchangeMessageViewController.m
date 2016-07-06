@@ -277,9 +277,6 @@
         [headerView addSubview:pointNumber];
         [pointNumber autoPinEdgesToSuperviewEdgesWithInsets:UIEdgeInsetsMake(0, 0, 0, 15) excludingEdge:ALEdgeLeft];
         [pointNumber autoSetDimension:ALDimensionWidth toSize:200];
-//        pointNumber.text = [GetUserDefault(Person_Info) objectForKey:@"integral"];
-        NSLog(@"%@",[PersonInfoModel shareInstance].myJifen);
-        pointNumber.text = [PersonInfoModel shareInstance].myJifen;
         pointNumber.textAlignment = NSTextAlignmentRight;
         headerView.backgroundColor = UIColorFromRGB(0xf9f9f9);
         return headerView;
@@ -432,7 +429,7 @@
                           @"integral_id" : _pointShop.goodsId,
                           @"pay_integral": [self.totalPrice substringToIndex:self.totalPrice.length],
 //                          @"u_id"        : GetUserDefault(U_ID),
-                          @"u_id"        : [PersonInfoModel shareInstance].uID,
+                          @"u_id"        : [UserModel shareInstance].u_id,
                           @"num"         : self.shopNumber
                           };
     
@@ -440,7 +437,6 @@
        
        NSLog(@"%@",resultObject);
        if ([resultObject[@"code"] integerValue] == 200) {
-           [PersonInfoModel shareInstance].myJifen = [NSString stringWithFormat:@"%d",[resultObject[@"obj"][@"integral"] intValue]];
            NSArray *arr = self.navigationController.viewControllers;
            for (MallO2OBaseViewController *vc in arr) {
                if ([vc isKindOfClass:[PointShopViewController class]]) {
@@ -454,25 +450,6 @@
    } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
        button.enabled = YES;
    }];
-    
-//    [Base64Tool postSomethingToServe:url andParams:dic isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-//        NSLog(@"%@",param);
-//        if ([param[@"code"] integerValue] == 200) {
-//            NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithDictionary:GetUserDefault(Person_Info)];
-//            [dic setValue:[NSString stringWithFormat:@"%@",param[@"obj"][@"integral"] ] forKey:@"integral"];
-//            SetUserDefault(dic, Person_Info);
-//            [[NSUserDefaults standardUserDefaults] synchronize];
-//            NSMutableArray *arr = self.navigationController.viewControllers.mutableCopy;
-//            self.navigationController.viewControllers = arr;
-//            PointShopViewController *viewController = arr[1];
-//            [self.navigationController popToViewController:viewController animated:YES];
-////            [SVProgressHUD showSuccessWithStatus:param[@"message"]];
-//            viewController.svpShowMessage = param[@"message"];
-//        }
-//        button.enabled = YES;
-//    } andErrorBlock:^(NSError *error) {
-//        button.enabled = YES;
-//    }];
 }
 
 /**
@@ -485,13 +462,6 @@
     
     if ([self.totalPrice intValue] == 0) {
         [SVProgressHUD showErrorWithStatus:@"数量不能为0"];
-        return NO;
-    }
-    
-//    NSString *pointText = [GetUserDefault(Person_Info) objectForKey:@"integral"];
-    NSString *pointText = [PersonInfoModel shareInstance].myJifen;
-    if ([pointText intValue] <= [self.totalPrice intValue]) {
-        [SVProgressHUD showErrorWithStatus:@"积分不够！"];
         return NO;
     }
     

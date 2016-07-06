@@ -269,12 +269,12 @@
         /*
          登录时本地存储一些数据  根据key能看出存储什么数据
          */
-        SetUserDefault(@"YES", IsLogin);
+        SetUserDefault(@"YES", AUTOLOGIN);
         SetUserDefault(_usernameText.text, UserName);
         SetUserDefault(_passwordText.text, PassWord);
         SetUserDefault(@"", ThirdId);
         [[NSUserDefaults standardUserDefaults] synchronize];
-        [PersonInfoModel savePersonInfo:resultObject[@"obj"]];
+        [UserModel mj_objectWithKeyValues:resultObject[@"obj"]];
         [self setAlian:[@"user_" stringByAppendingFormat:@"%@", resultObject[@"obj"][@"u_id"]]];
         /**
          获取当前栈里的viewcontroller并变成一数组
@@ -307,7 +307,7 @@
 //            /*
 //                登录时本地存储一些数据  根据key能看出存储什么数据
 //             */
-//            SetUserDefault(@"YES", IsLogin);
+//            SetUserDefault(@"YES", AUTOLOGIN);
 //            SetUserDefault(_usernameText.text, UserName);
 //            SetUserDefault(_passwordText.text, PassWord);
 //            SetUserDefault(param[@"obj"][@"u_id"], U_ID);
@@ -400,10 +400,10 @@
         /*
          登录时本地存储一些数据  根据key能看出存储什么数据
          */
-        SetUserDefault(@"YES", IsLogin);
+        SetUserDefault(@"YES", AUTOLOGIN);
 //        SetUserDefault(resultObject[@"obj"][@"u_id"], U_ID);
 //        SetUserDefault(resultObject[@"obj"], Person_Info);
-        [PersonInfoModel savePersonInfo:resultObject[@"obj"]];
+        [UserModel mj_objectWithKeyValues:resultObject[@"obj"]];
         [[NSUserDefaults standardUserDefaults] synchronize];
         [self setAlian:[@"user_" stringByAppendingFormat:@"%@", resultObject[@"obj"][@"u_id"] ]];
         /**

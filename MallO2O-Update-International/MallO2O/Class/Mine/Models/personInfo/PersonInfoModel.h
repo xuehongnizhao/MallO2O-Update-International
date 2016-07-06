@@ -49,6 +49,8 @@
  *  是否是VIP
  */
 @property (copy ,nonatomic) NSString *isVip;
+
+
 /**
  *  快速初始化一个单利模型
  *

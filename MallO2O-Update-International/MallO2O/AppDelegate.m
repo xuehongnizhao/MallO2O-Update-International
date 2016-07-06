@@ -29,8 +29,6 @@
 #import "SwpTools.h"
 #import "SwpNetworkModel.h"
 
-#import "PersonInfoModel.h"
-
 #import "MobClick.h"
 
 
@@ -57,7 +55,7 @@
     
     _mapManager = [[BMKMapManager alloc]init];
     // 如果要关注网络及授权验证事件，请设定     generalDelegate参数
-    BOOL ret = [_mapManager start:@"yxT6tE9snde30ol7dHVtaVwFHoKFmVfz"  generalDelegate:nil];
+    BOOL ret = [_mapManager start:@"2a40AbbfELimtZOvC4nK9N9M4o4sS1QA"  generalDelegate:nil];
     if (!ret) {
         NSLog(@"manager start failed!");
     }
@@ -126,7 +124,7 @@
     [UMSocialWechatHandler setWXAppId:APP_ID appSecret:@"6ad21a458d3ebebfa0dc34242760cbcf" url:@"http://www.114lives.com"];
     [UMSocialQQHandler setQQWithAppId:@"1104763572" appKey:@"LU37ehGMxcMGrjRN" url:@"http://www.114lives.com"];
     
-    [UMSocialSinaSSOHandler openNewSinaSSOWithAppKey:@"175699604" secret:@"a40abc9d5686640aa75d114173fe9aa8" RedirectURL:@"http://sns.whalecloud.com/sina2/callback"];
+    [UMSocialSinaSSOHandler openNewSinaSSOWithAppKey:@"3204389630" secret:@"99c49e55484ac534ddf193016399b46e" RedirectURL:@"http://www.114lives.com"];
 }
 
 #pragma mark 分享回调
@@ -184,14 +182,17 @@ didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
 - (void)application:(UIApplication *)application
 didReceiveRemoteNotification:(NSDictionary *)userInfo {
     // Required
-    NSLog(@"%@",userInfo);
     NSString *string = [[userInfo objectForKey:@"aps"] objectForKey:@"alert"];
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"提示"
-                                                        message:string
-                                                       delegate:self
-                                              cancelButtonTitle:@"OK"
-                                              otherButtonTitles:nil];
-    [alertView show];
+    NSLog(@"%@",userInfo);
+    UIAlertController *alertC=[UIAlertController alertControllerWithTitle:@"提示" message:string preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *action=[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+          [self didPushMessageJumpController:_messageUrl];
+    }];
+    [alertC addAction:action];
+
+    [self.window.rootViewController presentViewController:alertC animated:YES completion:^{
+        
+    }];
     [JPUSHService handleRemoteNotification:userInfo];
 }
 
@@ -218,23 +219,17 @@ fetchCompletionHandler:(void
 #pragma mark 收到推送通知
 - (void)showPushMessage:(NSDictionary *)userInfo{
     NSString *string = [[userInfo objectForKey:@"aps"] objectForKey:@"alert"];
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"提示"
-                                                        message:string
-                                                       delegate:self
-                                              cancelButtonTitle:@"去看看"
-                                              otherButtonTitles:nil];
-    alertView.tag = 3;
-    [alertView show];
+    UIAlertController *alertC=[UIAlertController alertControllerWithTitle:@"提示" message:string preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *action=[UIAlertAction actionWithTitle:@"去看看" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [self didPushMessageJumpController:_messageUrl];
+    }];
+    [alertC addAction:action];
+    
+    [self.window.rootViewController presentViewController:alertC animated:YES completion:^{
+        
+    }];
 }
 
-/**
-    alertview的代理方法
- */
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
-    if (buttonIndex == 0) {
-        [self didPushMessageJumpController:_messageUrl];
-    }
-}
 
 #pragma mark----设置别名
 -(void)setAlian :(NSString*)alian
@@ -248,14 +243,14 @@ fetchCompletionHandler:(void
     TabBarViewController *tabBarVC = (TabBarViewController *)self.window.rootViewController;
     NSInteger index = tabBarVC.selectedIndex;
     MallO2OBaseViewController *baseVC = [tabBarVC.viewControllers objectAtIndex:index];
-    UIViewController    *currentViewCtrl     = ((UINavigationController*)baseVC).topViewController;
+    UIViewController    *currentViewCtrl = ((UINavigationController*)baseVC).topViewController;
     
     int isExist = 0;
     // 取出 所有控制器
     NSArray *subViews = currentViewCtrl.navigationController.viewControllers;
     
     // 循环遍历 找出跳转的控制器是否存在
-    OrderDetailViewController *shopOreder      = [[OrderDetailViewController alloc] init];
+    OrderDetailViewController *shopOreder = [[OrderDetailViewController alloc] init];
     for (MallO2OBaseViewController *obj in subViews) {
         if ([obj isKindOfClass:[OrderDetailViewController class]]) {
             isExist    = 1;
@@ -311,7 +306,6 @@ fetchCompletionHandler:(void
     
     SwpNetworkModel *swpNetwork = [SwpNetworkModel shareInstance];
     
-    //    [JSONOfNetWork createPlist:nil];
     NSString *url         = [NSString stringWithFormat:@"http://%@/%@", baseUrl, base_set];
     NSString *sys_type    = [[UIDevice currentDevice] systemName];
     NSString *sys_version = [[UIDevice currentDevice] systemVersion];
@@ -342,6 +336,7 @@ fetchCompletionHandler:(void
                 NSLog(@"%@", dictData);
                 SetUserDefault(resultObject[@"obj"][@"ios_download"], @"ios_download");
                 NSLog(@"%@", GetUserDefault(@"ios_download"));
+                [self performSelectorOnMainThread:@selector(getURLFilter) withObject:nil waitUntilDone:YES];
             }
         } else {
             [SVProgressHUD showErrorWithStatus:resultObject[swpNetwork.swpNetworkMessage]];
@@ -352,7 +347,33 @@ fetchCompletionHandler:(void
     }];
     
 }
+/**
+ *  @author zq, 16-05-25 17:05:21
+ *
+ *  url过滤
+ */
+- (void)getURLFilter{
+    SwpNetworkModel *swpNetwork = [SwpNetworkModel shareInstance];
+    NSString *url = ALL_URL(@"as_url_filter");
+    NSDictionary *dic = @{
+                           @"app_key":url
+    
+                           };
+                           
+    [SwpRequest swpPOST:url parameters:dic isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
+            SetUserDefault(resultObject[@"obj"], URLFilter);
+            [[NSUserDefaults standardUserDefaults] synchronize];
+        }else{
+            NSLog(@"获取失败");
+        }
 
+    } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+        NSLog(@"网络不正常");
+    }];
+
+
+}
 #pragma mark 自动登录
 /**
  *  自动登录
@@ -360,10 +381,10 @@ fetchCompletionHandler:(void
 - (void)autoLogin{
     
     SwpNetworkModel *swpNetwork = [SwpNetworkModel shareInstance];
-    if ([GetUserDefault(IsLogin) boolValue]) {
-        NSString *url = @"http://b2c.yitaoo2o.com/action/ac_user/yz_login";
+    if ([GetUserDefault(AUTOLOGIN) boolValue]) {
+         NSString *url = [SwpTools swpToolGetInterfaceURL:@"yz_login"];
         if (GetUserDefault(UserName) == nil || [GetUserDefault(UserName) isEqualToString:@""]) {
-            SetUserDefault(@"NO", IsLogin);
+            SetUserDefault(@"NO", AUTOLOGIN);
             [[NSUserDefaults standardUserDefaults] synchronize];
             return;
         }
@@ -379,18 +400,18 @@ fetchCompletionHandler:(void
         [SwpRequest swpPOST:url parameters:dic isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
             
             if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
-                [PersonInfoModel savePersonInfo:resultObject[@"obj"]];
-                SetUserDefault(@"YES", IsLogin);
+                [UserModel mj_objectWithKeyValues:resultObject[@"obj"]];
+                SetUserDefault(@"YES", AUTOLOGIN);
                 [self setAlian:[@"user_" stringByAppendingFormat:@"%@", resultObject[@"obj"][@"u_id"] ]];
                 [[NSUserDefaults standardUserDefaults] synchronize];
             }else{
-                SetUserDefault(@"NO", IsLogin);
-                [PersonInfoModel clearPersonInfo];
+                SetUserDefault(@"NO", AUTOLOGIN);
+                [UserModel mj_objectWithKeyValues:nil];
                 [[NSUserDefaults standardUserDefaults] synchronize];
             }
             
         } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
-            [PersonInfoModel clearPersonInfo];
+        [UserModel mj_objectWithKeyValues:nil];
         }];
     }
 }
@@ -398,7 +419,7 @@ fetchCompletionHandler:(void
  *  三方自动登录
  */
 - (void)autoThirdLogin{
-    if ([GetUserDefault(IsLogin) boolValue]) {
+    if ([GetUserDefault(AUTOLOGIN) boolValue]) {
         SwpNetworkModel *swpNetwork = [SwpNetworkModel shareInstance];
         NSString *url = [SwpTools swpToolGetInterfaceURL:@"yz_login"];//@"action/ac_user/yz_login";
         NSDictionary *dic = @{
@@ -412,18 +433,19 @@ fetchCompletionHandler:(void
         [SwpRequest swpPOST:url parameters:dic isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
             
             if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
-                [PersonInfoModel savePersonInfo:resultObject[@"obj"]];
-                SetUserDefault(@"YES", IsLogin);
+                [UserModel mj_objectWithKeyValues:resultObject[@"obj"]];
+                SetUserDefault(@"YES", AUTOLOGIN);
                 [self setAlian:[@"user_" stringByAppendingFormat:@"%@", resultObject[@"obj"][@"u_id"] ]];
+                
                 [[NSUserDefaults standardUserDefaults] synchronize];
             }else{
-                SetUserDefault(@"NO", IsLogin);
-                [PersonInfoModel clearPersonInfo];
+                SetUserDefault(@"NO", AUTOLOGIN);
+                [UserModel mj_objectWithKeyValues:nil];
                 [[NSUserDefaults standardUserDefaults] synchronize];
             }
             
         } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
-            [PersonInfoModel clearPersonInfo];
+                [UserModel mj_objectWithKeyValues:nil];
         }];
     }
 }

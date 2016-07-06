@@ -94,10 +94,10 @@
 - (void)setBackType{
     _identifier = GetUserDefault(@"back_home_view");
 //    NSLog(@"asdfasdfasdfasdf=====%@",GetUserDefault(U_ID));
-    if ([GetUserDefault(IsLogin) boolValue] == YES) {
+    if ([GetUserDefault(AUTOLOGIN) boolValue] == YES) {
 //        NSLog(@"%@",[_webViewUrl stringByAppendingFormat:@"&u_id=%@",GetUserDefault(U_ID) ]);
 //        NSURL *url            = [NSURL URLWithString:[_webViewUrl stringByAppendingFormat:@"&u_id=%@",GetUserDefault(U_ID)]];
-        NSURL *url            = [NSURL URLWithString:[_webViewUrl stringByAppendingFormat:@"&u_id=%@",[PersonInfoModel shareInstance].uID]];
+        NSURL *url            = [NSURL URLWithString:[_webViewUrl stringByAppendingFormat:@"&u_id=%@",[UserModel shareInstance].u_id]];
         NSLog(@"%@",url);
         NSURLRequest *request = [NSURLRequest requestWithURL:url];
         [_webView loadRequest:request];

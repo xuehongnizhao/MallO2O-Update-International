@@ -54,7 +54,7 @@
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:YES animated:NO];
 //    NSString *str = GetUserDefault(U_ID);
-    NSString *str = [PersonInfoModel shareInstance].uID;
+    NSString *str = [UserModel shareInstance].u_id;
     if ([str isKindOfClass:[NSNull class]] || str == nil) {
         str = @"0";
     }
@@ -141,7 +141,7 @@
     NSLog(@"%@",url);
     
     if ([[url scheme] isEqualToString:@"gopay"]) {
-        if ([GetUserDefault(IsLogin) boolValue]) {
+        if ([GetUserDefault(AUTOLOGIN) boolValue]) {
             PushOrderViewController *viewController = [[PushOrderViewController alloc] init];
             NSString *str = [NSString stringWithFormat:@"%@",url];
             str = [str substringFromIndex:8];
@@ -192,7 +192,7 @@
     NSDictionary *dic = @{
                           @"app_key" : url,
 //                          @"u_id"    : GetUserDefault(U_ID),
-                          @"u_id"    : [PersonInfoModel shareInstance].uID
+                          @"u_id"    : [UserModel shareInstance].u_id
                           //                          @"page"    : [NSString stringWithFormat:@"%d",page]
                           };
     [self swpPublicTooGetDataToServer:url parameters:dic isEncrypt:self.swpNetwork.swpNetworkEncrypt swpResultSuccess:^(id  _Nonnull resultObject) {

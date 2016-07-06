@@ -35,14 +35,18 @@
 		<dict>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>xinlangwebo</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>sina.55ec0f2fe0f55a3af4000622</string>
+				<string>wb3204389630</string>
 			</array>
 		</dict>
 		<dict>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>qq</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>QQ41D95AB4</string>
@@ -51,6 +55,8 @@
 		<dict>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>tengxunwebo</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>tencent1104763572</string>

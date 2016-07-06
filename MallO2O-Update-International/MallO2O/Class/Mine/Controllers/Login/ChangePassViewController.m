@@ -135,7 +135,7 @@
                 NSDictionary *dic = @{
                                       @"app_key"  : url,
 //                                      @"u_id"     : GetUserDefault(U_ID),
-                                      @"u_id"     : [PersonInfoModel shareInstance].uID,
+                                      @"u_id"     : [UserModel shareInstance].u_id,
                                       @"old_pass" : _oldPassword.text,
                                       @"new_pass" : _inputNewPass.text
                                       };

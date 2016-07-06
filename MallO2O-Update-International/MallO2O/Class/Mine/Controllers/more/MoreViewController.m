@@ -254,7 +254,7 @@
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
     if (alertView.tag == 2) {
         if (buttonIndex == 1) {
-            SetUserDefault(@"NO", IsLogin);
+            SetUserDefault(@"NO", AUTOLOGIN);
 //            SetUserDefault(@"0", U_ID);
             SetUserDefault(nil, Address);
             SetUserDefault(@"", PassWord);
@@ -262,7 +262,7 @@
             [[NSUserDefaults standardUserDefaults] synchronize];
             [self setAlian:@"0"];
             [self.navigationController popViewControllerAnimated:YES];
-            [PersonInfoModel clearPersonInfo];
+            [UserModel mj_objectWithKeyValues:nil];
             [SVProgressHUD showSuccessWithStatus:NSLocalizedString(@"moreExitLoginSuccess", nil)];
         }
     }else{

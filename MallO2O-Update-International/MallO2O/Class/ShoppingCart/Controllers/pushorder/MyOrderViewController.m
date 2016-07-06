@@ -82,7 +82,7 @@
     NSDictionary *dic = @{
                           @"app_key" : url,
 //                          @"u_id"    : GetUserDefault(U_ID),
-                          @"u_id"    : [PersonInfoModel shareInstance].uID,
+                          @"u_id"    : [UserModel shareInstance].u_id,
                           @"type"    : [NSString stringWithFormat:@"%d",(int)_selectIndex],
                           @"page"    : [NSString stringWithFormat:@"%d",page]
                           };

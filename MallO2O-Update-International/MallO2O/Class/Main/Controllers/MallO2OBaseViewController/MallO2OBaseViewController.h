@@ -40,7 +40,7 @@ typedef void(^BridgeBlock)(id data,WVJBResponseCallback callBack);
 
 - (void) removeBackButton;
 
-- (void)popViewController;
+- (void) popViewController;
 
 @property (copy ,nonatomic) NSString *naviText;
 

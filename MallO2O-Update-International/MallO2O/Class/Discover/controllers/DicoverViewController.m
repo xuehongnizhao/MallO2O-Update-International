@@ -159,7 +159,7 @@
 //    }
     if (indexPath.section == 1 && indexPath.row == 2) {
         if ([self checkLogin] == YES) {
-            [self pushWebView:NSLocalizedString(@"dicoverTurntableNavigationTitle", nil) andWebUrl:[[SwpTools swpToolGetInterfaceURL:@"game_url"] stringByAppendingFormat:@"?u_id=%@",[PersonInfoModel shareInstance].uID]];
+            [self pushWebView:NSLocalizedString(@"dicoverTurntableNavigationTitle", nil) andWebUrl:[[SwpTools swpToolGetInterfaceURL:@"game_url"] stringByAppendingFormat:@"?u_id=%@",[UserModel shareInstance].u_id]];
         }
     }
     if (indexPath.section == 0 && indexPath.row == 0) {
@@ -171,17 +171,17 @@
     }
     if (indexPath.section == 1 && indexPath.row == 1) {
         if ([self checkLogin] == YES) {
-            [self pushWebView:NSLocalizedString(@"dicoverShakeNavigationTitle", nil) andWebUrl:[NSString stringWithFormat:@"http://b2c.yitaoo2o.com/phone_web/yy_yao/y_yao?u_id=%@",[PersonInfoModel shareInstance].uID]];
+            [self pushWebView:NSLocalizedString(@"dicoverShakeNavigationTitle", nil) andWebUrl:[NSString stringWithFormat:@"http://b2c.yitaoo2o.com/phone_web/yy_yao/y_yao?u_id=%@",[UserModel shareInstance].u_id]];
         }
     }
     if (indexPath.section == 1 && indexPath.row == 0) {
         if ([self checkLogin] == YES) {
-            [self pushWebView:NSLocalizedString(@"dicoverOneMoneyNavigationTitle", nil) andWebUrl:[NSString stringWithFormat:@"http://b2c.yitaoo2o.com/phone_web/yi_goods/yy_goods?u_id=%@",[PersonInfoModel shareInstance].uID]];
+            [self pushWebView:NSLocalizedString(@"dicoverOneMoneyNavigationTitle", nil) andWebUrl:[NSString stringWithFormat:@"http://b2c.yitaoo2o.com/phone_web/yi_goods/yy_goods?u_id=%@",[UserModel shareInstance].u_id]];
         }
     }
     if (indexPath.section == 0 && indexPath.row == 1) {
         if ([self checkLogin] == YES) {
-            [self pushWebView:NSLocalizedString(@"dicoverSendNavigationTitle", nil) andWebUrl:[NSString stringWithFormat:@"http://b2c.yitaoo2o.com/phone_web/yy_psy/yp_psy?u_id=%@",[PersonInfoModel shareInstance].uID]];
+            [self pushWebView:NSLocalizedString(@"dicoverSendNavigationTitle", nil) andWebUrl:[NSString stringWithFormat:@"http://b2c.yitaoo2o.com/phone_web/yy_psy/yp_psy?u_id=%@",[UserModel shareInstance].u_id]];
         }
     }
 }
@@ -201,7 +201,7 @@
 }
 
 - (BOOL)checkLogin{ 
-    if ([GetUserDefault(IsLogin) boolValue] == NO) {
+    if ([GetUserDefault(AUTOLOGIN) boolValue] == NO) {
         LoginViewController *vc = [[LoginViewController alloc] init];
         [self.navigationController pushViewController:vc animated:YES];
         [vc setBackButton];

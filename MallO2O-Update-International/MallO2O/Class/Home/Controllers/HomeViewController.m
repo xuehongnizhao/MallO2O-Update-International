@@ -962,7 +962,7 @@
                         break;
                     case 5:
                     {
-                        if ([GetUserDefault(IsLogin) boolValue]) {
+                        if ([GetUserDefault(AUTOLOGIN) boolValue]) {
                             PointShopViewController *viewController = [[PointShopViewController alloc] init];
                             [homeVC.navigationController pushViewController:viewController animated:YES];
                         }else{
@@ -1187,7 +1187,7 @@
             break;
         case 8:
         {
-            if ([GetUserDefault(IsLogin) boolValue]) {
+            if ([GetUserDefault(AUTOLOGIN) boolValue]) {
                 PointShopViewController *viewController = [[PointShopViewController alloc] init];
                 [self.navigationController pushViewController:viewController animated:YES];
             }else{

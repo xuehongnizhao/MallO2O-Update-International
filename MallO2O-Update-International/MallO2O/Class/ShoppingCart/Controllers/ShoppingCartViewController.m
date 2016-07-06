@@ -51,9 +51,9 @@
 - (void) viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:YES];
-//    if ([GetUserDefault(IsLogin) boolValue]) {
+//    if ([GetUserDefault(AUTOLOGIN) boolValue]) {
 //    NSString *str = GetUserDefault(U_ID);
-    NSString *str = [PersonInfoModel shareInstance].uID;
+    NSString *str = [UserModel shareInstance].u_id;
     if ([str isKindOfClass:[NSNull class]] || str == nil) {
         str = @"0";
     }
@@ -161,7 +161,7 @@
     NSLog(@"%@",url);
     
     if ([[url scheme] isEqualToString:@"gopay"]) {
-        if ([GetUserDefault(IsLogin) boolValue]) {
+        if ([GetUserDefault(AUTOLOGIN) boolValue]) {
             PushOrderViewController *viewController = [[PushOrderViewController alloc] init];
             NSString *str = [NSString stringWithFormat:@"%@",url];
             str = [str substringFromIndex:8];
@@ -204,13 +204,13 @@
 //    if ([GetUserDefault(U_ID) isEqualToString:@"0"] || GetUserDefault(U_ID) == nil) {
 //        return;
 //    }
-    if ([[PersonInfoModel shareInstance].uID isEqualToString:@"0"]) {
+    if ([[UserModel shareInstance].u_id isEqualToString:@"0"]) {
         return;
     }
     NSDictionary *dic = @{
                           @"app_key" : url,
 //                          @"u_id"    : GetUserDefault(U_ID),
-                          @"u_id" : [PersonInfoModel shareInstance].uID
+                          @"u_id" : [UserModel shareInstance].u_id
                           //                          @"page"    : [NSString stringWithFormat:@"%d",page]
                           };
     [self swpPublicTooGetDataToServer:url parameters:dic isEncrypt:self.swpNetwork.swpNetworkEncrypt swpResultSuccess:^(id  _Nonnull resultObject) {

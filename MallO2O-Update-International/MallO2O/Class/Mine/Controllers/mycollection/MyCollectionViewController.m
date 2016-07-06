@@ -71,7 +71,7 @@
     NSDictionary *dic = @{
                           @"app_key" : url,
                           @"page"    : [NSString stringWithFormat:@"%d",page],
-                          @"u_id"    : [PersonInfoModel shareInstance].uID
+                          @"u_id"    : [UserModel shareInstance].u_id
                           };
     
     

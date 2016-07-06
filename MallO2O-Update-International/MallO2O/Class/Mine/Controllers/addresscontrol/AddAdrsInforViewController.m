@@ -158,7 +158,7 @@ static NSString *const cellID = @"addAdrsCell";
     NSDictionary *dic = @{
                           @"app_key" : url,
 //                          @"u_id" : GetUserDefault(U_ID),
-                          @"u_id"   : [PersonInfoModel shareInstance].uID,
+                          @"u_id"   : [UserModel shareInstance].u_id,
                           @"consignee" : array[0],
                           @"phone_tel" : array[3],
                           @"address" : addressInfo,

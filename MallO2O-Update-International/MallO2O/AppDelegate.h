@@ -7,17 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
-
-//#import "BaseEngine.h"
-//#import "AppStoreEngine.h"
 #import <BaiduMapAPI_Base/BMKMapManager.h>
 
-#define baseUrl @"b2c.yitaoo2o.com"
+#define baseUrl @"192.168.1.141/life114"
+//#define baseUrl @"manager.114lives.com"
 
-
-//#define baseUrl @"o2omall.youzhiapp.com"
-//#define baseUrl @"192.168.1.61/tao_dq"
-#define base_set @"action/ac_base"
+#define base_set @"base_set/ac_base"
 
 #define NUMBERS @"0123456789"
 
@@ -29,9 +24,7 @@
 #define DefaultColor 0xf64532
 #define UserName @"username"
 #define PassWord @"password"
-#define APIKey      @"a1dc1078153f05f524b8785c4f1a4d7a"
-//#define U_ID      @"u_id"
-//#define Person_Info @"personinfo"
+#define APIKey      @"a1dc1078153f05f524b8785c4f1a4d7a"//高德地图
 #define Address @"address"
 #define LoadOver @""
 #define City_ID @"city_id"
@@ -55,7 +48,7 @@
 @property (strong ,nonatomic) BMKMapManager *mapManager;
 
 @property (strong, nonatomic) NSDictionary   *baseDict;
-@property (assign, nonatomic, getter = isLogin)  BOOL login;
+@property (assign, nonatomic, getter = AUTOLOGIN)  BOOL login;
 @property (copy ,nonatomic) NSURL *wechatPayReturnUrl;
 
 @end

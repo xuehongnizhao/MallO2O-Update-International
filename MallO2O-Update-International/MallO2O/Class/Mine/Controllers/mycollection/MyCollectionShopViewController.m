@@ -110,7 +110,7 @@
     NSString *url = [SwpTools swpToolGetInterfaceURL:@"collect_shop_list"];
     NSDictionary *dic = @{
                           @"app_key" : url,
-                          @"u_id"    : [PersonInfoModel shareInstance].uID
+                          @"u_id"    : [UserModel shareInstance].u_id
                           };
     [SwpRequest swpPOST:url parameters:dic isEncrypt:YES swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
         _collectionShopArray = [self arrayFormCollectionData:resultObject[@"obj"]];
@@ -208,7 +208,7 @@
         NSString *url = [NSString stringWithFormat:@"http://b2c.yitaoo2o.com/action/ac_user/collect_shop"];
         NSDictionary *dic = @{
                               @"app_key" : url,
-                              @"u_id" : [PersonInfoModel shareInstance].uID,
+                              @"u_id" : [UserModel shareInstance].u_id,
                               @"shop_id" : model.shopId
                               };
         [self swpPublicTooGetDataToServer:url parameters:dic isEncrypt:self.swpNetwork.swpNetworkEncrypt swpResultSuccess:^(id  _Nonnull resultObject) {
