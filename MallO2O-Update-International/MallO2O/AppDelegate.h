@@ -48,7 +48,7 @@
 @property (strong ,nonatomic) BMKMapManager *mapManager;
 
 @property (strong, nonatomic) NSDictionary   *baseDict;
-@property (assign, nonatomic, getter = AUTOLOGIN)  BOOL login;
+@property (assign, nonatomic, getter = isLogin)  BOOL login;
 @property (copy ,nonatomic) NSURL *wechatPayReturnUrl;
 
 @end

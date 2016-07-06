@@ -9,8 +9,7 @@
 #import "AppDelegate.h"
 #import "JPUSHService.h"
 #import "TabBarViewController.h"
-#import "MallO2OBaseViewController.h"
-#import "GoodsWebViewController.h"
+#import "TabBarViewController.h"
 #import "OrderDetailViewController.h"
 #import "UMSocialWechatHandler.h"
 #import "UMSocialQQHandler.h"
@@ -19,15 +18,11 @@
 #import "UMSocialSinaSSOHandler.h"
 #import "WXApi.h"
 #import "payRequsestHandler.h"
-#import "WechatOrderInformation.h"
 #import <AlipaySDK/AlipaySDK.h>
-#import "PushOrderSuccessViewController.h"
-#import "PushOrderViewController.h"
 #import "UMSocial.h"
 #import "Pingpp.h"
 
 #import "SwpTools.h"
-#import "SwpNetworkModel.h"
 
 #import "MobClick.h"
 
@@ -242,7 +237,7 @@ fetchCompletionHandler:(void
 - (void)didPushMessageJumpController: (NSString *)url{
     TabBarViewController *tabBarVC = (TabBarViewController *)self.window.rootViewController;
     NSInteger index = tabBarVC.selectedIndex;
-    MallO2OBaseViewController *baseVC = [tabBarVC.viewControllers objectAtIndex:index];
+    BaseViewController *baseVC = [tabBarVC.viewControllers objectAtIndex:index];
     UIViewController    *currentViewCtrl = ((UINavigationController*)baseVC).topViewController;
     
     int isExist = 0;
@@ -251,7 +246,7 @@ fetchCompletionHandler:(void
     
     // 循环遍历 找出跳转的控制器是否存在
     OrderDetailViewController *shopOreder = [[OrderDetailViewController alloc] init];
-    for (MallO2OBaseViewController *obj in subViews) {
+    for (BaseViewController *obj in subViews) {
         if ([obj isKindOfClass:[OrderDetailViewController class]]) {
             isExist    = 1;
             shopOreder = (OrderDetailViewController *)obj;
@@ -259,17 +254,17 @@ fetchCompletionHandler:(void
         }
     }
     
-    // 控制器是否存在
-    if (isExist == 0) {
-        // 不存在 跳转
-        shopOreder.webUrl = url;
-        [shopOreder.rdv_tabBarController setTabBarHidden:YES animated:YES];
-        shopOreder.identifier = @"1";
-        [currentViewCtrl.navigationController pushViewController:shopOreder animated:YES];
-    } else{
-        // 存在 刷新
-        [shopOreder reloadWebView:url];
-    }
+//    // 控制器是否存在
+//    if (isExist == 0) {
+//        // 不存在 跳转
+//        shopOreder.webUrl = url;
+//        [shopOreder.rdv_tabBarController setTabBarHidden:YES animated:YES];
+//        shopOreder.identifier = @"1";
+//        [currentViewCtrl.navigationController pushViewController:shopOreder animated:YES];
+//    } else{
+//        // 存在 刷新
+//        [shopOreder reloadWebView:url];
+//    }
 
 }
 
@@ -354,7 +349,7 @@ fetchCompletionHandler:(void
  */
 - (void)getURLFilter{
     SwpNetworkModel *swpNetwork = [SwpNetworkModel shareInstance];
-    NSString *url = ALL_URL(@"as_url_filter");
+    NSString *url = [SwpTools swpToolGetInterfaceURL:@"as_url_filter"];
     NSDictionary *dic = @{
                            @"app_key":url
     

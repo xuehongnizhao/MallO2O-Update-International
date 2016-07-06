@@ -21,6 +21,7 @@ PODS:
   - MJRefresh (3.1.9)
   - PureLayout (3.0.2)
   - RDVTabBarController (1.1.9)
+  - RegexKitLite (4.0)
   - SDWebImage (3.8.1):
     - SDWebImage/Core (= 3.8.1)
   - SDWebImage/Core (3.8.1)
@@ -37,6 +38,7 @@ DEPENDENCIES:
   - MJRefresh
   - PureLayout
   - RDVTabBarController
+  - RegexKitLite
   - SDWebImage
   - SVProgressHUD
   - UMengSocialCOM
@@ -51,11 +53,12 @@ SPEC CHECKSUMS:
   MJRefresh: c5f1f1653e5a1b932c90f78074f2bc86f3f9bd5e
   PureLayout: 4d550abe49a94f24c2808b9b95db9131685fe4cd
   RDVTabBarController: 67794f7a7a37f8e32f046f85ac67d06ab92d624a
+  RegexKitLite: c0e4c12e6e7de0769f3a3ed679f0f61604170661
   SDWebImage: 35f9627a3e44b4f292a8a8ce6a531fa488239b91
   SVProgressHUD: b0830714205bea1317ea1a2ebc71e5633af334d4
   UMengSocialCOM: 074c135ce349aa4c8848d3fb8458757bcb6ffb67
   WebViewJavascriptBridge: a4d502315f1b8d9a51cd6a9174147ed567ec3bc5
 
-PODFILE CHECKSUM: 94fa0509c6d9b61b765ce814c56bbfb82d41f471
+PODFILE CHECKSUM: a4e9ca218940eaf8ef8562a9ed8e40d15a4e41bc
 
 COCOAPODS: 1.0.0
