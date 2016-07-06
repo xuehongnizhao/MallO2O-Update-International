@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9532" systemVersion="15D21" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9530"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="OneBuySuccessViewController">
+            <connections>
+                <outlet property="goOneBtn" destination="8I7-PO-iec" id="cws-g3-tp7"/>
+                <outlet property="historyBtn" destination="UHd-jR-JQs" id="mdB-vT-Fpc"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="order_success" translatesAutoresizingMaskIntoConstraints="NO" id="1SU-S0-lH2">
+                    <rect key="frame" x="253" y="68" width="94" height="94"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="94" id="ZKd-zN-37y"/>
+                        <constraint firstAttribute="width" constant="94" id="iPR-5Y-myx"/>
+                    </constraints>
+                </imageView>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8I7-PO-iec">
+                    <rect key="frame" x="30" y="303" width="247" height="40"/>
+                    <color key="backgroundColor" red="0.85490196080000003" green="0.21176470589999999" blue="0.26274509800000001" alpha="1" colorSpace="calibratedRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="40" id="kng-Ju-F6S"/>
+                    </constraints>
+                    <state key="normal" title="继续参与">
+                        <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                            <integer key="value" value="4"/>
+                        </userDefinedRuntimeAttribute>
+                    </userDefinedRuntimeAttributes>
+                    <connections>
+                        <action selector="clickGoOnButton:" destination="-1" eventType="touchUpInside" id="z5f-qj-x5u"/>
+                    </connections>
+                </button>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UHd-jR-JQs">
+                    <rect key="frame" x="324" y="303" width="247" height="40"/>
+                    <color key="backgroundColor" red="0.47450980390000003" green="0.7725490196" blue="0.83137254900000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="40" id="PoW-wJ-Iid"/>
+                    </constraints>
+                    <state key="normal" title="查看参与记录">
+                        <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                            <integer key="value" value="4"/>
+                        </userDefinedRuntimeAttribute>
+                    </userDefinedRuntimeAttributes>
+                    <connections>
+                        <action selector="clickHistoryButton:" destination="-1" eventType="touchUpInside" id="aZS-Qm-6Qx"/>
+                    </connections>
+                </button>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="恭喜您  参与成功" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="q4W-Wy-gbJ">
+                    <rect key="frame" x="8" y="196" width="584" height="35"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="35" id="7Rg-gc-flR"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                    <color key="textColor" red="0.97647058819999999" green="0.1960784314" blue="0.070588235289999995" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="请等待系统为您揭晓" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3Fe-Qy-YTf">
+                    <rect key="frame" x="8" y="228" width="584" height="33"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="33" id="HRf-6f-AEz"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                    <color key="textColor" red="0.97647058819999999" green="0.1960784314" blue="0.070588235289999995" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+            </subviews>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstItem="UHd-jR-JQs" firstAttribute="top" secondItem="3Fe-Qy-YTf" secondAttribute="bottom" constant="42" id="2xh-Xh-DfY"/>
+                <constraint firstItem="8I7-PO-iec" firstAttribute="top" secondItem="3Fe-Qy-YTf" secondAttribute="bottom" constant="42" id="8UY-J0-9y0"/>
+                <constraint firstItem="8I7-PO-iec" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="30" id="Bw3-Jb-EE3"/>
+                <constraint firstItem="1SU-S0-lH2" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="MyH-9C-og3"/>
+                <constraint firstAttribute="trailing" secondItem="q4W-Wy-gbJ" secondAttribute="trailing" constant="8" id="R73-Mf-vG8"/>
+                <constraint firstItem="UHd-jR-JQs" firstAttribute="leading" secondItem="8I7-PO-iec" secondAttribute="trailing" constant="47" id="UGh-Ss-5vp"/>
+                <constraint firstItem="3Fe-Qy-YTf" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="8" id="YqU-cJ-vZ8"/>
+                <constraint firstItem="UHd-jR-JQs" firstAttribute="width" secondItem="8I7-PO-iec" secondAttribute="width" id="bvL-QC-67U"/>
+                <constraint firstItem="1SU-S0-lH2" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="68" id="cl7-bg-gID"/>
+                <constraint firstAttribute="trailing" secondItem="UHd-jR-JQs" secondAttribute="trailing" constant="29" id="kWj-1q-hfT"/>
+                <constraint firstItem="q4W-Wy-gbJ" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="8" id="krL-TN-Ygc"/>
+                <constraint firstAttribute="trailing" secondItem="3Fe-Qy-YTf" secondAttribute="trailing" constant="8" id="n3A-e0-RCD"/>
+                <constraint firstItem="3Fe-Qy-YTf" firstAttribute="top" secondItem="1SU-S0-lH2" secondAttribute="bottom" constant="66" id="trk-FT-Bxx"/>
+                <constraint firstItem="q4W-Wy-gbJ" firstAttribute="top" secondItem="1SU-S0-lH2" secondAttribute="bottom" constant="34" id="vew-Ud-Opy"/>
+            </constraints>
+        </view>
+    </objects>
+    <resources>
+        <image name="order_success" width="65" height="65"/>
+    </resources>
+</document>

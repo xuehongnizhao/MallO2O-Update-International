@@ -1,0 +1,337 @@
+/* 
+  Localizable.strings
+  MallO2O
+
+  Created by songweiping on 16/3/9.
+  Copyright © 2016年 songweipng. All rights reserved.
+*/
+
+
+// Tool
+
+"Yuan"                                         = "Yuan";
+"TheNumberOf"                                  = "Number";
+"Save"                                         = "Save";
+"Integral"                                     = "Integral";
+"Money"                                        = "$";
+"Total"                                        = "Total:";
+"Commodity"                                    = "";
+"OK"                                           = "OK";
+"NO"                                           = "NO";
+"Cancel"                                       = "Cancel";
+"Prompt"                                       = "Prompt";
+"Submit"                                       = "Submit";
+"Search"                                       = "Search";
+
+//  TabBar
+"tabBarHome"                                   = "Home";
+"tabBarCate"                                   = "Cate";
+"tabBarDiscover"                               = "discover";
+"tabbarShoppingCart"                           = "ShoppingCart";
+"tabbarMine"                                   = "Mine";
+
+// MJ 刷新
+"headerMJRefreshStateIdle"                     = "Drop down you can refresh";
+"headerMJRefreshStatePulling"                  = "Release the refresh now";
+"footerMJRefreshStateIdle"                     = "Click or pull loads for more";
+
+
+// SwpNetworkModel swpNetwork 数据模型
+
+"swpNetworkError"                              = "Network exception";
+"swpNetworkCommitDataing"                      = "In the data submitted...";
+"swpNetworkDeleteDataing"                      = "Data deletion...";
+"swpNetworkUpdateDataing"                      = "Data modifications ...";
+"swpNetworkLogin"                              = "User login...";
+"swpNetworkGetDagaingTitle"                    = "In the effort to obtain...";
+"swpNetworkRefreshDataTitle"                   = "Try to refresh...";
+"swpNetworkToLoadDataTitle"                    = "Efforts to load...";
+"swpNetworkNotData"                            = "No more data";
+"swpNetworkDataNULL"                           = "Gets exception data";
+
+
+// HomeViewController     home  首页
+"homeNavigationTitle"                          = "YouZhiO2OShop";
+"homeRecommendedBusinessesTitle"               = "RecommendedBusinesses";
+"homeDiscoverTheLatestVersionTitle"            = "Discover the latest version";
+"homeDownloadTheUpdate"                        = "Download";
+
+
+
+// DicoverViewController    dicover 发现
+"dicoverNavigationTitle"                       = "Dicover";
+"dicoverBesom"                                 = "Besom";
+"dicoverSend"                                  = "Send";
+"dicoverOneMoney"                              = "OneMoney - WinPrize";
+"dicoverShake"                                 = "Shake - EarnIntegral";
+"dicoverTurntable"                             = "Turntable - WinIntegral";
+"dicoverBesomPromptTitle"                      = "Place your barcode box";
+"dicoverSendNavigationTitle"                   = "Nationwide delivery";
+"dicoverShakeNavigationTitle"                  = "Shake shake shake";
+"dicoverTurntableNavigationTitle"              = "Happy big wheel";
+"dicoverOneMoneyNavigationTitle"               = "A purchase";
+
+
+// ShoppingCartViewController   shoppingCart  购物车
+"shoppingCartNavigationTitle"                  = "Shopping Cart";
+
+// PushOrderViewController  pushOrder   提交订单
+"pushOrderNavigationTitle"                     = "Submit your order";
+"pushOrderPromptTitle"                         = "Please submit your order completed within 15 minutes after payment";
+"pushOrderCellHeaderAddressTitle"              = "Your shipping address";
+"pushOrderCellHeaderTimeTitle"                 = "Delivery time";
+"pushOrderCellHeaderMyWalletTitle"             = "My Wallet";
+"pushOrderCellHeaderPaymentTitle"              = "Means of payment";
+
+"pushOrderCellHeaderCommodityInformationTitle" = "Commodity Information";
+"pushOrderCellHeaderNoteInformationTitle"      = "Note Information";
+"pushOrderCellSelectTimeButtonTitle"           = "Confirmed Dates";
+
+"pushOrderCellTimePlaceholder"                 = "Served as soon as possible";
+
+"pushOrderCellPlaceholderAccountBalances"      = "AccountBalances";
+"pushOrderCellPlaceholderUseBalance"           = "Use this payment balance";
+"pushOrderCellPlaceholderPaymentAlipay"        = "Alipay Payment";
+"pushOrderCellPlaceholderPaymentWeChat"        = "WeChat Payment";
+"pushOrderCellPlaceholderPaymentPaymentInCash" = "Payment in cash";
+"pushOrderCellPlaceholderViewProductList"      = "View product list";
+"pushOrderCellPlaceholderFreight"              = "Freight";
+"pushOrderCommitButtonTitle"                   = "Submit";
+"pushOrderUserAmountPaid"                      = "AmountPaid:";
+"pushOrderCellPlaceholderNoteInformation"      = "Please enter a comment information";
+
+// InputMarkMessageViewController  inputMark 提交订单 备注
+"inputMarkNavigationTitle"                     = "Notes";
+"inputMarkNotesPlaceholder"                    = "Please enter a comment information";
+"inputMarkNotesCommitButtonTitle"              = "Confirm";
+
+// MineViewController mine  我的
+"mineMyPoints"                                 = "My Points";
+"mineBusinessCollection"                       = "Business Collection";
+"mineGoodsCollection"                          = "Goods Collection";
+"mineAllOrders"                                = "All Orders";
+"minePendingPayment"                           = "Pending Payment";
+"mineInProgress"                               = "In Progress";
+"mineEvaluation"                               = "Evaluation";
+"mineRefund"                                   = "Refund";
+"mineMyWallet"                                 = "My Wallet";
+"mineBalance"                                  = "Balance";
+"mineBalanceRecharge"                          = "Balance Recharge";
+"mineTopRecords"                               = "Top Records";
+"mineOneOfMyPurchases"                         = "OneOfMyPurchases";
+"mineNews"                                     = "News";
+"mineAddressManagement"                        = "AddressManagement";
+"mineModifyPassword"                           = "ModifyPassword";
+"mineMore"                                     = "More";
+"mineClickOnLogin"                             = "Please click on login";
+
+// EditPerInfoViewController editPerInfo 修改信息
+"editPerInfoNavigationTitle"                   = "Modify The Information";
+"editPerInfoAvatar"                            = "Avatar";
+"editPerInfoNickname"                          = "Nickname";
+"editPerInfoSex"                               = "Sex";
+"editPerInfoPleaseSelectGender"                = "Please Select Gender";
+"editPerInfoMan"                               = "Man";
+"editPerInfoWoman"                             = "Woman";
+"editPerInfoPhotos"                            = "Photos";
+"editPerInfoPhotoAlbum"                        = "PhotoAlbum";
+
+// PointShopViewController pointShop 积分商城
+"pointShopNavigationTitle"                     = "Points Mall";
+"pointShopMyPoints"                            = "My Points:";
+"pointShopExchangeRecords"                     = "ExchangeRecords";
+"pointShopIntegralDescription"                 = "IntegralDescription";
+"pointShopIntegralDescriptionNavigationTitle"  = "Integral Description";
+
+// MyCollectionShopViewController myCollectionShop 收藏商家
+"myCollectionShopNavigationTitle"              = "Favorite Businesses";
+
+// HomeRecJumpViewController homeRecJump 商家详情
+"homeRecJumpBusinessDetailsNavigationTitle"    = "Business Details";
+"homeRecJumpCataTitle"                         = "Cate";
+"homeRecJumpDefaultSort"                       = "Default Sort";
+"homeRecJumpSalesSort"                         = "Sales";
+"homeRecJumpTheLatestReleaseSort"              = "The Latest Release";
+"homeRecJumpHighestPriceSort"                  = "Highest Price";
+"homeRecJumpTheLowestPriceSort"                = "The Lowest Price";
+
+// MyCollectionViewController  myCollection 我的收藏
+"myCollectionNavigationTitle"                  = "My Collection";
+
+// GoodsWebViewController       商品详情
+"productDetailsNavigationTitle"                = "Product Details";
+
+// MyOrderViewController  myOrder 我的订单
+"myOrderNavigationTitle"                       = "My Order";
+"myOrderAll"                                   = "All";
+"myOrderPendingPayment"                        = "PendingPayment";
+"myOrderInProgress"                            = "InProgress";
+"myOrderEvaluation"                            = "Evaluation";
+"myOrderRefund"                                = "Refund";
+"myOrderDeleteErrorMessage"                    = "Current Order Cannot Be Deleted";
+"myOrderDeleteSuccessMessage"                  = "Delete Success";
+
+// OrderDetailViewController orderDetail 订单 详情
+"orderDetailNavigationTitle"                   = "Order Details";
+
+// OrderDetailViewController orderDeta  充值中心
+"rechargeCenterNavigationTitle"                = "Recharge Center";
+
+// OrderDetailViewController  orderDetail 充值记录
+"rechargeRecordNavigationTitle"                = "Recharge Record";
+
+// OrderDetailViewController  orderDetail 我的一元购
+"oneDollarForMeNavigationTitle"                = "One Dollar For Me";
+
+// MessageViewController   message  消息
+"messageNewsNavigationTitle"                   = "News";
+"messageNewsClearAllTitle"                     = "Clear All Messages";
+
+// AdressDetailController adressDetail 地址管理
+"adressDetailNavigationTitle"                  = "Address Management";
+"adressDetailCellAddressTitle"                 = "Address:";
+"adressDetailCellConsigneeTitle"               = "Consignee:";
+"adressDetailCellTelephoneTitle"               = "TelePhone:";
+"adressDetailCellEditTitle"                    = "Edit";
+"adressDetailCellDeleteTitle"                  = "Delete";
+
+
+// AddAdrsInforViewController  addAdrsInfor 添加地址 | 和编辑地址
+"addAdrsInforAddAddressNavigationTitle"        = "Edit Address";
+"addAdrsInforUpdateAddressNavigationTitle"     = "Modify Address";
+"addAdrsInforCellContactsTitle"                = "Contacts";
+"addAdrsInforCellContactsPlaceholder"          = "Please enter your name";
+"addAdrsInforCellReceiptAddressTitle"          = "Receipt Address";
+"addAdrsInforCellReceiptAddressPlaceholder"    = "Please choose the school, building or district";
+"addAdrsInforCellAddressInDetailTitle"         = "Address In Detail";
+"addAdrsInforCellAddressInDetailPlaceholder"   = "Please enter a detailed address";
+"addAdrsInforCellTelephoneTitle"               = "Telephone";
+"addAdrsInforCellTelephonePlaceholder"         = "Please enter a contact phone";
+"addAdrsInforCellCkeckTitle"                   = "Please enter the correct phone number";
+
+// ChangePassViewController changePass 修改密码
+"changePassModifyPasswordNavigationTitle"      = "Modify Password";
+"changePassOldPasswordPlaceholder"             = "Please enter the original password";
+"changePassInputNewPasswordPlaceholder"        = "Please enter new password";
+"changePassConfirmNewPasswordPlaceholder"      = "Confirm new password";
+"changePassSubmitButton"                       = "Submit";
+"changePassCheckNewPasswordsTitle"             = "New passwords are not consistent";
+"changePassCkeckOldPasswordsTitle"             = "Please confirm the password";
+"changePassCkeckNewPasswordsNULLTitle"         = "please enter new password";
+"changePassCkeckOlePasswordsNULLTitle"         = "Please enter the original password";
+
+// MoreViewController  more 更多
+"moreNavigationTitle"                          = "More";
+"moreAboutApp"                                 = "About App";
+"morePrivacyRights"                            = "Privacy Rights";
+"moreFeedback"                                 = "Feedback";
+"moreGiveMeAGrade"                             = "Give Me A Grade";
+"moreUseHelp"                                  = "Use Help";
+"moreCodeSharing"                              = "Code Sharing";
+"moreClearCache"                               = "Clear Cache";
+"moreExitLoginPromptTitle"                     = "Are you sure you want to log out?";
+"moreExitLogin"                                = "Exit Login";
+"moreExitLoginSuccess"                         = "Exit Success";
+"moreClearCachePromptTitle"                    = "This time will be cleaned up";
+"moreClearCacheSuccessPromptTitle"             = "Successful cleanup cache";
+
+// OpinionViewController opinion 意见反馈
+"opinionPlaceholder"                           = "Please input feedback...";
+"opinionTextMaxSize"                           = "Enter the upper limit of 250 words";
+
+// LoginViewController login 登录
+"loginNavigationTitle"                         = "Sign In";
+"loginRegister"                                = "Register";
+"loginAccountPlaceholder"                      = "Enter the registered phone number";
+"loginPasswordPlaceholder"                     = "Enter Password";
+"loginRememberPassword"                        = "Remember Password";
+"loginForgetPassword"                          = "Forget Password";
+"loginButtonTitle"                             = "SignIn";
+"loginThirdPartyLoginPromptTitle"              = "Third party account login";
+"loginCleckAccountNULLMessage"                 = "Please enter a user name";
+"loginCleckPasswordNULLMessage"                = "Please enter a password";
+"loginCleckAccount"                            = "Please enter the correct phone number";
+"loginSuccess"                                 = "Login Success";
+
+// RegistViewController regist 注册
+"registNavigationTitle"                        = "Register";
+"registAccountPlaceholder"                     = "Please enter the number of registered mobile phone";
+"registVerificationCodePlaceholder"            = "Verification Code";
+"registGetVerificationCodeButtonTitle"         = "Get Verification Code";
+"registPasswordAccountPlaceholder"             = "Please enter a password";
+"registButtonTitle"                            = "Register";
+
+
+// ThirdRegistViewController thirdRegist 三方绑定
+"thirdRegistNavigationTitle"                   = "Three party binding";
+
+
+// ForgetPassViewController forgetPassword  忘记密码
+"forgetPasswordNavigationTitle"                = "Forget Password";
+"forgetPasswordAccountPlaceholder"             = "Enter the registered phone number";
+"forgetPasswordVerificationCodePlaceholder"    = "Verification Code";
+"forgetPasswordGetVerificationCodeButtonTitle" = "GetVerificationCode";
+"forgetPasswordNextStepButtonTitle"            = "Next Step";
+"forgetPasswordRetransmission"                 = "Retransmission";
+"forgetPasswordCheckVerificationCode"          = "Verification Code Error";
+
+// ChangeForgetPassViewController changeForgetPassword
+"changeForgetPasswordNavigationTitle"          = "Forget Password";
+"changeForgetPasswordAccountPlaceholder"       = "Please enter a user name";
+"changeForgetPasswordPleaseNewPassword"        = "New Password";
+"changeForgetPasswordPleaseConfirmThePassword" = "Please confirm the password";
+
+
+// CateGoodsViewController  cateGoods
+"cateGoodsSalesVolume"                         = "Sales Volume";
+"cateGoodsPraise"                              = "Praise";
+"cateGoodsPrice"                               = "Price";
+"cateGoodsScreen"                              = "Screen";
+
+// SelectTypeViewController selectType 筛选
+"selectTypeNavigationTitle"                    = "Screen";
+"selectTypeSubmitButtonTitle"                  = "Submit";
+"selectTypeKeywordTitle"                       = "Keywords";
+"selectTypeKeywordPlaceholder"                 = "Enter search keywords";
+"selectTypePriceRangeTitle"                    = "Price Range";
+
+"selectTypeHighPricePlaceholder"               = "High Price";
+"selectTypeLowPricePlaceholder"                = "Low Price";
+"selectTypeAllTitle"                           = "Whole";
+"selectTypePriceRange"                         = "Price range";
+
+// NearByShopViewController nearByShop 附近商家
+"nearByShopNavigationTitle"                    = "Near By Shop";
+"nearByShopLocationErrorTitle"                 = "Location Error";
+"nearByShopError01Title"                       = "Did not obtain the latitude and longitude";
+"nearByShopNearbyTitle"                        = "near";
+"nearByShopCateTitle"                          = "Cate";
+
+// TeamBuyingViewController teamBuying 团购
+"teamBuyingNavigationTitle"                    = "Group Buys";
+"teamBuyingCateTitle"                          = "Cate";
+"teamBuyingSorting"                            = "Sorting";
+"teamBuyingSales"                              = "Sales";
+"teamBuyingTheLatestRelease"                   = "The Latest Release";
+"teamBuyingHighestPrice"                       = "Highest Price";
+"teamBuyingTheLowestPrice"                     = "The Lowest Price";
+
+// CateJumpViewController cateJump 抢购
+"cateJumpNavigationTitle"                      = "Buy";
+"cateJumpSoldTitle"                            = "Sold:";
+
+// SeleRankViewController seleRank 排行榜
+"seleRankNavigationTitle"                      = "Top";
+
+// SearchHisViewController searchHis 首页搜索
+"searchHisSearchResultsNavigationTitle"        = "Search Results";
+"searchHisSearchBarPlaceholder"                = "Please enter your search item";
+"searchHisHotCommodityTitle"                   = "Hot Commodity";
+"searchHisSearchForRecordsTitle"               = "Search For Records";
+"searchHisSearchBarCheckInputText"             = "Please enter what you are looking";
+
+// CateViewController cate 分类
+"cateSearchBarPlaceholder"                     = "Search product name";
+
+
+

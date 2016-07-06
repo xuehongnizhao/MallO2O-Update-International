@@ -1,0 +1,61 @@
+PODS:
+  - AFNetworking (3.1.0):
+    - AFNetworking/NSURLSession (= 3.1.0)
+    - AFNetworking/Reachability (= 3.1.0)
+    - AFNetworking/Security (= 3.1.0)
+    - AFNetworking/Serialization (= 3.1.0)
+    - AFNetworking/UIKit (= 3.1.0)
+  - AFNetworking/NSURLSession (3.1.0):
+    - AFNetworking/Reachability
+    - AFNetworking/Security
+    - AFNetworking/Serialization
+  - AFNetworking/Reachability (3.1.0)
+  - AFNetworking/Security (3.1.0)
+  - AFNetworking/Serialization (3.1.0)
+  - AFNetworking/UIKit (3.1.0):
+    - AFNetworking/NSURLSession
+  - Base64nl (1.2)
+  - IQKeyboardManager (3.3.7)
+  - Masonry (1.0.1)
+  - MJExtension (3.0.11)
+  - MJRefresh (3.1.9)
+  - PureLayout (3.0.2)
+  - RDVTabBarController (1.1.9)
+  - SDWebImage (3.8.1):
+    - SDWebImage/Core (= 3.8.1)
+  - SDWebImage/Core (3.8.1)
+  - SVProgressHUD (2.0.3)
+  - UMengSocialCOM (5.2.1)
+  - WebViewJavascriptBridge (5.0.5)
+
+DEPENDENCIES:
+  - AFNetworking
+  - Base64nl
+  - IQKeyboardManager
+  - Masonry
+  - MJExtension
+  - MJRefresh
+  - PureLayout
+  - RDVTabBarController
+  - SDWebImage
+  - SVProgressHUD
+  - UMengSocialCOM
+  - WebViewJavascriptBridge
+
+SPEC CHECKSUMS:
+  AFNetworking: 5e0e199f73d8626b11e79750991f5d173d1f8b67
+  Base64nl: a497bdcd1c01ea793d36b399016195a8713c0e95
+  IQKeyboardManager: 249c3946acf61345c18b038eb50863fe2793e3a8
+  Masonry: a1a931a0d08870ed8ae415a2ea5ea68ebcac77df
+  MJExtension: f9ae6ddc0f1c482c3c9af750280ccebd14381958
+  MJRefresh: c5f1f1653e5a1b932c90f78074f2bc86f3f9bd5e
+  PureLayout: 4d550abe49a94f24c2808b9b95db9131685fe4cd
+  RDVTabBarController: 67794f7a7a37f8e32f046f85ac67d06ab92d624a
+  SDWebImage: 35f9627a3e44b4f292a8a8ce6a531fa488239b91
+  SVProgressHUD: b0830714205bea1317ea1a2ebc71e5633af334d4
+  UMengSocialCOM: 074c135ce349aa4c8848d3fb8458757bcb6ffb67
+  WebViewJavascriptBridge: a4d502315f1b8d9a51cd6a9174147ed567ec3bc5
+
+PODFILE CHECKSUM: 94fa0509c6d9b61b765ce814c56bbfb82d41f471
+
+COCOAPODS: 1.0.0
