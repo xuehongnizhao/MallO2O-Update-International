@@ -8,7 +8,7 @@
 
 #import "CityAddController.h"
 
-#import "RDVTabBarController/RDVTabBarController.h"
+#import "RDVTabBarController.h"
 #import "DoImagePickerController.h"
 #import "PictureCell.h"
 
@@ -670,7 +670,7 @@
     }
     
     // 提交表单数据
-    NSString *url = [SwpTools swpToolGetInterfaceURL:@"city_message_insert");
+    NSString *url = [SwpTools swpToolGetInterfaceURL:@"city_message_insert"];
     NSDictionary *dict = @{
                            @"app_key"       : url,
                            @"session_key"   : message.session_key,
@@ -683,23 +683,21 @@
                            @"a_id"          : message.a_id,
                            @"c_id"          : message.c_id
                            };
-    [Base64Tool postFileTo:url andParams:dict andFiles:picture andFileNames:pictureName isBase64:YES CompletionBlock:^(id param) {
-        
-        NSLog(@"%@", param);
-        
-        if ([param[@"code"] isEqualToString:@"200"]) {
-            
+    [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
             //跳转我的发布
             CityUserController *userAdd = [[CityUserController alloc] init];
             userAdd.identifier = @"1";
             [self.navigationController pushViewController:userAdd animated:YES];
         } else {
-            [SVProgressHUD showErrorWithStatus:param[@"message"]];
+            [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
         }
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络不给力！"];
-    }];
-    
+
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
+
 }
 
 

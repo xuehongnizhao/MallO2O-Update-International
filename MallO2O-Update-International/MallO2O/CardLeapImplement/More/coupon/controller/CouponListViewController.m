@@ -87,7 +87,6 @@
     TenLat = (int)(yGps.latitude*10);
     TenLog = (int)(yGps.longitude*10);
     NSString *sql = [[NSString alloc]initWithFormat:@"select offLat,offLog from gpsT where lat=%d and log = %d",TenLat,TenLog];
-    NSLog(sql);
     sqlite3_stmt* stmtL = [m_sqlite NSRunSql:sql];
     int offLat=0;
     int offLog=0;
@@ -149,24 +148,25 @@
     if (city_id == nil) {
         city_id = @"0";
     }
-    NSString *url = [SwpTools swpToolGetInterfaceURL:@"spike_cate_list");
+    NSString *url = [SwpTools swpToolGetInterfaceURL:@"spike_cate_list"];
     NSDictionary *dic = @{
                           @"app_key":url,
                           @"city_id":city_id
                           };
-    [Base64Tool postSomethingToServe:url andParams:dic isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        NSString *code = [NSString stringWithFormat:@"%@",[param objectForKey:@"code"]];
-        if ([code isEqualToString:@"200"]) {
+    [SwpRequest swpPOST:url parameters:dic isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
             //------------解析------------
-            NSDictionary *dict = (NSDictionary*)param;
+            NSDictionary *dict = (NSDictionary*)resultObject;
             [self parseCateDic:dict];
             [self getAreaFromNet];
         }else{
-            [SVProgressHUD showErrorWithStatus:[param objectForKey:@"message"]];
+            [SVProgressHUD showErrorWithStatus:[resultObject objectForKey:@"message"]];
         }
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络异常"];
-    }];
+
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
 }
 
 #pragma mark-----解析商家分类
@@ -192,24 +192,25 @@
     if (city_id == nil) {
         city_id = @"0";
     }
-    NSString *url = [SwpTools swpToolGetInterfaceURL:@"area_list");
+    NSString *url = [SwpTools swpToolGetInterfaceURL:@"area_list"];
     NSDictionary *dic = @{
                           @"app_key":url,
                           @"city_id":city_id
                           };
-    [Base64Tool postSomethingToServe:url andParams:dic isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        NSString *code = [NSString stringWithFormat:@"%@",[param objectForKey:@"code"]];
-        if ([code isEqualToString:@"200"]) {
-            //------------解析------------
-            NSDictionary *dict = (NSDictionary*)param;
+    [SwpRequest swpPOST:url parameters:dic isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
+            NSDictionary *dict = (NSDictionary*)resultObject;
             [self parseAreaDic:dict];
             [self getDataListFromNet];
         }else{
-            [SVProgressHUD showErrorWithStatus:[param objectForKey:@"message"]];
+            [SVProgressHUD showErrorWithStatus:[resultObject objectForKey:@"message"]];
         }
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络异常"];
-    }];
+
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
+    
 }
 
 #pragma mark------解析商圈分类
@@ -319,14 +320,8 @@
         _couponCollectionview.scrollEnabled = YES;
         _couponCollectionview.delegate = self;
         _couponCollectionview.dataSource = self;
-        [_couponCollectionview addHeaderWithTarget:self action:@selector(headerBeginRefreshing)];
-        [_couponCollectionview addFooterWithTarget:self action:@selector(footerBeginRefreshing)];
-        _couponCollectionview.footerPullToRefreshText = @"上拉可以加载更多数据了";
-        _couponCollectionview.footerReleaseToRefreshText = @"松开马上加载更多数据了";
-        _couponCollectionview.footerRefreshingText = @"正在加载，请稍等";
-        _couponCollectionview.headerPullToRefreshText = @"下拉可以刷新了";
-        _couponCollectionview.headerReleaseToRefreshText = @"松开马上刷新了";
-        _couponCollectionview.headerRefreshingText = @"正在刷新，请稍等";
+        _couponCollectionview.mj_header=[MJRefreshHeader headerWithRefreshingTarget:self refreshingAction:@selector(headerBeginRefreshing)];
+        _couponCollectionview.mj_footer=[MJRefreshFooter footerWithRefreshingTarget:self refreshingAction:@selector(footerBeginRefreshing)];
     }
     return _couponCollectionview;
 }
@@ -428,7 +423,7 @@
     if (city_id == nil) {
         city_id = @"0";
     }
-    NSString *url = [SwpTools swpToolGetInterfaceURL:@"spike_list");
+    NSString *url = [SwpTools swpToolGetInterfaceURL:@"spike_list"];
     NSDictionary *dict = @{
                            @"app_key":url,
                            @"page":[NSString stringWithFormat:@"%d",page],
@@ -439,27 +434,29 @@
                            @"order":order,
                            @"city_id":city_id
                            };
-    [Base64Tool postSomethingToServe:url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        if ([param[@"code"] integerValue]==200) {
+    [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
             if (page == 1) {
                 [couponArray removeAllObjects];
             }
-            NSArray *arr = param[@"obj"];
+            NSArray *arr = resultObject[@"obj"];
             for (NSDictionary *dic in arr) {
                 couponInfo *info = [[couponInfo alloc] initWithDictionary:dic];
                 [couponArray addObject:info];
             }
             [self.couponCollectionview reloadData];
         }else{
-            [SVProgressHUD showErrorWithStatus:param[@"message"]];
+            [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
         }
-        [self.couponCollectionview headerEndRefreshing];
-        [self.couponCollectionview footerEndRefreshing];
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络异常"];
-        [self.couponCollectionview headerEndRefreshing];
-        [self.couponCollectionview footerEndRefreshing];
-    }];
+
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
+    [self.couponCollectionview.mj_footer beginRefreshing];
+    [self.couponCollectionview.mj_header beginRefreshing];
+
+
 }
 
 #pragma mark------------search action
@@ -471,18 +468,9 @@
     firVC.u_lat = baidu_lat;
     firVC.u_lng = baidu_lng;
     [firVC setNavBarTitle:@"搜索团购" withFont:14.0f];
-//    [firVC.navigationItem setTitle:@"搜索团购"];
     [self.navigationController pushViewController:firVC animated:YES];
 }
 
-/*
-#pragma mark - Navigation
 
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

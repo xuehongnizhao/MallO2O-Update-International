@@ -156,60 +156,63 @@ static NSString *collName = @"collName";
 - (void) getCityCateData {
     
     //
-    NSArray *cityArr = userDefault(@"cityCates");
+    NSArray *cityArr = GetUserDefault(@"cityCates");
     if (cityArr.count != 0) {
         self.cityCates = [self dataTreatment:cityArr];
         [_collView reloadData];
     }
     //访问接口 获取数据
-    NSString     *url   = ALL_URL(@"city_cate"); // 获取url;
+    NSString     *url   = [SwpTools swpToolGetInterfaceURL:@"city_cate"]; // 获取url;
     NSDictionary *dict  = @{@"app_key":url};         // 验证AppKey
-    [Base64Tool postSomethingToServe:url andParams:dict isBase64:YES CompletionBlock:^(id param) {
-        if ([param[@"code"] isEqualToString:SUCCESS]) {
+    [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
             // 返回数据成功
-            self.cityCateArray = param[@"obj"];
-            self.cityCates = [self dataTreatment:param[@"obj"]];
-            [[NSUserDefaults standardUserDefaults]setObject:param[@"obj"] forKey:@"cityCates"];
+            self.cityCateArray = resultObject[@"obj"];
+            self.cityCates = [self dataTreatment:resultObject[@"obj"]];
+            [[NSUserDefaults standardUserDefaults]setObject:resultObject[@"obj"] forKey:@"cityCates"];
             [[NSUserDefaults standardUserDefaults] synchronize];
             [_collView reloadData];
         } else {
             // 返回数据失败
-            [SVProgressHUD showErrorWithStatus:param[@"message"]];
+            [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
         }
-    } andErrorBlock:^(NSError *error) {
+
+    } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
         [SVProgressHUD showErrorWithStatus:@"网络不给力"];
+
     }];
+
 }
 
 /**
  *  获取 同城地区 数据
  */
 - (void) getCityAddress {
-    NSArray *addressArr = userDefault(@"cityAddress");
+    
+    NSArray *addressArr = GetUserDefault(@"cityAddress");
     if (addressArr.count != 0) {
         self.cityAddress  = addressArr;
     }
     
-    NSString *url = [SwpTools swpToolGetInterfaceURL:@"area_list");
+    NSString *url = [SwpTools swpToolGetInterfaceURL:@"area_list"];
     NSDictionary *dict = @{@"app_key":url};
-    [Base64Tool postSomethingToServe:url andParams:dict isBase64:YES CompletionBlock:^(id param) {
-        
-        if ([param[@"code"] isEqualToString:SUCCESS]) {
-            
-            self.cityAddress = param[@"obj"];
-            [[NSUserDefaults standardUserDefaults] setObject:param[@"obj"] forKey:@"cityAddress"];
+    [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
+            self.cityAddress = resultObject[@"obj"];
+            [[NSUserDefaults standardUserDefaults] setObject:resultObject[@"obj"] forKey:@"cityAddress"];
             
         } else {
-            [SVProgressHUD showErrorWithStatus:param[@"message"]];
+            [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
         }
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络不给力"];
+
+    } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+          [SVProgressHUD showErrorWithStatus:@"网络不给力"];
     }];
 }
 
 #pragma mark @@@@ ----> 数据处理
 - (NSArray *) dataTreatment:(NSArray *)param {
-    NSArray *array = [CityOneCate objectArrayWithKeyValuesArray:param];
+    NSArray *array = [CityOneCate mj_objectArrayWithKeyValuesArray:param];
     return array;
 }
 
@@ -290,7 +293,7 @@ static NSString *collName = @"collName";
 #pragma mark @@@@ ----> 跳转到发布分类信息控制器
 - (void) toAddCity {
     
-    if (ApplicationDelegate.islogin) {
+    if (ApplicationDelegate.login) {
         OneCateController *oneCate = [[OneCateController alloc] init];
         // 地区分类
         oneCate.cityAddress        = self.cityAddress;

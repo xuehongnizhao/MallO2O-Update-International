@@ -31,15 +31,10 @@
     [self setUI];
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
 #pragma mark------------getData
 -(void)getDataFromNet
 {
-    NSString *url = [SwpTools swpToolGetInterfaceURL:@"shop_review");
+    NSString *url = [SwpTools swpToolGetInterfaceURL:@"shop_review"];
     NSString *shopOrGroupID;// 团购时传group_id，其他情况传shop_id。
     if (self.group_id == nil) {
         shopOrGroupID = self.shop_id;
@@ -52,15 +47,15 @@
                            @"shop_id":shopOrGroupID,
                            @"rev_type":type,
                            };
-    [[LinLoadingView shareInstances:self.view] startAnimation];  //开始转动
-    [Base64Tool postSomethingToServe:url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        NSString *code = [NSString stringWithFormat:@"%@",[param objectForKey:@"code"]];
-        if ([code isEqualToString:@"200"]) {
+
+    [self.reviewTableview.mj_footer beginRefreshing];
+    [self.reviewTableview.mj_header beginRefreshing];
+    [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
             if (page == 1) {
                 [reviewArray removeAllObjects];
             }
-            [[LinLoadingView shareInstances:self.view] stopWithAnimation:[param objectForKey:@"message"]];
-            NSArray *arr = [param objectForKey:@"obj"];
+            NSArray *arr = [resultObject objectForKey:@"obj"];
             if (arr.count == 0) {
                 [SVProgressHUD showErrorWithStatus:@"暂无评价"];
             }else {
@@ -71,14 +66,11 @@
             }
             [self.reviewTableview reloadData];
         }else{
-            [[LinLoadingView shareInstances:self.view] stopWithAnimation:[param objectForKey:@"message"]];
+
         }
-        [self.reviewTableview footerEndRefreshing];
-        [self.reviewTableview headerEndRefreshing];
-    } andErrorBlock:^(NSError *error) {
-        [self.reviewTableview footerEndRefreshing];
-        [self.reviewTableview headerEndRefreshing];
-        [[LinLoadingView shareInstances:self.view] stopWithAnimation:@"网络异常"];
+
+    } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+        
     }];
 }
 
@@ -184,14 +176,8 @@
         _reviewTableview.dataSource = self;
         //_reviewTableview.layer.borderWidth = 1;
         [UZCommonMethod hiddleExtendCellFromTableview:_reviewTableview];
-        [_reviewTableview addHeaderWithTarget:self action:@selector(headerBeginRefreshing)];
-        [_reviewTableview addFooterWithTarget:self action:@selector(footerBeginRefreshing)];
-        _reviewTableview.footerPullToRefreshText = @"上拉可以加载更多数据了";
-        _reviewTableview.footerReleaseToRefreshText = @"松开马上加载更多数据了";
-        _reviewTableview.footerRefreshingText = @"正在刷新，请稍后";
-        _reviewTableview.headerPullToRefreshText = @"下拉可以刷新了";
-        _reviewTableview.headerReleaseToRefreshText = @"松开马上刷新了";
-        _reviewTableview.headerRefreshingText = @"马上就出现了";
+        _reviewTableview.mj_header=[MJRefreshHeader headerWithRefreshingTarget:self refreshingAction:@selector(headerBeginRefreshing)];
+        _reviewTableview.mj_footer=[MJRefreshFooter footerWithRefreshingTarget:self refreshingAction:@selector(footerBeginRefreshing)];
         if ([_reviewTableview respondsToSelector:@selector(setSeparatorInset:)]) {
             [_reviewTableview setSeparatorInset:UIEdgeInsetsMake(0,0,0,0)];
         }
@@ -217,13 +203,6 @@
     [self getDataFromNet];
 }
 
-/*
-#pragma mark - Navigation
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
+
 
 @end

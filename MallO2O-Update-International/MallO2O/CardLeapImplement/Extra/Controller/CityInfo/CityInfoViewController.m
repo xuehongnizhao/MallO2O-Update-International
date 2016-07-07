@@ -234,7 +234,6 @@
     // 拨打电话
     if (button.tag == 10)
     {
-//        [UZCommonMethod callPhone:self.telLabel.text superView:self.view];
         NSString *tel = [NSString stringWithFormat:@"tel://%@", self.telLabel.text];
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:tel]];
     }
@@ -251,42 +250,39 @@
 #pragma mark @@@@ ----> 网络获取数据(获取同城详情)
 - (void) getCityInfoData {
     
-    
+     
     NSString *url = [SwpTools swpToolGetInterfaceURL:@"city_message"];
     NSDictionary *dict = @{
                            @"app_key"   :url,
                            @"m_id"      :self.m_id
                            };
-    [Base64Tool postSomethingToServe:url andParams:dict isBase64:YES CompletionBlock:^(id param) {
-        
-        if ([param[@"code"] isEqualToString:@"200"]) {
-            
+    [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
             [self toolView];
-            self.cityInfo = [self cityInofDataTreatment:param[@"obj"]];
+            self.cityInfo = [self cityInofDataTreatment:resultObject[@"obj"]];
             // 图片轮播
             self.cityInfoView.images = self.cityInfo.city_pic;
             
             // web 数据
             [self toUrl:self.cityInfo.message_url];
             [self toolView];
-
+            
             self.nameLabel.text = self.cityInfo.contact;
             self.telLabel.text  = self.cityInfo.tel;
             [self messageView];
             [self telView];
-            
-        } else {
-            [SVProgressHUD showErrorWithStatus:param[@"message"]];
+
+        }else{
+            [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
         }
-        
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络不给力"];
+    } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络不给力"];
     }];
 }
 
 #pragma mark @@@@ ----> 数据处(字典转成模型数据)
 - (CityInfo *) cityInofDataTreatment:(NSDictionary *)param {
-    return [CityInfo objectWithKeyValues:param];
+    return [CityInfo mj_objectWithKeyValues:param];
 }
 
 

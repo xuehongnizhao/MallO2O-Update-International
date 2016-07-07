@@ -299,7 +299,7 @@ fetchCompletionHandler:(void
 -(void)getInfoFromNetWork {
     
     
-    SwpNetworkModel *swpNetwork = [SwpNetworkModel shareInstance];
+    
     
     NSString *url         = [NSString stringWithFormat:@"http://%@/%@", baseUrl, base_set];
     NSString *sys_type    = [[UIDevice currentDevice] systemName];
@@ -348,7 +348,7 @@ fetchCompletionHandler:(void
  *  url过滤
  */
 - (void)getURLFilter{
-    SwpNetworkModel *swpNetwork = [SwpNetworkModel shareInstance];
+    
     NSString *url = [SwpTools swpToolGetInterfaceURL:@"as_url_filter"];
     NSDictionary *dic = @{
                            @"app_key":url
@@ -375,7 +375,7 @@ fetchCompletionHandler:(void
  */
 - (void)autoLogin{
     
-    SwpNetworkModel *swpNetwork = [SwpNetworkModel shareInstance];
+    
     if ([GetUserDefault(AUTOLOGIN) boolValue]) {
          NSString *url = [SwpTools swpToolGetInterfaceURL:@"yz_login"];
         if (GetUserDefault(UserName) == nil || [GetUserDefault(UserName) isEqualToString:@""]) {
@@ -415,7 +415,7 @@ fetchCompletionHandler:(void
  */
 - (void)autoThirdLogin{
     if ([GetUserDefault(AUTOLOGIN) boolValue]) {
-        SwpNetworkModel *swpNetwork = [SwpNetworkModel shareInstance];
+        
         NSString *url = [SwpTools swpToolGetInterfaceURL:@"yz_login"];//@"action/ac_user/yz_login";
         NSDictionary *dic = @{
                               @"app_key" : url,

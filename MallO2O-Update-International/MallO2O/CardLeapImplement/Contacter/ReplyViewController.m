@@ -9,7 +9,6 @@
 #import "ReplyViewController.h"
 #import "ReplyInfo.h"
 #import "ReplyTableViewCell.h"
-#import "UIScrollView+MJRefresh.h"
 #import "LinFriendCircleDetailController.h"
 @interface ReplyViewController ()<UITableViewDataSource,UITableViewDelegate>
 @property (strong, nonatomic) UITableView *replyTableview;

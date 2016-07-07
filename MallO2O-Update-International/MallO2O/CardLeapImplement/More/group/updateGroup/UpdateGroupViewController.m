@@ -131,7 +131,7 @@
 #pragma mark------button aciton
 -(void)submitAction:(UIButton*)sender
 {
-    if (ApplicationDelegate.islogin == NO) {
+    if (ApplicationDelegate.login == NO) {
         LoginViewController *firVC = [[LoginViewController alloc] init];
         [firVC setHiddenTabbar:YES];
         [firVC setNavBarTitle:@"登录" withFont:14.0f];

@@ -97,7 +97,7 @@
     
     //根据tagButton的数量应该有多少页
     NSInteger pages=self.cateArray.count%(ColumnOfTagButton*RowOfTagButton)==0?self.cateArray.count/(ColumnOfTagButton*RowOfTagButton):(self.cateArray.count-1)/(ColumnOfTagButton*RowOfTagButton)+1;
-    NSLog(@"pages:%ld",pages);
+    NSLog(@"pages:%ld",(long)pages);
     [self.contentWidthConstraint autoRemove];
     self.contentWidthConstraint = [self.contentView autoMatchDimension:ALDimensionWidth toDimension:ALDimensionWidth ofView:self.industryScrollView withMultiplier:pages];
     

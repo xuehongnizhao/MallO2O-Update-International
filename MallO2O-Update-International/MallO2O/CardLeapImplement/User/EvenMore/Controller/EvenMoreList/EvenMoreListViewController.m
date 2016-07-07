@@ -364,13 +364,13 @@
     
     NSString *cr_version  = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
     
-    NSString *net_version = [[[JSONOfNetWork getDictionaryFromPlist] objectForKey:@"obj"]objectForKey:@"ios_v"];
+    NSString *net_version = [[[SwpTools swpToolGetDictionaryFromPlist:nil] objectForKey:@"obj"]objectForKey:@"ios_v"];
     //
     if ([net_version compare:cr_version] == 1) {
         // 是否强制更新
-        NSString *is_update = [[[JSONOfNetWork getDictionaryFromPlist] objectForKey:@"obj"] objectForKey:@"is_update"] ;
+        NSString *is_update = [[[SwpTools swpToolGetDictionaryFromPlist:nil] objectForKey:@"obj"] objectForKey:@"is_update"] ;
         // 取出 更新内容
-        NSString *hintStr = [[[JSONOfNetWork getDictionaryFromPlist] objectForKey:@"obj"] objectForKey:@"ios_desc"] ;
+        NSString *hintStr = [[[SwpTools swpToolGetDictionaryFromPlist:nil] objectForKey:@"obj"] objectForKey:@"ios_desc"] ;
         
         if ([is_update intValue] == 1) {
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"强制版本更新" message:hintStr delegate:self cancelButtonTitle:@"去更新" otherButtonTitles:nil, nil];
@@ -389,7 +389,7 @@
 {
     if (alertView.tag == 1) {
         if (buttonIndex == 0) {
-            NSString *downLoadUrl = [[[JSONOfNetWork getDictionaryFromPlist] objectForKey:@"obj"]objectForKey:@"ios_download"] ;
+            NSString *downLoadUrl = [[[SwpTools swpToolGetDictionaryFromPlist:nil] objectForKey:@"obj"]objectForKey:@"ios_download"] ;
             [[UIApplication sharedApplication] openURL:[NSURL URLWithString:downLoadUrl]];
         }
     }

@@ -13,7 +13,6 @@
 @end
 
 @interface orderRoomReviewViewController : BaseViewController
-#pragma mark --- 2016.4 将代理的strong属性改为assign
 @property (assign,nonatomic)id<orderRoomRefreshDelegate> delegate;
 @property (strong,nonatomic)NSString *shop_id;
 @property (strong,nonatomic)NSString *hotel_id;

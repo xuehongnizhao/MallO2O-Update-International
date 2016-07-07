@@ -93,18 +93,8 @@
         [self.navigationItem setHidesBackButton:YES];
     }
 
-    //[self getCity];
 }
 
-
-
--(void)viewDidLayoutSubviews
-{
-    //    if (IS_HEIGHT_GTE_568==0) {
-    //        CGRect rect = _m_tableView.frame;
-    //        rect
-    //    }
-}
 
 -(void)setUI
 {
@@ -144,15 +134,13 @@
 {
     
 //    NSLog(@"user_city:%@",USER_CITY);
-    NSString *url = [SwpTools swpToolGetInterfaceURL:@"shop_city");
+    NSString *url = [SwpTools swpToolGetInterfaceURL:@"shop_city"];
     NSDictionary* dict=@{
                          @"app_key":url,
                          };
-    [Base64Tool postSomethingToServe:url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        
-        if ([param[@"code"] integerValue]==200)
-        {
-            NSArray* arr=[CityModule objectArrayWithKeyValuesArray:[param objectForKey:@"obj"]];
+    [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
+            NSArray* arr=[CityModule mj_objectArrayWithKeyValuesArray:[resultObject objectForKey:@"obj"]];
             self.dataArray=[[NSMutableArray alloc]init];
             [moduleArray addObjectsFromArray:arr];
             for (CityModule* module in arr)
@@ -163,12 +151,13 @@
                 [_headerView openLoaction];
             }
         }
-        
-    } andErrorBlock:^(NSError *error) {
 
-        [SVProgressHUD showErrorWithStatus:@"网络异常！"];
-    }];
-}
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
+
+   }
 
 #pragma mark - UITableView delegate
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section

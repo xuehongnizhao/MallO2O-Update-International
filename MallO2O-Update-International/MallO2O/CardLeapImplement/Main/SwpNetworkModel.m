@@ -18,12 +18,12 @@
  *  @return SwpNetworkModel
  */
 + (instancetype)shareInstance {
-    static SwpNetworkModel *swpNetwork = nil;
+    static SwpNetworkModel *swpNetworkInstance = nil;
     static dispatch_once_t predicate;
     dispatch_once(&predicate,^{
-        swpNetwork = [[self alloc] init];
+        swpNetworkInstance = [[self alloc] init];
     });
-    return swpNetwork;
+    return swpNetworkInstance;
 }
 
 /*!

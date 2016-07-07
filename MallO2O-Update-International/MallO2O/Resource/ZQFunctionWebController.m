@@ -11,11 +11,11 @@
 #import "UMSocial.h"
 #import "WebViewJavascriptBridge.h"
 #import "XMNPhotoPickerFramework.h"
-#import "VoiceRecorderBase.h"
-#import "AmrRecordWriter.h"
+//#import "VoiceRecorderBase.h"
+//#import "AmrRecordWriter.h"
 #import "LoginViewController.h"
 #import "UserModel.h"
-#import "MLAudioMeterObserver.h"
+//#import "MLAudioMeterObserver.h"
 #import <AVFoundation/AVFoundation.h>
 #define NaviItemTag 2016
 @interface ZQFunctionWebController()<UIWebViewDelegate,UMSocialUIDelegate>
@@ -25,9 +25,9 @@
 }
 @property (strong,nonatomic)UIWebView *detailWeb;
 @property (strong, nonatomic) WebViewJavascriptBridge *bridge;
-@property (strong, nonatomic) AmrRecordWriter *amrWriter;
-@property (strong, nonatomic) MLAudioRecorder *recorder;
-@property (nonatomic, strong) MLAudioMeterObserver *meterObserver;
+//@property (strong, nonatomic) AmrRecordWriter *amrWriter;
+//@property (strong, nonatomic) MLAudioRecorder *recorder;
+//@property (nonatomic, strong) MLAudioMeterObserver *meterObserver;
 @property (strong, nonatomic) AVAudioPlayer *player;
 @end
 
@@ -60,36 +60,39 @@
 - (void)setUpLoadVoiceWebBridge{
     [self.bridge registerHandler:@"hd_uploadvoicestart" handler:^(id data, WVJBResponseCallback responseCallback) {
         _uuid=data[@"uuid"];
-        [self.recorder startRecording];
+//        [self.recorder startRecording];
         _responseCallBack=responseCallback;
     }];
 }
 - (void)setUpLoadVoiceWebBridgeEnd{
     [self.bridge registerHandler:@"hd_uploadvoiceend" handler:^(id data, WVJBResponseCallback responseCallback) {
         _uuid=data[@"uuid"];
-        [self.recorder stopRecording];
+//        [self.recorder stopRecording];
         _responseCallBack=responseCallback;
     }];
 }
 -(void)sendDataWithFilePath:(NSString*) filePath{
 
-    NSString *bigArrayUrl = ALL_URL(as_comm);
+    NSString *bigArrayUrl = [SwpTools swpToolGetInterfaceURL:as_comm];
     NSString *upVoiceURL=[bigArrayUrl stringByAppendingPathComponent:hd_upload_voice];
-    NSData *voiceData=[NSData dataWithContentsOfFile:filePath];
-    NSDictionary *dict = @{ 
+//    NSData *voiceData=[NSData dataWithContentsOfFile:filePath];
+    NSDictionary *dict = @{
                             @"app_key":upVoiceURL,
                             @"uuid":_uuid
                             };
-    [Base64Tool postFileTo:upVoiceURL andParams:dict andFile:voiceData andFileName:@"pic" isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        if ([param[@"code"] integerValue]==200) {
+    [SwpRequest swpPOST:upVoiceURL parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
             _responseCallBack(@"true");
         }else{
-            [SVProgressHUD showErrorWithStatus:param[@"message"]];
+            [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
         }
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络异常"];
-    }];
-}
+
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
+
+   }
 - (void)setLogInWebBridge{
     [self.bridge registerHandler:@"hd_login" handler:^(id data, WVJBResponseCallback responseCallback) {
         LoginViewController *firVC = [[LoginViewController alloc] init];
@@ -117,22 +120,24 @@
                 }
             }
             for (UIImage *image in myImages) {
-                NSString *bigArrayUrl = ALL_URL(as_comm);
+                NSString *bigArrayUrl = [SwpTools swpToolGetInterfaceURL:as_comm];
                 NSString *upImageURL=[bigArrayUrl stringByAppendingPathComponent:hd_upload_img];
                 NSData* imageData=UIImageJPEGRepresentation(image, 0.3);
                 NSDictionary *dict = @{
                                        @"app_key":upImageURL,
                                        @"uuid":data[@"uuid"]
                                        };
-                [Base64Tool postFileTo:upImageURL andParams:dict andFile:imageData andFileName:@"pic" isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-                    if ([param[@"code"] integerValue]==200) {
+                [SwpRequest swpPOST:upImageURL parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+                    if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
                         responseCallback(data[@"true"]);
                     }else{
-                        [SVProgressHUD showErrorWithStatus:param[@"message"]];
+                        [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
                     }
-                } andErrorBlock:^(NSError *error) {
-                    [SVProgressHUD showErrorWithStatus:@"网络异常"];
-                }];
+
+                    } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+                        [SVProgressHUD showErrorWithStatus:@"网络异常"];
+                        
+                    }];
                 
             }
             
@@ -143,45 +148,45 @@
     }];
 }
 #pragma mark--------初始化录音控件
--(void)initRecorder
-{
-    AmrRecordWriter *amrWriter = [[AmrRecordWriter alloc]init];
-    amrWriter.filePath = [VoiceRecorderBase getPathByFileName:@"record.amr"];
-    NSLog(@"filePaht:%@",amrWriter.filePath);
-    amrWriter.maxSecondCount = 12.0;
-    amrWriter.maxFileSize = 1024*100;
-    self.amrWriter = amrWriter;
-    
-    MLAudioMeterObserver *meterObserver = [[MLAudioMeterObserver alloc]init];
-    meterObserver.actionBlock = ^(NSArray *levelMeterStates,MLAudioMeterObserver *meterObserver){
-        DLOG(@"volume:%f",[MLAudioMeterObserver volumeForLevelMeterStates:levelMeterStates]);
-    };
-    meterObserver.errorBlock = ^(NSError *error,MLAudioMeterObserver *meterObserver){
-        [[[UIAlertView alloc]initWithTitle:@"错误" message:error.userInfo[NSLocalizedDescriptionKey] delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil]show];
-    };
-    self.meterObserver = meterObserver;
-    
-    MLAudioRecorder *recorder = [[MLAudioRecorder alloc]init];
-    __weak __typeof(self)weakSelf = self;
-    recorder.receiveStoppedBlock = ^{
-      //发送录音
-        [weakSelf sendDataWithFilePath:weakSelf.amrWriter.filePath];
-        NSLog(@"停止录音代码块");
-        weakSelf.meterObserver.audioQueue = nil;
-    };
-    recorder.receiveErrorBlock = ^(NSError *error){
-        weakSelf.meterObserver.audioQueue = nil;
-        NSLog(@"错误代码块");
-        [[[UIAlertView alloc]initWithTitle:@"错误" message:error.userInfo[NSLocalizedDescriptionKey] delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil]show];
-    };
-    
-    //amr
-    recorder.bufferDurationSeconds = 0.5;
-    recorder.fileWriterDelegate = self.amrWriter;
-    
-    self.recorder = recorder;
-    
-}
+//-(void)initRecorder
+//{
+//    AmrRecordWriter *amrWriter = [[AmrRecordWriter alloc]init];
+//    amrWriter.filePath = [VoiceRecorderBase getPathByFileName:@"record.amr"];
+//    NSLog(@"filePaht:%@",amrWriter.filePath);
+//    amrWriter.maxSecondCount = 12.0;
+//    amrWriter.maxFileSize = 1024*100;
+//    self.amrWriter = amrWriter;
+//    
+//    MLAudioMeterObserver *meterObserver = [[MLAudioMeterObserver alloc]init];
+//    meterObserver.actionBlock = ^(NSArray *levelMeterStates,MLAudioMeterObserver *meterObserver){
+//        DLOG(@"volume:%f",[MLAudioMeterObserver volumeForLevelMeterStates:levelMeterStates]);
+//    };
+//    meterObserver.errorBlock = ^(NSError *error,MLAudioMeterObserver *meterObserver){
+//        [[[UIAlertView alloc]initWithTitle:@"错误" message:error.userInfo[NSLocalizedDescriptionKey] delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil]show];
+//    };
+//    self.meterObserver = meterObserver;
+//    
+//    MLAudioRecorder *recorder = [[MLAudioRecorder alloc]init];
+//    __weak __typeof(self)weakSelf = self;
+//    recorder.receiveStoppedBlock = ^{
+//      //发送录音
+//        [weakSelf sendDataWithFilePath:weakSelf.amrWriter.filePath];
+//        NSLog(@"停止录音代码块");
+//        weakSelf.meterObserver.audioQueue = nil;
+//    };
+//    recorder.receiveErrorBlock = ^(NSError *error){
+//        weakSelf.meterObserver.audioQueue = nil;
+//        NSLog(@"错误代码块");
+//        [[[UIAlertView alloc]initWithTitle:@"错误" message:error.userInfo[NSLocalizedDescriptionKey] delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil]show];
+//    };
+//    
+//    //amr
+//    recorder.bufferDurationSeconds = 0.5;
+//    recorder.fileWriterDelegate = self.amrWriter;
+//    
+//    self.recorder = recorder;
+//    
+//}
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];

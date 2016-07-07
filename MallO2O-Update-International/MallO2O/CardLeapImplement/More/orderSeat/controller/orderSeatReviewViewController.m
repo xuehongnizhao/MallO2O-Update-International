@@ -109,12 +109,11 @@
 -(void)finishAction:(UIButton*)sender
 {
     //评价 之后跳转会评价列表页面
-    NSString *url = [SwpTools swpToolGetInterfaceURL:@"seat_review");
+    NSString *url = [SwpTools swpToolGetInterfaceURL:@"seat_review"];
     NSString *text = self.userInput_T.text;
     if (text == nil || [text isEqualToString:@""] == YES) {
         text = @" ";
     }
-    //    if (text.length>0) {
     NSDictionary *dict = @{
                            @"app_key":url,
                            @"u_id":[UserModel shareInstance].u_id,
@@ -124,12 +123,9 @@
                            @"shop_id":self.shop_id,
                            @"seat_id":self.seat_id
                            };
-    [Base64Tool postSomethingToServe:url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        if ([param[@"code"] integerValue]==200) {
+    [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
             [SVProgressHUD dismiss];
-#pragma mark --- 2015.12.15 评价后跳转的页面可能要改,标记一下
-            //                [self.delegate refreshAction];
-            //                [self.navigationController popViewControllerAnimated:YES];
             for (UIViewController *object in self.navigationController.viewControllers) {
                 if ([object isKindOfClass:NSClassFromString(@"myOrderSeatCenterViewController")]== YES) {
                     self.delegate = object;
@@ -138,12 +134,14 @@
                 }
             }
         }else{
-            [SVProgressHUD showErrorWithStatus:param[@"message"]];
+            [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
         }
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络异常"];
-    }];
-    //    }
+
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
+
 }
 
 -(BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
@@ -157,18 +155,5 @@
     }
     return YES;
 }
--(void)refreshAction{
-    
-}
-
-/*
- #pragma mark - Navigation
- 
- // In a storyboard-based application, you will often want to do a little preparation before navigation
- - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
- // Get the new view controller using [segue destinationViewController].
- // Pass the selected object to the new view controller.
- }
- */
 
 @end

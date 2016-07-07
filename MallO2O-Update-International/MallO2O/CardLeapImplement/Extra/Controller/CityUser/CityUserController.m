@@ -104,12 +104,8 @@
         cityUserTableView.frame = CGRectMake(cityUserX, cityUserY, cityUserW, cityUserH);
         cityUserTableView.dataSource = self;
         cityUserTableView.delegate   = self;
-        
-        
-        [cityUserTableView addHeaderWithTarget:self action:@selector(upLoad)];
-        [cityUserTableView addFooterWithTarget:self action:@selector(downRefresh)];
-        cityUserTableView.headerRefreshingText = @"正在刷新数据...";
-        cityUserTableView.footerRefreshingText = @"正在加载数据...";
+        cityUserTableView.mj_footer=[MJRefreshFooter footerWithRefreshingTarget:self refreshingAction:@selector(downRefresh)];
+        cityUserTableView.mj_header=[MJRefreshHeader headerWithRefreshingTarget:self refreshingAction:@selector(upLoad)];
     
         [UZCommonMethod hiddleExtendCellFromTableview:cityUserTableView];
         cityUserTableView.rowHeight  = 80;
@@ -157,33 +153,36 @@
  */
 - (void) getUserCityData {
     
+
     NSString  *page = [NSString stringWithFormat:@"%i", self.page];
     UserModel *user = [UserModel shareInstance];
     NSString  *u_id = user.u_id;
-    NSString  *url  = ALL_URL(@"my_city");
+    NSString  *url  = [SwpTools swpToolGetInterfaceURL:@"my_city"];
 
     NSDictionary *dict = @{@"app_key":url,
                            @"u_id"   :u_id,
                            @"page"   :page
                            };
-    [Base64Tool postSomethingToServe:url andParams:dict isBase64:YES CompletionBlock:^(id param) {
-        if ([param[@"code"] isEqualToString:@"200"]) {
-            
-            [self.cityUserTableView headerEndRefreshing];
-            [self.cityUserTableView footerEndRefreshing];
-            NSMutableArray *array = param[@"obj"];
+    
+    [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]){
+            [self.cityUserTableView.mj_header beginRefreshing];
+            [self.cityUserTableView.mj_footer beginRefreshing];
+            NSMutableArray *array = resultObject[@"obj"];
             if (array.count != 0) {
                 self.cityUserArray = [self cityUserDataTreatment:array];
             } else {
-                //[SVProgressHUD showErrorWithStatus:@"没有数据啦！"];
+
             }
         } else {
-            [SVProgressHUD showErrorWithStatus:param[@"message"]];
+            [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
         }
         [self.cityUserTableView reloadData];
-    } andErrorBlock:^(NSError *error) {
+    } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
         [SVProgressHUD showErrorWithStatus:@"网络不给力"];
+
     }];
+
 }
 
 
@@ -308,22 +307,25 @@
  *  删除
  */
 - (void) deleteCityUser {
+     
     self.page          = 1;
-    NSString *url      = ALL_URL(@"my_city_del");
+    NSString *url      = [SwpTools swpToolGetInterfaceURL:@"my_city_del"];
     NSDictionary *dict = @{
                            @"app_key":url,
                            @"m_id"   :self.m_id
                            };
-    [Base64Tool postSomethingToServe:url andParams:dict isBase64:YES CompletionBlock:^(id param) {
-        NSLog(@"%@", param);
-        if ([param[@"code"] isEqualToString:@"200"]) {
-            [SVProgressHUD showSuccessWithStatus:param[@"message"]];
+    
+    [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
+            [SVProgressHUD showSuccessWithStatus:resultObject[@"message"]];
             [self getUserCityData];
         } else {
-            [SVProgressHUD showErrorWithStatus:param[@"message"]];
+            [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
         }
-    } andErrorBlock:^(NSError *error) {
+
+    } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
         [SVProgressHUD showErrorWithStatus:@"网络不给力！"];
+
     }];
 }
 
@@ -334,13 +336,12 @@
 - (void) toUpdateCityUser {
     
     
-    NSArray *cityAddress       = userDefault(@"cityAddress");
-    NSArray *cityCate          = userDefault(@"cityCates");
+    NSArray *cityAddress       = GetUserDefault(@"cityAddress");
+    NSArray *cityCate          = GetUserDefault(@"cityCates");
     CityUpdateViewController *cityUpdate = [[CityUpdateViewController alloc] init];
     cityUpdate.cityAddress     = cityAddress;
     cityUpdate.cityCates       = cityCate;
     cityUpdate.m_id            = self.m_id;
-//    cityUpdate.cityAddMessage  = self.cityMessage;
     [self.navigationController pushViewController:cityUpdate animated:YES];
     
 }
@@ -360,25 +361,26 @@
  *  点击刷新
  */
 - (void) updateCityAddTimeUser {
-
+     
     self.page          = 1;
-    NSString *url      = ALL_URL(@"refresh_city");
+    NSString *url      = [SwpTools swpToolGetInterfaceURL:@"refresh_city"];
     NSDictionary *dict = @{
                            @"app_key":url,
                            @"m_id"   :self.m_id,
                            };
-    [Base64Tool postSomethingToServe:url andParams:dict isBase64:YES CompletionBlock:^(id param) {
-        
-        if ([param[@"code"] isEqualToString:@"200"]) {
-            [SVProgressHUD showSuccessWithStatus:param[@"message"]];
+    [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
+            [SVProgressHUD showSuccessWithStatus:resultObject[@"message"]];
             [self getUserCityData];
         } else {
-            [SVProgressHUD showErrorWithStatus:param[@"message"]];
+            [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
         }
-        
-    } andErrorBlock:^(NSError *error) {
+
+    } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
         [SVProgressHUD showErrorWithStatus:@"网络不给力！"];
+
     }];
+
 }
 
 

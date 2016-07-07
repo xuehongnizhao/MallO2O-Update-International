@@ -8,7 +8,7 @@
 
 #import "BindPhoneViewController.h"
 #import "RegistViewController.h"
-#import "APService.h"
+#import "JPUSHService.h"
 
 @interface BindPhoneViewController ()
 @property (strong, nonatomic) NSString *checkCode;//验证码

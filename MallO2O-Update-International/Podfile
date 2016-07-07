@@ -20,4 +20,6 @@ pod 'Masonry'				# Masonry 自动布局框架
 pod 'WebViewJavascriptBridge'		# webView 交互
 pod 'UMengSocialCOM'        #友盟
 pod 'RegexKitLite'          #正则表达式
+pod 'Reachability'          #网络环境
+pod 'SDCycleScrollView'     #轮播
 end

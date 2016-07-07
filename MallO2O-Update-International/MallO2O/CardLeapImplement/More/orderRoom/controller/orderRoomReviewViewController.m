@@ -110,9 +110,8 @@
 -(void)finishAction:(UIButton*)sender
 {
     //评价 之后跳转会评价列表页面
-    NSString *url = [SwpTools swpToolGetInterfaceURL:@"hotel_review");
+    NSString *url = [SwpTools swpToolGetInterfaceURL:@"hotel_review"];
     NSString *text = self.userInput_T.text;
-#warning 12.16 取消字数限制,评论后跳转列表页
     if (text == nil || [text isEqualToString:@""] == YES) {
         text = @" ";
     }
@@ -126,25 +125,27 @@
                                @"shop_id":self.shop_id,
                                @"hotel_id":self.hotel_id
                                };
-        [Base64Tool postSomethingToServe:url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-            if ([param[@"code"] integerValue]==200) {
-                [SVProgressHUD dismiss];
-//                [self.delegate orderRoomRefreshAction];
-//                [self.navigationController popViewControllerAnimated:YES];
-                for (UIViewController *viewController in self.navigationController.viewControllers) {
-                    if ([viewController isKindOfClass:NSClassFromString(@"myOrderRoomCenterViewController")] == YES) {
-                        self.delegate = viewController;
-                        [self.delegate orderRoomRefreshAction];
-                        [self.navigationController popToViewController:viewController animated:YES];
-                    }
+    [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
+            [SVProgressHUD dismiss];
+            //                [self.delegate orderRoomRefreshAction];
+            //                [self.navigationController popViewControllerAnimated:YES];
+            for ( UIViewController *viewController in self.navigationController.viewControllers) {
+                if ([viewController isKindOfClass:NSClassFromString(@"myOrderRoomCenterViewController")] == YES) {
+                    self.delegate = viewController;
+                    [self.delegate orderRoomRefreshAction];
+                    [self.navigationController popToViewController:viewController animated:YES];
                 }
-            }else{
-                [SVProgressHUD showErrorWithStatus:param[@"message"]];
             }
-        } andErrorBlock:^(NSError *error) {
+        }else{
+            [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
+        }
+
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
             [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
         }];
-//    }
+
 }
 
 -(BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text

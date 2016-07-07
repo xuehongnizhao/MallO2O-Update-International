@@ -58,14 +58,14 @@
     [_timeLable autoPinEdgeToSuperviewEdge:ALEdgeLeft withInset:10.0f];
     [_timeLable autoSetDimension:ALDimensionWidth toSize:100.0f];
     [_timeLable autoPinEdgeToSuperviewEdge:ALEdgeBottom withInset:5.0f];
-    _timeLable.text = [Base64Tool fuckNULL:shopInfo.add_time];
+    _timeLable.text = [SwpTools fuckNULL:shopInfo.add_time];
     //评价类型
     [self.contentView addSubview:self.typeLable];
     [_typeLable autoPinEdge:ALEdgeLeft toEdge:ALEdgeRight ofView:_timeLable withOffset:15.0f];
     [_typeLable autoPinEdge:ALEdgeTop toEdge:ALEdgeBottom ofView:_scoreText withOffset:5.0f];
     [_typeLable autoPinEdgeToSuperviewEdge:ALEdgeBottom withInset:5.0f];
     [_typeLable autoPinEdgeToSuperviewEdge:ALEdgeRight withInset:15.0f];
-    _typeLable.text = [Base64Tool fuckNULL:shopInfo.type];
+    _typeLable.text = [SwpTools fuckNULL:shopInfo.type];
 }
 
 #pragma mark-----------设置星星显示

@@ -87,7 +87,7 @@
     TenLat = (int)(yGps.latitude*10);
     TenLog = (int)(yGps.longitude*10);
     NSString *sql = [[NSString alloc]initWithFormat:@"select offLat,offLog from gpsT where lat=%d and log = %d",TenLat,TenLog];
-    NSLog(sql);
+    NSLog(@"%@",sql);
     sqlite3_stmt* stmtL = [m_sqlite NSRunSql:sql];
     int offLat=0;
     int offLog=0;
@@ -147,24 +147,25 @@
     if (city_id == nil) {
         city_id = @"0";
     }
-    NSString *url = [SwpTools swpToolGetInterfaceURL:@"seat_cate");
+    NSString *url = [SwpTools swpToolGetInterfaceURL:@"seat_cate"];
     NSDictionary *dic = @{
                           @"app_key":url,
                           @"city_id":city_id
                           };
-    [Base64Tool postSomethingToServe:url andParams:dic isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        NSString *code = [NSString stringWithFormat:@"%@",[param objectForKey:@"code"]];
-        if ([code isEqualToString:@"200"]) {
+    [SwpRequest swpPOST:url parameters:dic isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
             //------------解析------------
-            NSDictionary *dict = (NSDictionary*)param;
+            NSDictionary *dict = (NSDictionary*)resultObject;
             [self parseCateDic:dict];
             [self getAreaFromNet];
         }else{
-            [SVProgressHUD showErrorWithStatus:[param objectForKey:@"message"]];
+            [SVProgressHUD showErrorWithStatus:[resultObject objectForKey:@"message"]];
         }
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络异常"];
-    }];
+
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
 }
 
 #pragma mark-----解析商家分类
@@ -190,25 +191,27 @@
     if (city_id == nil) {
         city_id = @"0";
     }
-    NSString *url = [SwpTools swpToolGetInterfaceURL:@"area_list");
+    NSString *url = [SwpTools swpToolGetInterfaceURL:@"area_list"];
     NSDictionary *dic = @{
                           @"app_key":url,
                           @"city_id":city_id
                           };
-    [Base64Tool postSomethingToServe:url andParams:dic isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        NSString *code = [NSString stringWithFormat:@"%@",[param objectForKey:@"code"]];
-        if ([code isEqualToString:@"200"]) {
+    [SwpRequest swpPOST:url parameters:dic isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
             //------------解析------------
-            NSDictionary *dict = (NSDictionary*)param;
+            NSDictionary *dict = (NSDictionary*)resultObject;
             [self parseAreaDic:dict];
             [self getDataFromNet];
         }else{
-            [SVProgressHUD showErrorWithStatus:[param objectForKey:@"message"]];
+            [SVProgressHUD showErrorWithStatus:[resultObject objectForKey:@"message"]];
         }
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络异常"];
-    }];
-}
+
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
+
+  }
 
 #pragma mark------解析商圈分类
 -(void)parseAreaDic :(NSDictionary*)dic
@@ -314,7 +317,7 @@
     if (city_id == nil) {
         city_id = @"0";
     }
-    NSString *url = [SwpTools swpToolGetInterfaceURL:@"hotel_shop");
+    NSString *url = [SwpTools swpToolGetInterfaceURL:@"hotel_shop"];
     NSDictionary *dict = @{
                            @"app_key":url,
                            @"area_id":area,
@@ -324,27 +327,29 @@
                            @"lat":baidu_lat,
                            @"city_id":city_id
                            };
-    [Base64Tool postSomethingToServe:url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        if ([param[@"code"] integerValue]==200) {
+    [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
             [SVProgressHUD dismiss];
             if (page == 1) {
                 [orderRoomArray removeAllObjects];
             }
-            NSArray *arr = param[@"obj"];
-#pragma mark --- 11.27 预定酒店 详情页增加一个WEB页面，参照团购样式。
+            NSArray *arr = resultObject[@"obj"];
             for (NSDictionary *dic in arr) {
                 orderRoomInfo *info = [[orderRoomInfo alloc] initWithDictionary:dic];
                 [orderRoomArray addObject:info];
             }
             [self.orderRoomTableview reloadData];
         }else{
-            [SVProgressHUD showErrorWithStatus:param[@"message"]];
+            [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
         }
-        [self.orderRoomTableview headerEndRefreshing];
-        [self.orderRoomTableview footerEndRefreshing];
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络异常"];
-    }];
+        [self.orderRoomTableview.mj_footer beginRefreshing];
+        [self.orderRoomTableview.mj_header beginRefreshing];
+
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
+
 }
 
 #pragma mark-------set UI
@@ -371,14 +376,8 @@
         _orderRoomTableview.dataSource = self;
         [UZCommonMethod hiddleExtendCellFromTableview:_orderRoomTableview];
         _orderRoomTableview.separatorInset = UIEdgeInsetsZero;
-        [_orderRoomTableview addHeaderWithTarget:self action:@selector(headerBeginRefreshing)];
-        [_orderRoomTableview addFooterWithTarget:self action:@selector(footerBeginRefreshing)];
-        _orderRoomTableview.footerPullToRefreshText = @"上拉可以加载更多数据了";
-        _orderRoomTableview.footerReleaseToRefreshText = @"松开马上加载更多数据了";
-        _orderRoomTableview.footerRefreshingText = @"正在努力加载";
-        _orderRoomTableview.headerPullToRefreshText = @"下拉可以刷新了";
-        _orderRoomTableview.headerReleaseToRefreshText = @"松开马上刷新了";
-        _orderRoomTableview.headerRefreshingText = @"正在刷新";
+        _orderRoomTableview.mj_header=[MJRefreshHeader headerWithRefreshingTarget:self refreshingAction:@selector(headerBeginRefreshing)];
+        _orderRoomTableview.mj_footer=[MJRefreshFooter footerWithRefreshingTarget:self refreshingAction:@selector(footerBeginRefreshing)];
         if ([_orderRoomTableview respondsToSelector:@selector(setSeparatorInset:)]) {
             [_orderRoomTableview setSeparatorInset:UIEdgeInsetsMake(0,0,0,0)];
         }
@@ -487,7 +486,6 @@
     firVC.identifer = area;
     [firVC setHiddenTabbar:YES];
     [firVC setNavBarTitle:@"地图搜索" withFont:14.0f];
-//    [firVC.navigationItem setTitle:@"地图搜索"];
     [self.navigationController pushViewController:firVC animated:YES];
 }
 
@@ -501,13 +499,5 @@
     [self.navigationController pushViewController:firVC animated:YES];
 }
 
-/*
-#pragma mark - Navigation
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

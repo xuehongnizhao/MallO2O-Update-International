@@ -77,26 +77,28 @@
 #pragma mark-------get data
 -(void)getDataFromNet
 {
-    NSString *url = [SwpTools swpToolGetInterfaceURL:@"group_content");
+    NSString *url = [SwpTools swpToolGetInterfaceURL:@"group_content"];
     NSDictionary *dict = @{
                            @"app_key":url,
                            @"group_id":self.group_id
                            };
-    [SVProgressHUD showWithStatus:@"数据加载..." maskType:SVProgressHUDMaskTypeBlack];
-    [Base64Tool postSomethingToServe:url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        [SVProgressHUD dismiss];
-        if ([param[@"code"] integerValue]==200) {
-            NSDictionary *detailDic = param[@"obj"];
+    [SVProgressHUD showWithStatus:@"数据加载..." ];
+    [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
+            NSDictionary *detailDic = resultObject[@"obj"];
             detailInfo = [[groupDetailInfo alloc] initWithDictionary:detailDic];
             [self.groupDetailTableview reloadData];
-//            [self getHeightForWeb:detailInfo.message_url];
+            
         }else{
-            [SVProgressHUD showErrorWithStatus:param[@"message"]];
+            [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
         }
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络异常"];
-    }];
-}
+
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
+
+   }
 
 #pragma mark-------set UI
 -(void)setUI
@@ -240,7 +242,7 @@
                 
             }else{
                 height = 20.0f;
-#warning 12.10 优化计算cell高度 by CC
+
                 if (detailInfo == nil) {
                     NSString *shop_name = self.info.shop_name;
                     if (shop_name != nil && [shop_name isEqualToString:@""] == NO) {
@@ -413,21 +415,21 @@
     [UMSocialData defaultData].extConfig.sinaData.shareText = sinaText;
 //    [UMSocialData defaultData].extConfig.sinaData.urlResource.url = detailInfo.share_url;
 }
-#warning 11.28 点击分享按钮就加积分
 - (void) UserSharePoint {
-    if (ApplicationDelegate.islogin == YES) {
-        NSString *url = [SwpTools swpToolGetInterfaceURL:@"share_point");
+    if (ApplicationDelegate.login == YES) {
+        NSString *url = [SwpTools swpToolGetInterfaceURL:@"share_point"];
         NSDictionary *dict = @{
                                @"app_key":url,
                                @"u_id":[UserModel shareInstance].u_id
                                };
-        [Base64Tool postSomethingToServe:url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-            if ([param[@"code"] integerValue]==200) {
-//                [SVProgressHUD showSuccessWithStatus:@"分享成功"];
+        [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+            if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
             }
-        } andErrorBlock:^(NSError *error) {
-            [SVProgressHUD showErrorWithStatus:@"网络异常"];
-        }];
+            } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+                [SVProgressHUD showErrorWithStatus:@"网络异常"];
+                
+            }];
+
     }else{
         [SVProgressHUD showErrorWithStatus:@"您尚未登录，无法给您增加积分"];
     }
@@ -441,20 +443,23 @@
     if(response.responseCode == UMSResponseCodeSuccess)
     {
         [SVProgressHUD showSuccessWithStatus:@"分享成功"];
-        if (ApplicationDelegate.islogin == YES) {
-            NSString *url = [SwpTools swpToolGetInterfaceURL:@"share_point");
+        if (ApplicationDelegate.login == YES) {
+            NSString *url = [SwpTools swpToolGetInterfaceURL:@"share_point"];
             NSDictionary *dict = @{
                                    @"app_key":url,
                                    @"u_id":[UserModel shareInstance].u_id
                                    };
-            [Base64Tool postSomethingToServe:url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-                if ([param[@"code"] integerValue]==200) {
+            [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+                if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
                     [SVProgressHUD showSuccessWithStatus:@"分享成功"];
+
                 }
-            } andErrorBlock:^(NSError *error) {
-                [SVProgressHUD showErrorWithStatus:@"网络异常"];
-            }];
-        }else{
+                } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+                    [SVProgressHUD showErrorWithStatus:@"网络异常"];
+                    
+                }];
+
+            }else{
             [SVProgressHUD showErrorWithStatus:@"您尚未登录，无法给您增加积分"];
         }
     }

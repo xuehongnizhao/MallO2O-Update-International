@@ -152,7 +152,7 @@
 {
     //跳转支付宝
     if (chooseIndex == 0) {
-        NSString *url = [SwpTools swpToolGetInterfaceURL:@"group_grab_insert");
+        NSString *url = [SwpTools swpToolGetInterfaceURL:@"group_grab_insert"];
         NSString *totalPrice = [NSString stringWithFormat:@"%f",[self.dict[@"singel_price"] floatValue]*[self.dict[@"count"] integerValue]];
         NSDictionary *myDic = @{
                                @"app_key":url,
@@ -162,17 +162,19 @@
                                @"grab_num":self.dict[@"count"],
                                @"grab_price":totalPrice
                                };
-        [Base64Tool postSomethingToServe:url andParams:myDic isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-            if ([param[@"code"] integerValue]==200) {
-                NSArray *passArray = [param[@"obj"] objectForKey:@"group_pass"];
-                NSString *order_ids = [NSString stringWithFormat:@"%@",[param[@"obj"] objectForKey:@"order_id"]];
+        [SwpRequest swpPOST:url parameters:myDic isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+            if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
+                NSArray *passArray = [resultObject[@"obj"] objectForKey:@"group_pass"];
+                NSString *order_ids = [NSString stringWithFormat:@"%@",[resultObject[@"obj"] objectForKey:@"order_id"]];
                 [self clientAlipay:order_ids passArray:passArray];
             }else{
-                [SVProgressHUD showErrorWithStatus:param[@"message"]];
+                [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
             }
-        } andErrorBlock:^(NSError *error) {
-            [SVProgressHUD showErrorWithStatus:@"网络异常"];
-        }];
+
+            } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+                [SVProgressHUD showErrorWithStatus:@"网络异常"];
+                
+            }];
     }
 }
 

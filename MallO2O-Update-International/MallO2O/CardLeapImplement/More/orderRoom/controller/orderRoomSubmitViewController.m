@@ -168,8 +168,8 @@
         leftLable.textColor = UIColorFromRGB(singleTitle);
         leftLable.text = @"手  机";
         _connect_tel_T.leftView = leftLable;
-        if (userDefault(@"USERNAME")!=nil) {
-            _connect_tel_T.text=userDefault(@"USERNAME");
+        if (GetUserDefault(@"USERNAME")!=nil) {
+            _connect_tel_T.text=GetUserDefault(@"USERNAME");
         }
     }
     return _connect_tel_T;
@@ -414,16 +414,6 @@
             [tmpLable autoPinEdgeToSuperviewEdge:ALEdgeBottom withInset:5.0f];
             [tmpLable autoPinEdgeToSuperviewEdge:ALEdgeRight withInset:10.0f];
         }else{
-            //            UILabel *hint_lable = [[UILabel alloc] initForAutoLayout];
-            //            //hint_lable.layer.borderWidth = 1;
-            //            hint_lable.numberOfLines = 0;
-            //            hint_lable.textColor = UIColorFromRGB(singleTitle);
-            //            hint_lable.font = [UIFont systemFontOfSize:14.0f];
-            //            [cell.contentView addSubview:hint_lable];
-            //            [hint_lable autoPinEdgeToSuperviewEdge:ALEdgeLeft withInset:10.0f];
-            //            [hint_lable autoPinEdgeToSuperviewEdge:ALEdgeRight withInset:10.0f];
-            //            [hint_lable autoPinEdgeToSuperviewEdge:ALEdgeTop withInset:5.0f];
-            //            hint_lable.text = self.info.shop_desc;
 #pragma mark --- 11.28 这里改为web页
             [cell.contentView addSubview:self.messageWebView];
             [_messageWebView autoPinEdgeToSuperviewEdge:ALEdgeTop];
@@ -471,7 +461,7 @@
 #pragma mark--------submit action
 -(void)submitAction:(UIButton*)sender
 {
-    if (ApplicationDelegate.islogin == NO) {
+    if (ApplicationDelegate.login == NO) {
         LoginViewController *firVC = [[LoginViewController alloc] init];
         [firVC setHiddenTabbar:YES];
         [firVC setNavBarTitle:@"登录" withFont:14.0f];
@@ -484,7 +474,7 @@
                 [SVProgressHUD showErrorWithStatus:@"请填写个人资料"];
             }else{
                 if ([self checkValue]) {
-                    NSString *url = [SwpTools swpToolGetInterfaceURL:@"hotel_insert");
+                    NSString *url = [SwpTools swpToolGetInterfaceURL:@"hotel_insert"];
                     NSDictionary *dict = @{
                                            @"app_key":url,
                                            @"session_key":[UserModel shareInstance].session_key,
@@ -498,12 +488,12 @@
                                            @"hotel_tel":self.connect_tel_T.text,
                                            @"order_price":self.goods_info.goods_price
                                            };
-                    [SVProgressHUD showWithStatus:@"正在提交订单" maskType:SVProgressHUDMaskTypeBlack];
-                    [Base64Tool postSomethingToServe:url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-                        if ([param[@"code"] integerValue]==200) {
+                    [SVProgressHUD showWithStatus:@"正在提交订单"];
+                    [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+                        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
                             [SVProgressHUD dismiss];
-                            NSString *hotel_id = [NSString stringWithFormat:@"%@",[param[@"obj"] objectForKey:@"hotel_id"]];
-                            NSString *url = [param[@"obj"] objectForKey:@"hotel_message"];
+                            NSString *hotel_id = [NSString stringWithFormat:@"%@",[resultObject[@"obj"] objectForKey:@"hotel_id"]];
+                            NSString *url = [resultObject[@"obj"] objectForKey:@"hotel_message"];
                             orderRoomWaitViewController *firVC = [[orderRoomWaitViewController alloc] init];
                             [firVC setHiddenTabbar:YES];
                             [firVC setNavBarTitle:@"下单成功" withFont:14.0f];
@@ -512,12 +502,14 @@
                             firVC.seat_id = hotel_id;
                             [self.navigationController pushViewController:firVC animated:YES];
                         }else{
-                            [SVProgressHUD showErrorWithStatus:param[@"message"]];
+                            [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
                         }
-                    } andErrorBlock:^(NSError *error) {
-                        [SVProgressHUD showErrorWithStatus:@"网络异常"];
-                    }];
-                }
+
+                        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+                            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+                            
+                        }];
+                        }
             }
         }else{
             [SVProgressHUD showErrorWithStatus:@"请填写预定日期"];
@@ -572,16 +564,7 @@
     return _messageWebView;
 }
 
-#pragma mark--------other delegate
 
-/*
- #pragma mark - Navigation
- 
- // In a storyboard-based application, you will often want to do a little preparation before navigation
- - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
- // Get the new view controller using [segue destinationViewController].
- // Pass the selected object to the new view controller.
- }
- */
+
 
 @end

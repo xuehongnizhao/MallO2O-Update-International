@@ -1587,7 +1587,7 @@ static NSMutableDictionary* g_nsdicemojiDict = nil;
 {
     [self UserSharePoint];
     //分享什么东西？？？？？？？
-    NSString *url = [[[[JSONOfNetWork getDictionaryFromPlist] objectForKey:@"obj"]objectForKey:@"api"]objectForKey:@"share"];
+    NSString *url = [[[[SwpTools swpToolGetDictionaryFromPlist:nil] objectForKey:@"obj"]objectForKey:@"api"]objectForKey:@"share"];
     url = [NSString stringWithFormat:@"%@?com_id=%@",url,self.com_id];
     NSString *sinaText = [NSString stringWithFormat:@"如e生活 %@",url];
     [UMSocialSnsService presentSnsIconSheetView:self

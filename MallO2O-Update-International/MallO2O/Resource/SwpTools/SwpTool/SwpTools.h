@@ -17,7 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 @interface SwpTools : NSObject
-
++(double) LantitudeLongitudeDist:(double)lon1 other_Lat:(double)lat1 self_Lon:(double)lon2 self_Lat:(double)lat2;
++(NSString*)fuckNULL:(NSObject*)obj;
 
 #pragma mark - Get System Version & App Version Methods
 

@@ -73,7 +73,7 @@
     TenLat = (int)(yGps.latitude*10);
     TenLog = (int)(yGps.longitude*10);
     NSString *sql = [[NSString alloc]initWithFormat:@"select offLat,offLog from gpsT where lat=%d and log = %d",TenLat,TenLog];
-    NSLog(sql);
+    NSLog(@"%@",sql);
     sqlite3_stmt* stmtL = [m_sqlite NSRunSql:sql];
     int offLat=0;
     int offLog=0;
@@ -121,7 +121,6 @@
     [geocoder reverseGeocodeLocation:location completionHandler:^(NSArray *placemark,NSError *error)
      {
          CLPlacemark *mark=[placemark objectAtIndex:0];
-         NSString *title = [NSString stringWithFormat:@"%@",mark.name];//获取subtitle的信息;
          NSString *subTitle = [NSString stringWithFormat:@"%@%@%@",mark.subLocality,mark.thoroughfare,mark.subThoroughfare];
          NSString *myLocation = [NSString stringWithFormat:@"%@",subTitle];
          NSDictionary *locationDic = @{
@@ -131,7 +130,7 @@
                                        };
          NSMutableArray *array = [[NSMutableArray alloc] init ];
          [array addObject:locationDic];
-         NSArray *tmpArray = userDefault(@"LocatinoHistory");
+         NSArray *tmpArray = GetUserDefault(@"LocatinoHistory");
          if (tmpArray != nil) {
              if ([tmpArray count]>4) {
                  for (int i=0; i<=3; i++) {
@@ -145,7 +144,7 @@
          [[NSUserDefaults standardUserDefaults] setObject:array forKey:@"LocatinoHistory"];
          [[NSUserDefaults standardUserDefaults] synchronize];
          
-         NSArray *tmpArray1 = userDefault(@"LocatinoHistory");
+         NSArray *tmpArray1 = GetUserDefault(@"LocatinoHistory");
         //-------读取历史记录--------------------------
          [locationArray removeAllObjects];
          for (NSDictionary *dic in tmpArray1) {
@@ -195,7 +194,7 @@
     is_location = NO;
     locationArray = [[NSMutableArray alloc] init];
     //-------读取历史记录--------------------------
-    NSArray *tmpArray1 = userDefault(@"LocatinoHistory");
+    NSArray *tmpArray1 = GetUserDefault(@"LocatinoHistory");
     //-------读取历史记录--------------------------
     if (tmpArray1!=nil) {
         for (NSDictionary *dic in tmpArray1) {
@@ -282,15 +281,6 @@
     }else{
         locatinoInfo *info = [locationArray objectAtIndex:indexPath.row];
         cell.textLabel.text = info.location_name;
-//        cell.backgroundColor = [UIColor lightGrayColor];
-//        cell.contentView.backgroundColor = [UIColor whiteColor];
-//        cell.contentView.layer.borderWidth = 1;
-//        cell.contentView.layer.borderColor = [UIColor lightGrayColor].CGColor;
-//        cell.layer.masksToBounds = YES;
-//        cell.layer.cornerRadius = 4.0;
-//        UILabel *lalbe = [[UILabel alloc] initWithFrame:CGRectMake(10, 10, 150, 20)];
-//        lalbe.text = @"00";
-//        [cell.contentView addSubview:lalbe];
     }
     return cell;
 }
@@ -299,14 +289,5 @@
 {
     return 40.0;
 }
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

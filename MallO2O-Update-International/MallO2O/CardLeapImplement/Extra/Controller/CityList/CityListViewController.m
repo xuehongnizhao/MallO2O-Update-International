@@ -164,14 +164,8 @@
         cityTableView.delegate   = self;
         
         // 上拉
-        [cityTableView addHeaderWithTarget:self action:@selector(headerBeginRefreshing)];
-        
-        // 下拉
-        [cityTableView addFooterWithTarget:self action:@selector(footerBeginRefreshing)];
-        
-        cityTableView.headerRefreshingText    = @"正在刷新数据...";
-        
-        cityTableView.footerRefreshingText    = @"正在加载数据...";
+        cityTableView.mj_footer=[MJRefreshFooter footerWithRefreshingTarget:self refreshingAction:@selector(footerBeginRefreshing)];
+        cityTableView.mj_header=[MJRefreshHeader headerWithRefreshingTarget:self refreshingAction:@selector(headerBeginRefreshing)];
         
         cityTableView.backgroundColor = Color(255, 255, 255, 255);
         
@@ -284,7 +278,7 @@
 
 #pragma  mark -----  点击跳转 发布
 - (void) toAddCity {
-    if (ApplicationDelegate.islogin) {
+    if (ApplicationDelegate.login) {
         
         CityAddMessage *message    = [[CityAddMessage alloc] init];
         message.cityOneCateId      = self.c_id;
@@ -384,13 +378,10 @@
  *  服务器获取数据
  */
 - (void) getCityListData {
-    //[SVProgressHUD showSuccessWithStatus:@"数据加载中..."];
     
-    NSLog(@"%@", self.c_id);
-    NSLog(@"%@", self.a_id);
     // 分页参数
     NSString *type = [NSString stringWithFormat:@"%d", self.page];
-    NSString *url =  ALL_URL(@"city_message_list");
+    NSString *url =  [SwpTools swpToolGetInterfaceURL:@"city_message_list"];
     NSDictionary *dict = @{
                            @"app_key":url,
                            @"cat_id" :self.c_id,
@@ -400,35 +391,33 @@
                            };
     
     // 网络获取数据
-    [[LinLoadingView shareInstances:self.view] startAnimation];
-    [Base64Tool postSomethingToServe:url andParams:dict isBase64:YES CompletionBlock:^(id param) {
-        
-        if ([param[@"code"] isEqualToString:@"200"]) {
-            
+    [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
             // 数据处理 移除 手尾 刷新控件
-            [self.cityTableView headerEndRefreshing];
-            [self.cityTableView footerEndRefreshing];
+            [self.cityTableView.mj_header beginRefreshing];
+            [self.cityTableView.mj_footer beginRefreshing];
             
             
-            NSMutableArray *array = param[@"obj"];
+            NSMutableArray *array = resultObject[@"obj"];
             if (array.count != 0) {
                 [SVProgressHUD dismiss];
-                [[LinLoadingView shareInstances:self.view] stopWithAnimation:@"加载成功"];
+                
                 self.cityListArray = [self cityListDataTreatment:array];
             } else {
-                [[LinLoadingView shareInstances:self.view] stopWithAnimation:@"没有数据"];
+                
             }
             
         } else {
-            [SVProgressHUD showErrorWithStatus:param[@"message"]];
+            [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
         }
         
         // 刷新表格数据
         [_cityTableView reloadData];
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络不给力"];
+        
+    } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+        
     }];
-    
+
 }
 
 
@@ -451,7 +440,7 @@
     
     // 数据处理
     for (NSDictionary *dic in param) {
-        CityList *cityList          = [CityList objectWithKeyValues:dic];
+        CityList *cityList          = [CityList mj_objectWithKeyValues:dic];
         CityListFrame *cityFrame    = [[CityListFrame alloc] init];
         cityFrame.cityList          = cityList;
         [array addObject:cityFrame];

@@ -382,15 +382,15 @@
  */
 - (void) getCityUserMessage {
     
-    NSString     *url  = ALL_URL(@"my_city_ok");
+    NSString     *url  = [SwpTools swpToolGetInterfaceURL:@"my_city_ok"];
     NSDictionary *dict = @{
                            @"app_key":url,
                            @"m_id"   :self.m_id,
                            };
-    [Base64Tool postSomethingToServe:url andParams:dict isBase64:YES CompletionBlock:^(id param) {
-        if ([param[@"code"] isEqualToString:@"200"]) {
-            [SVProgressHUD showSuccessWithStatus:param[@"message"]];
-            NSDictionary *mess = param[@"obj"];
+    [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
+            [SVProgressHUD showSuccessWithStatus:resultObject[@"message"]];
+            NSDictionary *mess = resultObject[@"obj"];
             CityUserMessage *userMessage = [CityUserMessage cityUserMessageWithDict:mess];
             self.cityAddMessage = [self cityMessageDataTreatment:userMessage];
             [self initData];
@@ -400,12 +400,13 @@
             [self.messageTableView reloadData];
             [self.pictureTableView reloadData];
         } else {
-            [SVProgressHUD showErrorWithStatus:param[@"message"]];
+            [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
         }
         
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络不给力！"];
+    } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+        
     }];
+
 }
 
 
@@ -657,7 +658,7 @@
     }
     
     // 提交表单数据
-    NSString *url      = ALL_URL(@"my_city_update");
+    NSString *url      = [SwpTools swpToolGetInterfaceURL:@"my_city_update"];
     NSDictionary *dict = @{
                            @"app_key"       : url,
                            @"session_key"   : message.session_key,
@@ -672,19 +673,19 @@
                            @"m_id"          : self.m_id,
                            };
     NSLog(@"%@", dict);
-    [Base64Tool postSomethingToServe:url andParams:dict isBase64:YES CompletionBlock:^(id param) {
-        if ([param[@"code"] isEqualToString:@"200"]) {
-        
-            [SVProgressHUD showSuccessWithStatus:param[@"message"]];
+    [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
+            [SVProgressHUD showSuccessWithStatus:resultObject[@"message"]];
             CityUserController *cityUser = [[CityUserController alloc] init];
             [self.navigationController pushViewController:cityUser animated:YES];
         } else {
-            [SVProgressHUD showErrorWithStatus:param[@"message"]];
+            [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
         }
-        
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络不给力！"];
-    }];
+
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
 }
 
 

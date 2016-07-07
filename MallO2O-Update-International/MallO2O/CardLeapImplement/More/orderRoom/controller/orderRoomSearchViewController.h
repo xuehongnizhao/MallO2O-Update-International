@@ -8,7 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-#define SEARCH_GROUP_POST ALL_URL(@"hotel_shop")
 
 /**
  *  该类为搜索类 拥有记忆历史输入功能还搜索帖子功能

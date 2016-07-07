@@ -182,7 +182,7 @@
 
 -(void)classAction:(UIButton*)sender
 {
-    if (ApplicationDelegate.islogin == YES) {
+    if (ApplicationDelegate.login == YES) {
         for (id obj in allButton.subviews) {
             if ([obj isKindOfClass:[UIImageView class]]) {
                 UIImageView* iv=(UIImageView*)obj;
@@ -232,11 +232,8 @@
         messageTableView.delegate   = self;
         messageTableView.rowHeight  = 60;
         
-        
-        [messageTableView addHeaderWithTarget:self action:@selector(upLoad)];
-        [messageTableView addFooterWithTarget:self action:@selector(downRefresh)];
-        messageTableView.headerRefreshingText = @"正在刷新数据...";
-        messageTableView.footerRefreshingText = @"正在加载数据...";
+        messageTableView.mj_header=[MJRefreshHeader headerWithRefreshingTarget:self refreshingAction:@selector(upLoad)];
+        messageTableView.mj_footer=[MJRefreshFooter footerWithRefreshingTarget:self refreshingAction:@selector(downRefresh)];
         
         if ([messageTableView respondsToSelector:@selector(setSeparatorInset:)]) {
             [messageTableView setSeparatorInset:UIEdgeInsetsMake(0,0,0,0)];
@@ -285,7 +282,7 @@
     //私信点击
     if (button.tag == 1) {
         // 是否登陆
-        if (!ApplicationDelegate.islogin) {
+        if (!ApplicationDelegate.login) {
             LoginViewController *login = [[LoginViewController alloc] init];
             [login setNavBarTitle:@"登陆" withFont:14.0f];
             [self.navigationController pushViewController:login animated:YES];
@@ -323,37 +320,35 @@
  *  网络获取 公告数据
  */
 - (void) getPublicData {
-    
     NSString *typePage  = [NSString stringWithFormat:@"%ld", (long)self.page];
     self.isPublicChange = YES;
-    NSString *url       = ALL_URL(@"message_list");
+    NSString *url       = [SwpTools swpToolGetInterfaceURL:@"message_list"];
     NSDictionary *dict  = @{
                            @"app_key" : url,
                            @"page"    : typePage,
                            };
-    
-    [Base64Tool postSomethingToServe:url andParams:dict isBase64:YES CompletionBlock:^(id param) {
-       
-        [self.messageTableView headerEndRefreshing];
-        [self.messageTableView footerEndRefreshing];
-        if ([param[@"code"] isEqualToString:@"200"]) {
+    SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        [self.messageTableView.mj_header beginRefreshing];
+        [self.messageTableView.mj_footer beginRefreshing];
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
         
-            NSMutableArray *array = param[@"obj"];
-            [SVProgressHUD dismiss];
-            if (array.count != 0) {
-                self.messageArray = [self publicDataTreatment:array];
-                [self.messageTableView reloadData];
+                NSMutableArray *array = resultObject[@"obj"];
+                [SVProgressHUD dismiss];
+                if (array.count != 0) {
+                    self.messageArray = [self publicDataTreatment:array];
+                    [self.messageTableView reloadData];
+                } else {
+                }
+                
             } else {
-                //[SVProgressHUD showErrorWithStatus:@"没有数据啦！"];
+                [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
             }
-            
-        } else {
-            [SVProgressHUD showErrorWithStatus:param[@"message"]];
-        }
-    } andErrorBlock:^(NSError *error) {
+
+    } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
         [SVProgressHUD showErrorWithStatus:@"网络异常！"];
-    }];
-}
+
+    }
+
 
 /**
  *  获取 私信的数据

@@ -130,11 +130,10 @@
         tableView.dataSource   = self;
         tableView.delegate     = self;
         tableView.rowHeight    = 100;
-        [tableView addHeaderWithTarget:self action:@selector(headerBeginRefreshing)];
+        tableView.mj_header=[MJRefreshHeader headerWithRefreshingTarget:self refreshingAction:@selector(headerBeginRefreshing)];
         
-        [tableView addFooterWithTarget:self action:@selector(footerBeginRefreshing)];
-        tableView.headerRefreshingText = @"加载数据中...";
-        tableView.footerRefreshingText = @"加载数据中...";
+        
+        tableView.mj_footer=[MJRefreshFooter footerWithRefreshingTarget:self refreshingAction:@selector(footerBeginRefreshing)];
         
         tableView.scrollEnabled   = NO;
         tableView.separatorStyle  = UITableViewCellSeparatorStyleNone;
@@ -224,10 +223,10 @@
  *  网络获取数据
  */
 - (void) getData {
-    
+     
     // 分页 数量
     NSString *type = [NSString stringWithFormat:@"%i", self.page];
-    NSString *url  = ALL_URL(@"city_like_list");
+    NSString *url  = [SwpTools swpToolGetInterfaceURL:@"city_like_list" ];
     NSDictionary *dict = @{
                            @"app_key":url,
                            @"like":self.like,
@@ -235,15 +234,15 @@
                            };
     
     [SVProgressHUD showSuccessWithStatus:@"获取数据中..."];
-    [Base64Tool postSomethingToServe:url andParams:dict isBase64:YES CompletionBlock:^(id param) {
-        
-        if ([param[@"code"] isEqualToString:@"200"]) {
+    [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
+            
             // 数据处理 移除 手尾 刷新控件
-            [self.tableView headerEndRefreshing];
-            [self.tableView footerEndRefreshing];
-            NSMutableArray *array = param[@"obj"];
+            [self.tableView.mj_header beginRefreshing];
+            [self.tableView.mj_footer beginRefreshing];
+            NSMutableArray *array = resultObject[@"obj"];
             if (array.count != 0) {
-                [SVProgressHUD showSuccessWithStatus:param[@"message"]];
+                [SVProgressHUD showSuccessWithStatus:resultObject[@"message"]];
                 self.cityList =  [self selectListDataTreatment:array];
             } else {
                 [SVProgressHUD showErrorWithStatus:@"没有数据啦！"];
@@ -251,11 +250,11 @@
             self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
             [self.tableView reloadData];
         } else {
-            [SVProgressHUD showErrorWithStatus:param[@"message"]];
+            [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
         }
-        
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络不给力"];
+
+    } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+         [SVProgressHUD showErrorWithStatus:@"网络不给力"];
     }];
     
 }
@@ -279,7 +278,7 @@
     }
     
     for (NSDictionary *dict in param) {
-        CityList *cityList = [CityList objectWithKeyValues:dict];
+        CityList *cityList = [CityList mj_objectWithKeyValues:dict];
         CityListFrame *cityFrame = [[CityListFrame alloc] init];
         cityFrame.cityList = cityList;
         [typeArray addObject:cityFrame];

@@ -70,4 +70,6 @@
 #define SetUserDefault(value, key) [[NSUserDefaults standardUserDefaults] setObject:value forKey:key]
 // 获取NSUserDefault中的数据
 #define GetUserDefault(key) [[NSUserDefaults standardUserDefaults] objectForKey:key]
+
+#define swpNetwork [SwpNetworkModel shareInstance]
 #endif

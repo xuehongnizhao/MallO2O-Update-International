@@ -207,14 +207,14 @@ static NSString *pageCount = @"10";
         [self.myLevel addSubview:imageview];
     }
 }
-#warning  星星处理 mark
+
 //设置用户操作view中的数据值
 - (void)settingOperationView
 {
     NSInteger beginPage = (page-1) * [pageCount integerValue] + 1;
     NSInteger endPage = beginPage + 9;
     
-    self.descriptionLabel.text = [NSString stringWithFormat:@"第%ld-%ld家",(long)beginPage,endPage];
+    self.descriptionLabel.text = [NSString stringWithFormat:@"第%d-%d家",(long)beginPage,endPage];
     
     if (page <= 1) {
         [self.leftButton setEnabled:NO];

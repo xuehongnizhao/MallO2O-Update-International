@@ -161,7 +161,7 @@ linHangyeCommendViewDelegate>
 - (void)goDetailAD{
     [self removeADView];
     ZQFunctionWebController *firVC=[[ZQFunctionWebController alloc]init];
-    NSDictionary *dic=userDefault(adImageDic);
+    NSDictionary *dic=GetUserDefault(adImageDic);
     firVC.url=dic[@"a_url"];
     [self.navigationController pushViewController:firVC animated:NO];
 }
@@ -184,13 +184,11 @@ linHangyeCommendViewDelegate>
 - (void) getfullScreenFromNet
 {
     NSDictionary* dict=@{
-                         @"app_key":ALL_URL(@"advertisement"),
+                         @"app_key":[SwpTools swpToolGetInterfaceURL:@"advertisement"],
                          };
-    
-    [Base64Tool postSomethingToServe:ALL_URL(@"advertisement") andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        if ([param[@"code"] integerValue]==200)
-        {
-            NSDictionary *urlDic = param[@"obj"];
+    [SwpRequest swpPOST:[SwpTools swpToolGetInterfaceURL:@"advertisement"] parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
+            NSDictionary *urlDic = resultObject[@"obj"];
             
             [[NSUserDefaults standardUserDefaults]setObject:urlDic forKey:adImageDic];
             
@@ -199,8 +197,11 @@ linHangyeCommendViewDelegate>
             [self saveImage:image withFileName:adImageName ofType:@"png" inDirectory:[self documentFolder]];
             
         }
-    } andErrorBlock:^(NSError *error) {
-    }];
+
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
     
 }
 - (NSString *)documentFolder {
@@ -369,26 +370,29 @@ linHangyeCommendViewDelegate>
 - (void)getServerCateFromNetwork
 {
     NSDictionary* dict=@{
-                         @"app_key":ALL_URL(index_cate),
+                         @"app_key": [SwpTools swpToolGetInterfaceURL:index_cate],
                          };
-    [Base64Tool postSomethingToServe:ALL_URL(index_cate) andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        if ([param[@"code"] integerValue]==200)
-        {
-            NSLog(@"paramsdfas:%@",param[@"obj"]);
-            NSArray* moduleArray=[linServicemodel objectArrayWithKeyValuesArray:param[@"obj"]];
+    [SwpRequest swpPOST:[SwpTools swpToolGetInterfaceURL:index_cate] parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
+            NSLog(@"paramsdfas:%@",resultObject[@"obj"]);
+            NSArray* moduleArray=[linServicemodel mj_objectArrayWithKeyValuesArray:resultObject[@"obj"]];
             
             if (moduleArray.count!=0)
             {
                 self.serverView=[self createServerViewWithModuleArray:moduleArray];
                 //存储到UD当中
-                [[NSUserDefaults standardUserDefaults] setObject:param forKey:@"CenterInfo"];
+                [[NSUserDefaults standardUserDefaults] setObject:resultObject forKey:@"CenterInfo"];
                 [self getcommodityDisplayFromNetwork];
                 [self setIndexTableviewHeaderView];
             }
         }
-    } andErrorBlock:^(NSError *error) {
-    }];
-}
+
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
+
+   }
 #pragma mark --- 2016.4 设置生活服务区图标大小和分布
 - (UIView*)createServerViewWithModuleArray:(NSArray*) moduleArray
 {
@@ -433,43 +437,49 @@ linHangyeCommendViewDelegate>
 - (void) getcommodityDisplayFromNetwork
 {
     NSDictionary* dict=@{
-                         @"app_key":ALL_URL(@"goods_list"),
+                         @"app_key": [SwpTools swpToolGetInterfaceURL:@"goods_list"],
                          };
-    [Base64Tool postSomethingToServe:ALL_URL(@"goods_list") andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        if ([param[@"code"] integerValue]==200)
-        {
-            NSLog(@"paramsdfas:%@",param[@"obj"]);
-            NSArray* moduleArray=[ccDisplayModel objectArrayWithKeyValuesArray:param[@"obj"]];
-            if (moduleArray.count!=0)
+    [SwpRequest swpPOST: [SwpTools swpToolGetInterfaceURL:@"goods_list"] parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
             {
-                self.commodityDisplayView =  [self createDisplayViewWithModuleArray:moduleArray];
+                NSLog(@"paramsdfas:%@",resultObject[@"obj"]);
+                NSArray* moduleArray=[ccDisplayModel mj_objectArrayWithKeyValuesArray:resultObject[@"obj"]];
+                if (moduleArray.count!=0)
+                {
+                    self.commodityDisplayView =  [self createDisplayViewWithModuleArray:moduleArray];
+                }
+                //存储到UD当中
+                [[NSUserDefaults standardUserDefaults] setObject:resultObject forKey:@"CommodityDisplayInfo"];
+                [self getcommodityDisplayMore];
+                [self getBillboardsViewFromNetwork];
             }
-            //存储到UD当中
-            [[NSUserDefaults standardUserDefaults] setObject:param forKey:@"CommodityDisplayInfo"];
-            [self getcommodityDisplayMore];
-            [self getBillboardsViewFromNetwork];
         }
-    } andErrorBlock:^(NSError *error) {
-    }];
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
+
 }
 //获取查看更多按钮的url
 - (void) getcommodityDisplayMore
 {
     NSDictionary *dict = @{
-                           @"app_key" :ALL_URL(@"more_url"),
+                           @"app_key" : [SwpTools swpToolGetInterfaceURL:@"more_url"],
                            };
     
-    [Base64Tool postSomethingToServe:ALL_URL(@"more_url") andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        if ([param[@"code"] integerValue]==200)
-        {
-            NSLog(@"paramsdfas:%@",param[@"obj"]);
-            NSDictionary *urlDict = param[@"obj"];
+    [SwpRequest swpPOST:[SwpTools swpToolGetInterfaceURL:@"more_url"] parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
+            NSLog(@"paramsdfas:%@",resultObject[@"obj"]);
+            NSDictionary *urlDict = resultObject[@"obj"];
             [self addMoreButton:urlDict[@"message_url"]];
         }
-    } andErrorBlock:^(NSError *error) {
-    }];
-    
-}
+
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
+
+   }
 
 -(void) addMoreButton:(NSString *)url
 {
@@ -538,29 +548,30 @@ linHangyeCommendViewDelegate>
         city_id = @"0";
     }
     NSDictionary *dict = @{
-                           @"app_key":ALL_URL(@"advertisement_index"),
+                           @"app_key":[SwpTools swpToolGetInterfaceURL:@"advertisement_index"],
                            @"city_id":city_id
                            };
-    [Base64Tool postSomethingToServe:ALL_URL(@"advertisement_index") andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        if ([param[@"code"] integerValue]==200)
-        {
+    [SwpRequest swpPOST:[SwpTools swpToolGetInterfaceURL:@"advertisement_index"] parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
             billboardsArray = [NSMutableArray array];
             descBillboardsArray = [NSMutableArray array];
-            NSLog(@"paramsdfas:%@",param[@"obj"]);
-            for (NSDictionary *dict in param[@"obj"]) {
-                [billboardsArray addObject:dict[@"a_pic"]];
-                [descBillboardsArray addObject:dict[@"a_url"]];
+            NSLog(@"paramsdfas:%@",resultObject[@"obj"]);
+            for (NSDictionary *dict in resultObject[@"obj"]) {
+                [billboardsArray addObject:resultObject[@"a_pic"]];
+                [descBillboardsArray addObject:resultObject[@"a_url"]];
             }
             self.billboardsView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, Balance_Heith*145)];
-            //            self.billboardsView.layer.borderColor = [UIColor blueColor].CGColor;
-            //            self.billboardsView.layer.borderWidth = 1;
-            //存储到UD当中
-            [[NSUserDefaults standardUserDefaults] setObject:param forKey:@"BillboardsInfo"];
+
+            [[NSUserDefaults standardUserDefaults] setObject:resultObject forKey:@"BillboardsInfo"];
             [self setIndexTableviewHeaderView];
         }
-    } andErrorBlock:^(NSError *error) {
-    }];
-}
+
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
+
+   }
 
 #pragma mark - 获取首页行业专区分类
 -(void)getIndustryFromNetwork
@@ -569,12 +580,12 @@ linHangyeCommendViewDelegate>
     if ([[NSUserDefaults standardUserDefaults] objectForKey:@"CenterInfo"])
     {
         NSDictionary* dict=[[NSUserDefaults standardUserDefaults] objectForKey:@"CenterInfo"];
-        NSArray* moduleArray=[linServicemodel objectArrayWithKeyValuesArray:dict[@"obj"]];
+        NSArray* moduleArray=[linServicemodel mj_objectArrayWithKeyValuesArray:dict[@"obj"]];
         self.serverView=[self createServerViewWithModuleArray:moduleArray];
         if ([[NSUserDefaults standardUserDefaults] objectForKey:@"IndustryInfo"])
         {
             NSDictionary* dict=[[NSUserDefaults standardUserDefaults] objectForKey:@"IndustryInfo"];
-            NSArray* moduleArray=[linServicemodel objectArrayWithKeyValuesArray:dict[@"obj"]];
+            NSArray* moduleArray=[linServicemodel mj_objectArrayWithKeyValuesArray:dict[@"obj"]];
             self.industryView.moduleArray   =   moduleArray;
             self.industryView.delegate      =   self;
             //            self.industryView=[self crateIndustryViewFromNetwork:moduleArray];
@@ -582,10 +593,10 @@ linHangyeCommendViewDelegate>
         if ([[NSUserDefaults standardUserDefaults] objectForKey:@"CommodityDisplayInfo"]) {
             NSDictionary* param = [[NSUserDefaults standardUserDefaults] objectForKey:@"CommodityDisplayInfo"];
             //这应该写商品展示 对数据的处理
-            NSArray* moduleArray=[ccDisplayModel objectArrayWithKeyValuesArray:param[@"obj"]];
+            NSArray* moduleArray=[ccDisplayModel mj_objectArrayWithKeyValuesArray:param[@"obj"]];
             if (moduleArray.count!=0)
             {
-                self.commodityDisplayView =  [self createDisplayViewWithModuleArray:moduleArray];
+                self.commodityDisplayView =  [self mj_createDisplayViewWithModuleArray:moduleArray];
             }
             //
         }
@@ -603,30 +614,28 @@ linHangyeCommendViewDelegate>
     
     
     NSDictionary* dict=@{
-                         @"app_key":ALL_URL(index_cate_hy),
+                         @"app_key":[SwpTools swpToolGetInterfaceURL:index_cate_hy],
                          };
-    
-    [Base64Tool postSomethingToServe:ALL_URL(index_cate_hy) andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        if ([param[@"code"] integerValue]==200)
-        {
-            
-            NSArray* moduleArray=[linHangyeModel objectArrayWithKeyValuesArray:param[@"obj"]];
+    [SwpRequest swpPOST:[SwpTools swpToolGetInterfaceURL:index_cate_hy] parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
+            NSArray* moduleArray=[linHangyeModel mj_objectArrayWithKeyValuesArray:resultObject[@"obj"]];
             industryArray = [moduleArray copy];
-            //            linHangyeModel *model = (linHangyeModel *)[industryArray objectAtIndex:0];
+
             if (moduleArray.count!=0)
             {
-                //                self.industryView=[self crateIndustryViewFromNetwork:moduleArray];
-                //                [self.industryView createIndustryView:moduleArray];
                 self.industryView.moduleArray   =   moduleArray;
                 self.industryView.delegate      =   self;
                 //存储到UD当中
-                [[NSUserDefaults standardUserDefaults] setObject:param forKey:@"IndustryInfo"];
+                [[NSUserDefaults standardUserDefaults] setObject:resultObject forKey:@"IndustryInfo"];
                 [self getServerCateFromNetwork];
                 [self setIndexTableviewHeaderView];
             }
         }
-    } andErrorBlock:^(NSError *error) {
-    }];
+
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
 }
 
 //-----------弃用方法----------------
@@ -681,21 +690,25 @@ linHangyeCommendViewDelegate>
                           @"app_key":index_data,
                           @"city_id":city_id
                           };
-    [Base64Tool postSomethingToServe:index_data andParams:dic isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        indexDic = [[NSMutableDictionary alloc] initWithDictionary:(NSDictionary*)param];
-        NSLog(@"获取的数据为:%@",indexDic);
-        //如果距离上次更新时间超过4小时 更新ud的数据
-        //解析数据 做显示
-        if ([self isRefresh:0]) {
-            [[NSUserDefaults standardUserDefaults] setObject:indexDic forKey:@"indexData"];
-            [[NSUserDefaults standardUserDefaults] synchronize];
+    [SwpRequest swpPOST:index_data parameters:dic isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
+            indexDic = [[NSMutableDictionary alloc] initWithDictionary:(NSDictionary*)resultObject];
+            NSLog(@"获取的数据为:%@",indexDic);
+            //如果距离上次更新时间超过4小时 更新ud的数据
+            //解析数据 做显示
+            if ([self isRefresh:0]) {
+                [[NSUserDefaults standardUserDefaults] setObject:indexDic forKey:@"indexData"];
+                [[NSUserDefaults standardUserDefaults] synchronize];
+            }
+            [self parseData:indexDic];
+            //读取列表
+            [self getShopListFromNet];
         }
-        [self parseData:indexDic];
-        //读取列表
-        [self getShopListFromNet];
-          } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络不给力"];
-    }];
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
+
     
 }
 
@@ -711,29 +724,28 @@ linHangyeCommendViewDelegate>
                           @"page":[NSString stringWithFormat:@"%d",page],
                           @"city_id":city_id
                           };
-    [Base64Tool postSomethingToServe:shop_list andParams:dic isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        // NSLog(@"%@",param);
-        NSString *code = [NSString stringWithFormat:@"%@",[param objectForKey:@"code"]];
-        if ([code isEqualToString:@"200"]) {
-            NSDictionary *dict = [[NSDictionary alloc] initWithDictionary:(NSDictionary*)param] ;
+    [SwpRequest swpPOST:shop_list parameters:dic isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        [self.indexTableview.mj_header beginRefreshing];
+        [self.indexTableview.mj_footer beginRefreshing];
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
+            NSDictionary *dict = [[NSDictionary alloc] initWithDictionary:(NSDictionary*)resultObject] ;
             if ([self isRefresh:1]) {
-                [[NSUserDefaults standardUserDefaults] setObject:param forKey:@"ShopList"];
+                [[NSUserDefaults standardUserDefaults] setObject:resultObject forKey:@"ShopList"];
                 [[NSUserDefaults standardUserDefaults] synchronize];
             }
             [self parseShopList:dict];
             //[[self indexTableview] reloadData];
-            [self.indexTableview headerEndRefreshing];
-            [self.indexTableview footerEndRefreshing];
+  
         }else{
-            [self.indexTableview headerEndRefreshing];
-            [self.indexTableview footerEndRefreshing];
-            [SVProgressHUD showErrorWithStatus:param[@"message"]];
+
+            [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
         }
-    } andErrorBlock:^(NSError *error) {
-        [self.indexTableview headerEndRefreshing];
-        [self.indexTableview footerEndRefreshing];
-        [SVProgressHUD showErrorWithStatus:@"网络不给力"];
-    }];
+
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
+
 }
 
 #pragma mark------解析time
@@ -744,7 +756,7 @@ linHangyeCommendViewDelegate>
      1:代表shoplist的刷新
      */
     if (index == 0) {
-        if (userDefault(@"freshTime")==nil) {
+        if (GetUserDefault(@"freshTime")==nil) {
             NSDate* dat = [NSDate dateWithTimeIntervalSinceNow:0];
             NSTimeInterval a=[dat timeIntervalSince1970];
             NSString *timeString = [NSString stringWithFormat:@"%f", a];
@@ -752,7 +764,7 @@ linHangyeCommendViewDelegate>
             [[NSUserDefaults standardUserDefaults]synchronize];
             return YES;
         }else{
-            NSString *timeStr = userDefault(@"freshTime");
+            NSString *timeStr = GetUserDefault(@"freshTime");
             NSDate* dat = [NSDate dateWithTimeIntervalSinceNow:0];
             NSTimeInterval a=[dat timeIntervalSince1970];
             NSString *timeString = [NSString stringWithFormat:@"%f", a];
@@ -762,7 +774,7 @@ linHangyeCommendViewDelegate>
             }
         }
     }else{
-        if (userDefault(@"freshTimeShop")==nil) {
+        if (GetUserDefault(@"freshTimeShop")==nil) {
             NSDate* dat = [NSDate dateWithTimeIntervalSinceNow:0];
             NSTimeInterval a=[dat timeIntervalSince1970];
             NSString *timeString = [NSString stringWithFormat:@"%f", a];
@@ -770,7 +782,7 @@ linHangyeCommendViewDelegate>
             [[NSUserDefaults standardUserDefaults]synchronize];
             return YES;
         }else{
-            NSString *timeStr = userDefault(@"freshTimeShop");
+            NSString *timeStr = GetUserDefault(@"freshTimeShop");
             NSDate* dat = [NSDate dateWithTimeIntervalSinceNow:0];
             NSTimeInterval a=[dat timeIntervalSince1970];
             NSString *timeString = [NSString stringWithFormat:@"%f", a];
@@ -792,7 +804,7 @@ linHangyeCommendViewDelegate>
         shopInfo *info = [[shopInfo alloc] initWithDictionary:dic];
         [array addObject:info];
     }
-    if (userDefault(@"ShopList")!=nil && page == 1) {
+    if (GetUserDefault(@"ShopList")!=nil && page == 1) {
         [shopArray removeAllObjects];
         [shopArray addObjectsFromArray:array];
     }else{
@@ -809,7 +821,7 @@ linHangyeCommendViewDelegate>
 #pragma mark------解析数据，封装 ----
 -(void)parseData :(NSDictionary*)dict
 {
-    if (userDefault(@"indexData") != nil) {
+    if (GetUserDefault(@"indexData") != nil) {
         [self freshData];
     }
     //首页幻灯片解析
@@ -843,11 +855,7 @@ linHangyeCommendViewDelegate>
     //    //重新显示列表
     [self setupAdBannerView:urlArray andLabelName:descArray];
     if ([cateArray count]>0) {
-        /**
-         测试使用 减少button数量 计算高度问题
-         [cateArray removeObjectAtIndex:0];
-         [cateArray removeObjectAtIndex:0];
-         */
+
         [self setCateButton:cateArray];
     }
     //获取首页服务分类
@@ -1039,12 +1047,12 @@ linHangyeCommendViewDelegate>
     [_indexTableview autoPinEdgeToSuperviewEdge:ALEdgeTop ];
     [_indexTableview autoPinEdgeToSuperviewEdge:ALEdgeBottom withInset:44.0f];
     //如果ud里面有数据 则读取出去 设置界面 然后继续访问接口
-    indexDic = userDefault(@"indexData");
+    indexDic = GetUserDefault(@"indexData");
     if (indexDic != nil) {
         //数据解析 显示数据
         [self parseData:indexDic];
-        if (userDefault(@"ShopList")!=nil) {
-            NSDictionary *dict = [[NSDictionary alloc] initWithDictionary:(NSDictionary *)userDefault(@"ShopList")];
+        if (GetUserDefault(@"ShopList")!=nil) {
+            NSDictionary *dict = [[NSDictionary alloc] initWithDictionary:(NSDictionary *)GetUserDefault(@"ShopList")];
             [self parseShopList:dict];
         }
     }
@@ -1058,38 +1066,15 @@ linHangyeCommendViewDelegate>
 #pragma mark------获取当前网络环境
 -(void)getTheWebCon
 {
-    /*
-     判断当前网络环境
-     */
-    Reachability *r = [Reachability reachabilityWithHostname:@"www.baidu.com"];
-    switch ([r currentReachabilityStatus]) {
-        case NotReachable:
-            // 没有网络连接
-            NSLog(@"无网络");
-            break;
-        case ReachableViaWWAN:
-            // 使用3G网络
-            NSLog(@"移动网络");
-            break;
-        case ReachableViaWiFi:
-            // 使用WiFi网络
-            NSLog(@"wifi");
-            break;
-    }
+
 }
 #pragma mark--------tableview and delegate
 -(UITableView*)indexTableview
 {
     if (!_indexTableview) {
         _indexTableview = [[UITableView alloc] initForAutoLayout];
-        [_indexTableview addHeaderWithTarget:self action:@selector(headerBeginRefreshing)];
-        [_indexTableview addFooterWithTarget:self action:@selector(footerBeginRefreshing)];
-        _indexTableview.footerPullToRefreshText = @"上拉可以加载更多数据了";
-        _indexTableview.footerReleaseToRefreshText = @"松开马上加载更多数据了";
-        _indexTableview.footerRefreshingText = @"正在加载更多的商家";
-        _indexTableview.headerPullToRefreshText = @"下拉可以刷新了";
-        _indexTableview.headerReleaseToRefreshText = @"松开马上刷新了";
-        _indexTableview.headerRefreshingText = @"正在刷新，请稍等";
+        _indexTableview.mj_footer=[MJRefreshFooter footerWithRefreshingTarget:self refreshingAction:@selector(footerBeginRefreshing)];
+        _indexTableview.mj_header=[MJRefreshHeader headerWithRefreshingTarget:self refreshingAction:@selector(headerBeginRefreshing)];
         [UZCommonMethod hiddleExtendCellFromTableview:_indexTableview];
         [_indexTableview setSeparatorStyle:UITableViewCellSeparatorStyleSingleLine];
         _indexTableview.separatorInset = UIEdgeInsetsZero;
@@ -1157,7 +1142,7 @@ linHangyeCommendViewDelegate>
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     NSInteger count = [shopArray count];
-    NSLog(@"the num of shopArray is %ld",count);
+    NSLog(@"the num of shopArray is %d",count);
     return count;
 }
 #pragma mark---------刷新
@@ -1197,7 +1182,7 @@ linHangyeCommendViewDelegate>
     if ([urlArray count]>0) {
         [bannerView setPictureUrls:urlArray andTitles:urlArry];
         bannerView.tapHandler=^(SkyBannerView* bannerView,NSInteger index){
-            NSLog(@"Has taped imageView at index :%ld",index);
+            NSLog(@"Has taped imageView at index :%d",index);
             CarouselInfo *info = [CarouseArray objectAtIndex:index];
             [self parseInfo:info];
         };
@@ -1222,7 +1207,7 @@ linHangyeCommendViewDelegate>
     if ([urlArray count]>0) {
         [bannerView setPictureUrls:urlArray andTitles:descArray];
         bannerView.tapHandler=^(SkyBannerView* bannerView,NSInteger index){
-            NSLog(@"Has taped imageView at index :%ld",index);
+            NSLog(@"Has taped imageView at index :%d",index);
             CarouselInfo *info = [CarouseArray objectAtIndex:index];
             [self parseInfo:info];
         };
@@ -1562,7 +1547,7 @@ linHangyeCommendViewDelegate>
 {
     if (alertView.tag == 1) {
         if (buttonIndex == 0) {
-            NSString *downLoadUrl = [[[JSONOfNetWork getDictionaryFromPlist] objectForKey:@"obj"]objectForKey:@"ios_download"] ;
+            NSString *downLoadUrl = [[[SwpTools swpToolGetDictionaryFromPlist:nil] objectForKey:@"obj"]objectForKey:@"ios_download"] ;
             //            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:downLoadUrl]];
             AppUpdatesController * appUpdates = [[AppUpdatesController alloc] init];
             appUpdates.webURL = downLoadUrl;
@@ -1622,7 +1607,7 @@ linHangyeCommendViewDelegate>
         _cityButton=[[UIButton alloc]initWithFrame:CGRectMake(0, 25, 100, 30)];
         [_cityButton addTarget: self action:@selector(goSeachShop:) forControlEvents:UIControlEventTouchUpInside];
         _cityButton.tag=SEARCHTAG+2;
-        _cityName=userDefault(KCityNAME);
+        _cityName=GetUserDefault(KCityNAME);
         UIImage *image=[UIImage imageNamed:@"cityDown"];
         [_cityButton setImage:image forState:UIControlStateNormal];
         [_cityButton setTitle:_cityName forState:UIControlStateNormal];
@@ -1655,7 +1640,7 @@ linHangyeCommendViewDelegate>
     if (!_adView) {
         _adView=[[UIImageView alloc]initForAutoLayout];
         _adView.userInteractionEnabled=YES;
-        if (!userDefault(everLaunch)) {
+        if (!GetUserDefault(everLaunch)) {
             _adView.image=[UIImage imageNamed:@"one"];
             UIButton *enterButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 175, 35)];
             [enterButton setTitle:@"开始体验"

@@ -48,23 +48,24 @@
 #pragma mark-------------get data
 -(void)getCateFromNet
 {
-    NSString *url = [SwpTools swpToolGetInterfaceURL:@"activity_cate_list");
+    NSString *url = [SwpTools swpToolGetInterfaceURL:@"activity_cate_list"];
     NSDictionary *dic = @{
                           @"app_key":url
                           };
-    [Base64Tool postSomethingToServe:url andParams:dic isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        NSString *code = [NSString stringWithFormat:@"%@",[param objectForKey:@"code"]];
-        if ([code isEqualToString:@"200"]) {
+    [SwpRequest swpPOST:url parameters:dic isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
             //------------解析------------
-            NSDictionary *dict = (NSDictionary*)param;
+            NSDictionary *dict = (NSDictionary*)resultObject;
             [self parseCateDic:dict];
             [self getAreaFromNet];
         }else{
-            [SVProgressHUD showErrorWithStatus:[param objectForKey:@"message"]];
+            [SVProgressHUD showErrorWithStatus:[resultObject objectForKey:@"message"]];
         }
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络异常"];
-    }];
+
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
 }
 
 #pragma mark-----解析商家分类
@@ -90,24 +91,26 @@
     if (city_id == nil) {
         city_id = @"0";
     }
-    NSString *url = [SwpTools swpToolGetInterfaceURL:@"area_list");
+    NSString *url = [SwpTools swpToolGetInterfaceURL:@"area_list"];
     NSDictionary *dic = @{
                           @"app_key":url,
                           @"city_id":city_id
                           };
-    [Base64Tool postSomethingToServe:url andParams:dic isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        NSString *code = [NSString stringWithFormat:@"%@",[param objectForKey:@"code"]];
-        if ([code isEqualToString:@"200"]) {
+    [SwpRequest swpPOST:url parameters:dic isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
             //------------解析------------
-            NSDictionary *dict = (NSDictionary*)param;
+            NSDictionary *dict = (NSDictionary*)resultObject;
             [self parseAreaDic:dict];
             [self getDataFromNet];
         }else{
-            [SVProgressHUD showErrorWithStatus:[param objectForKey:@"message"]];
+            [SVProgressHUD showErrorWithStatus:[resultObject objectForKey:@"message"]];
         }
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络异常"];
-    }];
+
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
+
 }
 
 #pragma mark------解析商圈分类
@@ -240,14 +243,8 @@
         _activityTableview.dataSource = self;
         _activityTableview.separatorInset = UIEdgeInsetsZero;
         [UZCommonMethod hiddleExtendCellFromTableview:_activityTableview];
-        [_activityTableview addHeaderWithTarget:self action:@selector(headerBeginRefreshing)];
-        [_activityTableview addFooterWithTarget:self action:@selector(footerBeginRefreshing)];
-        _activityTableview.footerPullToRefreshText = @"上拉可以加载更多数据了";
-        _activityTableview.footerReleaseToRefreshText = @"松开马上加载更多数据了";
-        _activityTableview.footerRefreshingText = @"正在加载，请稍等";
-        _activityTableview.headerPullToRefreshText = @"下拉可以刷新了";
-        _activityTableview.headerReleaseToRefreshText = @"松开马上刷新了";
-        _activityTableview.headerRefreshingText = @"正在刷新，请稍等";
+        _activityTableview.mj_footer=[MJRefreshFooter footerWithRefreshingTarget:self refreshingAction:@selector(footerBeginRefreshing)];
+        _activityTableview.mj_header=[MJRefreshHeader headerWithRefreshingTarget:self refreshingAction:@selector(headerBeginRefreshing)];
         if ([_activityTableview respondsToSelector:@selector(setSeparatorInset:)]) {
             [_activityTableview setSeparatorInset:UIEdgeInsetsMake(0,0,0,0)];
         }

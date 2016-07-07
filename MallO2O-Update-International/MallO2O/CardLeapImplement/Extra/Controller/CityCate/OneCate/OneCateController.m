@@ -148,10 +148,9 @@
  */
 - (void) getData {
 
-//   NSArray *cityCate =  [[NSUserDefaults standardUserDefaults] objectForKey:@"cityCates"];
-    NSArray *cityCate = userDefault(@"cityCates");
+    NSArray *cityCate = GetUserDefault(@"cityCates");
     
-    self.oneCate      = [CityOneCate objectArrayWithKeyValuesArray:cityCate];
+    self.oneCate      = [CityOneCate mj_objectArrayWithKeyValuesArray:cityCate];
 }
 
 

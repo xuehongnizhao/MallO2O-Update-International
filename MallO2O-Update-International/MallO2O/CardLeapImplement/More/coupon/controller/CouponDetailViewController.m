@@ -42,21 +42,25 @@
 #pragma mark--------------刷新数据
 -(void)freshDataFromNet
 {
-    NSString *url = [SwpTools swpToolGetInterfaceURL:@"spike_down");
+    
+    NSString *url = [SwpTools swpToolGetInterfaceURL:@"spike_down"];
     NSDictionary *dict = @{
                            @"app_key":url,
                            @"spike_id":self.info.spike_id
+           
                            };
-    [Base64Tool postSomethingToServe:url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        if ([param[@"code"] integerValue]==200) {
-            self.info.down = [NSString stringWithFormat:@"%@",[param[@"obj"] objectForKey:@"down"]];
+    [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
+            self.info.down = [NSString stringWithFormat:@"%@",[resultObject[@"obj"] objectForKey:@"down"]];
             _messageLable.text = [NSString stringWithFormat:@"剩余%@张，%@人已下载",self.info.spike_lastnum,self.info.down];
         }else{
-            [SVProgressHUD showErrorWithStatus:param[@"message"]];
+            [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
         }
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络一场"];
+        
+    } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+        
     }];
+
 }
 
 #pragma mark--------------set UI
@@ -162,51 +166,51 @@
 -(void)downloadAction:(UIButton*)sender
 {
     NSLog(@"下载优惠券");
-    if (ApplicationDelegate.islogin == NO) {
+    if (ApplicationDelegate.login == NO) {
         LoginViewController *firVC = [[LoginViewController alloc] init];
         [firVC setHiddenTabbar:YES];
         [firVC setNavBarTitle:@"登录" withFont:14.0f];
 //        [firVC.navigationItem setTitle:@"登录"];
         [self.navigationController pushViewController:firVC animated:YES];
     }else{
-        NSString *url = [SwpTools swpToolGetInterfaceURL:@"seckill");
+        NSString *url = [SwpTools swpToolGetInterfaceURL:@"seckill"];
         NSDictionary *dic = @{
                               @"app_key":url,
                               @"u_id":[UserModel shareInstance].u_id,
                               @"session_key":[UserModel shareInstance].session_key,
                               @"spike_id":self.info.spike_id
                               };
-        [SVProgressHUD showWithStatus:@"正在努力为您抢购" maskType:SVProgressHUDMaskTypeNone];
-        [Base64Tool postSomethingToServe:url andParams:dic isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-            if ([param[@"code"] integerValue]==200) {
-                NSInteger type = [[param[@"obj"] objectForKey:@"type"] integerValue];
+        [SVProgressHUD showWithStatus:@"正在努力为您抢购"];
+        [SwpRequest swpPOST:url parameters:dic isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+            if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
+                NSInteger type = [[resultObject[@"obj"] objectForKey:@"type"] integerValue];
                 if (type == 0) {
                     [SVProgressHUD dismiss];
-                    NSString *spike_code = [NSString stringWithFormat:@"%@",[param[@"obj"] objectForKey:@"spike_pass"]];
+                    NSString *spike_code = [NSString stringWithFormat:@"%@",[resultObject[@"obj"] objectForKey:@"spike_pass"]];
                     SpikeCodeViewController *firVC = [[SpikeCodeViewController alloc] init];
                     [firVC setHiddenTabbar:YES];
                     firVC.info = self.info;
                     firVC.spike_code = spike_code;
                     [firVC setNavBarTitle:self.info.spike_name withFont:14.0f];
-//                    [firVC.navigationItem setTitle:self.info.spike_name];
+                    //                    [firVC.navigationItem setTitle:self.info.spike_name];
                     [self.navigationController pushViewController:firVC animated:YES];
                 }else{
-                    [SVProgressHUD showErrorWithStatus:param[@"message"]];
+                    [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
                 }
             }else{
-                [SVProgressHUD showErrorWithStatus:param[@"message"]];
+                [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
             }
-        } andErrorBlock:^(NSError *error) {
-            [SVProgressHUD showErrorWithStatus:@"网络异常"];
-        }];
-    }
+
+            } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+                [SVProgressHUD showErrorWithStatus:@"网络异常"];
+                
+            }];
 }
 
 -(void)shareActino:(UIButton*)sender
 {
     NSLog(@"点击分享");
     [self UserSharePoint];
-    //NSString *url = @"www.baidu.com";
     NSString *sinaText;
     sinaText = [NSString stringWithFormat:@"如e生活 %@",self.share_url];
 
@@ -231,19 +235,19 @@
 }
 #pragma mark --- 11.28 点击分享按钮就加积分
 - (void) UserSharePoint {
-    if (ApplicationDelegate.islogin == YES) {
-        NSString *url = [SwpTools swpToolGetInterfaceURL:@"share_point");
+    if (ApplicationDelegate.login == YES) {
+        NSString *url = [SwpTools swpToolGetInterfaceURL:@"share_point"];
         NSDictionary *dict = @{
                                @"app_key":url,
                                @"u_id":[UserModel shareInstance].u_id
                                };
-        [Base64Tool postSomethingToServe:url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-            if ([param[@"code"] integerValue]==200) {
-//                [SVProgressHUD showSuccessWithStatus:@"分享成功"];
+        [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+            if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
             }
-        } andErrorBlock:^(NSError *error) {
-            [SVProgressHUD showErrorWithStatus:@"网络异常"];
-        }];
+            } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+                [SVProgressHUD showErrorWithStatus:@"网络异常"];
+                
+            }];
     }else{
         [SVProgressHUD showErrorWithStatus:@"您尚未登录，无法给您增加积分"];
     }
@@ -257,28 +261,30 @@
     if(response.responseCode == UMSResponseCodeSuccess)
     {
         [SVProgressHUD showSuccessWithStatus:@"分享成功"];
-        if (ApplicationDelegate.islogin == YES) {
-            NSString *url = [SwpTools swpToolGetInterfaceURL:@"share_point");
+        if (ApplicationDelegate.login == YES) {
+            NSString *url = [SwpTools swpToolGetInterfaceURL:@"share_point"];
             NSDictionary *dict = @{
                                    @"app_key":url,
                                    @"u_id":[UserModel shareInstance].u_id
                                    };
-            [Base64Tool postSomethingToServe:url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-                if ([param[@"code"] integerValue]==200) {
+                             
+            [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+                if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
                     [SVProgressHUD showSuccessWithStatus:@"分享成功"];
                 }
-            } andErrorBlock:^(NSError *error) {
+                
+            } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage){
                 [SVProgressHUD showErrorWithStatus:@"网络异常"];
             }];
         }else{
             [SVProgressHUD showErrorWithStatus:@"您尚未登录，无法给您增加积分"];
         }
     }
-    else if (response.responseCode == UMSResponseCodeFaild){
-        [SVProgressHUD showSuccessWithStatus:@"分享失败"];
+        else if (response.responseCode == UMSResponseCodeFaild){
+            [SVProgressHUD showSuccessWithStatus:@"分享失败"];
+                 
     }
 }
-
 #pragma mark--------webview delegate
 -(BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
 {
@@ -295,13 +301,5 @@
     NSLog(@"加载完成，开始追入数据");
 }
 
-/*
-#pragma mark - Navigation
-// In a  -based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end
