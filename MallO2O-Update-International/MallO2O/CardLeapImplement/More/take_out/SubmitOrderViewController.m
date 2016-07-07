@@ -64,18 +64,17 @@
 #pragma mark--------get Address
 -(void)getDataFromNet
 {
-    NSString *url = [SwpTools swpToolGetInterfaceURL:@"takeout_address");
+    NSString *url = [SwpTools swpToolGetInterfaceURL:@"takeout_address"];
     NSDictionary *dict = @{
                            @"app_key":url,
                            @"u_id":[UserModel shareInstance].u_id
                            };
-    [SVProgressHUD showWithStatus:@"请稍候" maskType:SVProgressHUDMaskTypeBlack];
-    [Base64Tool postSomethingToServe:url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        NSString *code = [NSString stringWithFormat:@"%@",[param objectForKey:@"code"]];
-        if ([code isEqualToString:@"200"]) {
+    [SVProgressHUD showWithStatus:@"请稍候" ];
+    [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
             [addressArray removeAllObjects];
             [SVProgressHUD dismiss];
-            NSArray *tmpArray = [param objectForKey:@"obj"];
+            NSArray *tmpArray = [resultObject objectForKey:@"obj"];
             for (NSDictionary *dic in tmpArray) {
                 userAddressInfo *info = [[userAddressInfo alloc] initWithNSDictionary:dic];
                 [addressArray addObject:info];
@@ -87,14 +86,16 @@
                 }
             }
         }else{
-            [SVProgressHUD showErrorWithStatus:[param objectForKey:@"message"]];
+            [SVProgressHUD showErrorWithStatus:[resultObject objectForKey:@"message"]];
         }
         [self.LinSubmitTableview reloadData];
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络异常"];
-    }];
-}
 
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
+
+}
 #pragma mark--------init data
 -(void)initData
 {
@@ -426,7 +427,7 @@
         [SVProgressHUD showErrorWithStatus:@"请选择送餐地址和电话"];
         return;
     }
-    NSString *url = [SwpTools swpToolGetInterfaceURL:@"add_order");
+    NSString *url = [SwpTools swpToolGetInterfaceURL:@"add_order"];
     NSDictionary *dict = @{
                            @"app_key":url,
                            @"session_key":[UserModel shareInstance].session_key,
@@ -440,12 +441,12 @@
                            @"total_price":self.totalPrice,
                            @"cash":@"1"
                            };
-    [SVProgressHUD showWithStatus:@"正在提交订单" maskType:SVProgressHUDMaskTypeBlack];
-    [Base64Tool postSomethingToServe:url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        if ([param[@"code"] integerValue]==200) {
+    [SVProgressHUD showWithStatus:@"正在提交订单"];
+    [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
             [SVProgressHUD dismiss];
-            NSString *order_id = [NSString stringWithFormat:@"%@",[param[@"obj"] objectForKey:@"order_id"]];
-            takeout_url = [NSString stringWithFormat:@"%@",[param[@"obj"] objectForKey:@"takeout_url"]];
+            NSString *order_id = [NSString stringWithFormat:@"%@",[resultObject[@"obj"] objectForKey:@"order_id"]];
+            takeout_url = [NSString stringWithFormat:@"%@",[resultObject[@"obj"] objectForKey:@"takeout_url"]];
             sumitSuccessViewController *firVC = [[sumitSuccessViewController alloc] init];
             [firVC setHiddenTabbar:YES];
             [firVC setNavBarTitle:@"订单提交成功" withFont:14.0f];
@@ -453,11 +454,14 @@
             firVC.takeout_url = takeout_url;
             [self.navigationController pushViewController:firVC animated:YES];
         }else{
-            [SVProgressHUD showErrorWithStatus:param[@"message"]];
+            [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
         }
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络异常"];
-    }];
+
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
+
 }
 
 /**
@@ -466,7 +470,7 @@
 -(void)payWebAlpay
 {
     NSLog(@"提示：确认提交吗？");
-    NSString *url = [SwpTools swpToolGetInterfaceURL:@"add_order");
+    NSString *url = [SwpTools swpToolGetInterfaceURL:@"add_order"];
     if (address == nil || [address isEqualToString:@""] || phone == nil || [phone isEqualToString:@""]) {
         [SVProgressHUD showErrorWithStatus:@"请选择送餐地址和电话"];
         return;
@@ -484,20 +488,23 @@
                            @"total_price":self.totalPrice,
                            @"cash":@"0"
                            };
-    [SVProgressHUD showWithStatus:@"正在下订单" maskType:SVProgressHUDMaskTypeBlack];
-    [Base64Tool postSomethingToServe:url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        if ([param[@"code"] integerValue]==200) {
+    [SVProgressHUD showWithStatus:@"正在下订单"];
+    [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
             [SVProgressHUD dismiss];
-            NSString *order_id = [NSString stringWithFormat:@"%@",[param[@"obj"] objectForKey:@"order_id"]];
+            NSString *order_id = [NSString stringWithFormat:@"%@",[resultObject[@"obj"] objectForKey:@"order_id"]];
             //在这该跳转支付宝了
-            takeout_url = [NSString stringWithFormat:@"%@",[param[@"obj"] objectForKey:@"takeout_url"]];
+            takeout_url = [NSString stringWithFormat:@"%@",[resultObject[@"obj"] objectForKey:@"takeout_url"]];
             [self jumpAlpay:order_id];
         }else{
-            [SVProgressHUD showErrorWithStatus:param[@"message"]];
+            [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
         }
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络异常"];
-    }];
+
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
+
 }
 
 /**

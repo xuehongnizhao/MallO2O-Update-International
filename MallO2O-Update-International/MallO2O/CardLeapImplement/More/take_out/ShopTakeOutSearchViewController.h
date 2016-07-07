@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#define SEARCH_TAKE_POST ALL_URL(@"takeout_list")
+
 @interface ShopTakeOutSearchViewController : BaseViewController
 @property(nonatomic,copy) NSString *u_lng;
 @property(nonatomic,copy) NSString *u_lat;

@@ -203,7 +203,7 @@
     if (city_id == nil) {
         city_id = @"0";
     }
-    NSString *url = [SwpTools swpToolGetInterfaceURL:@"activity_list");
+    NSString *url = [SwpTools swpToolGetInterfaceURL:@"activity_list"];
     NSDictionary *dict = @{
                            @"app_key":url,
                            @"page":[NSString stringWithFormat:@"%d",page],
@@ -212,26 +212,27 @@
                            @"order":order,
                            @"city_id":city_id
                            };
-    [Base64Tool postSomethingToServe:url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        if([param[@"code"] integerValue]==200){
+    [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
             [SVProgressHUD dismiss];
             if (page==1) {
                 [activityArray removeAllObjects];
             }
-            NSArray *arr = param[@"obj"];
+            NSArray *arr = resultObject[@"obj"];
             for (NSDictionary *dic in arr) {
                 activityInfo *info = [[activityInfo alloc] initWithDictionary:dic];
                 [activityArray addObject:info];
             }
             [self.activityTableview reloadData];
         }else{
-            [SVProgressHUD showErrorWithStatus:param[@"message"]];
+            [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
         }
-        [self.activityTableview headerEndRefreshing];
-        [self.activityTableview footerEndRefreshing];
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络异常"];
-    }];
+        [self.activityTableview.mj_header beginRefreshing];
+        [self.activityTableview.mj_footer beginRefreshing];
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
 }
 
 #pragma mark-------------get UI

@@ -205,9 +205,10 @@
                 [SVProgressHUD showErrorWithStatus:@"网络异常"];
                 
             }];
+    }
 }
 
--(void)shareActino:(UIButton*)sender
+-(void)shareAction:(UIButton*)sender
 {
     NSLog(@"点击分享");
     [self UserSharePoint];
@@ -283,22 +284,12 @@
         else if (response.responseCode == UMSResponseCodeFaild){
             [SVProgressHUD showSuccessWithStatus:@"分享失败"];
                  
-    }
+        }
 }
 #pragma mark--------webview delegate
 -(BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
 {
     return YES;
-}
-
--(void)webViewDidStartLoad:(UIWebView *)webView
-{
-    NSLog(@"开始加载");
-}
-
--(void)webViewDidFinishLoad:(UIWebView *)webView
-{
-    NSLog(@"加载完成，开始追入数据");
 }
 
 

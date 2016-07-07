@@ -19,7 +19,7 @@
 #import "UserUpdatePasswordViewController.h"
 #import "EvenMoreListViewController.h"
 #import "myGroupListViewController.h"
-#import "APService.h"
+#import "JPUSHService.h"
 #import "myPointGiftViewController.h"
 #import "myPointDetailViewController.h"//记录获取记录
 #pragma mark 2016.4 我的页面
@@ -56,7 +56,7 @@
 
 -(void)viewWillAppear:(BOOL)animated
 {
-    if (ApplicationDelegate.islogin == NO) {
+    if (ApplicationDelegate.login == NO) {
         
     }else{
         UIBarButtonItem *barItem = [[UIBarButtonItem alloc] initWithCustomView:self.logoutButton];
@@ -70,38 +70,40 @@
 #pragma mark------重新在后台走一次登录接口，获取积分数量
 -(void)logToGetPoint
 {
-    NSString *url = [SwpTools swpToolGetInterfaceURL:@"user_point");
+    NSString *url = [SwpTools swpToolGetInterfaceURL:@"user_point"];
     NSDictionary *dict = @{
                            @"app_key":url,
                            @"u_id":[UserModel shareInstance].u_id
                            };
-    [Base64Tool postSomethingToServe:url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        if ([param[@"code"] integerValue]==200) {
-            [UserModel shareInstance].pay_point=[NSString stringWithFormat:@"%@",[param[@"obj"] objectForKey:@"user_point"]];
+    [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
+            [UserModel shareInstance].pay_point=[NSString stringWithFormat:@"%@",[resultObject[@"obj"] objectForKey:@"user_point"]];
             [self.userInfoTableview reloadData];
         }
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络异常"];
-    }];
-    NSString *url1 = ALL_URL(@"mp_user_firm");
+
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
+    NSString *url1 = [SwpTools swpToolGetInterfaceURL:@"mp_user_firm"];
     NSDictionary *dict1 = @{
                             @"app_key":url1,
                             @"u_id":[UserModel shareInstance].u_id
                             };
-    [Base64Tool postSomethingToServe:url1 andParams:dict1 isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        if ([param[@"code"] integerValue]==200) {
-            
-            _myBusinessURL=[[param objectForKey:@"obj"]objectForKey:@"user_business"];
+    [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
+            _myBusinessURL=[[resultObject objectForKey:@"obj"]objectForKey:@"user_business"];
         }
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络异常"];
-    }];
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
     
 }
 
 -(void)autoJumpLogin
 {
-    if (ApplicationDelegate.islogin == NO) {
+    if (ApplicationDelegate.login == NO) {
         LoginViewController *firVC = [[LoginViewController alloc] init];
         [firVC setNavBarTitle:@"登录" withFont:14];
         [self.navigationController pushViewController:firVC animated:YES];
@@ -143,13 +145,9 @@
 {
     if (!_userInfoTableview) {
         _userInfoTableview = [[UITableView alloc] initWithFrame:CGRectMake(0, -20, 0, 0) style:UITableViewStyleGrouped];
-        //_userInfoTableview.layer.borderWidth = 1;
-        //_userInfoTableview.style = UITableViewStyleGrouped;
         _userInfoTableview.translatesAutoresizingMaskIntoConstraints = NO;
         _userInfoTableview.delegate = self;
         _userInfoTableview.dataSource = self;
-        //_userInfoTableview.scrollEnabled = NO;
-        //_userInfoTableview.separatorInset = UIEdgeInsetsZero;
         [UZCommonMethod hiddleExtendCellFromTableview:_userInfoTableview];
     }
     return _userInfoTableview;
@@ -164,7 +162,7 @@
         _logoutButton.titleLabel.font = [UIFont systemFontOfSize:15.0f];
     }
     NSString *title ;
-    if (ApplicationDelegate.islogin == YES) {
+    if (ApplicationDelegate.login == YES) {
         title = @"注销";
     }else{
         title = @"登录";
@@ -177,22 +175,16 @@
 #pragma mark----设置别名
 -(void)setAlian :(NSString*)alian
 {
-    [APService setTags:nil
-                 alias:alian
-      callbackSelector:@selector(tagsAliasCallback:tags:alias:)
-                target:self];
-}
+    [JPUSHService setTags:nil alias:alian fetchCompletionHandle:^(int iResCode, NSSet *iTags, NSString *iAlias) {
+        NSLog(@"rescode: %d, \ntags: %@, \nalias: %@\n", iResCode, iTags , iAlias);
 
-#pragma mark---------设备号获取以及回调函数
-- (void)tagsAliasCallback:(int)iResCode tags:(NSSet*)tags alias:(NSString*)alias {
-    NSLog(@"rescode: %d, \ntags: %@, \nalias: %@\n", iResCode, tags , alias);
+    }];
 }
-
 #pragma mark-----------tableview delegate
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    if (ApplicationDelegate.islogin == YES) {
+    if (ApplicationDelegate.login == YES) {
         NSLog(@"点击跳转很多地方");
         
         if (indexPath.row == 0 && indexPath.section == 0) {
@@ -288,14 +280,6 @@
     return 6;
 }
 
-//-(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
-//{
-//    if (section == 0) {
-//        return 0.1;
-//    }else{
-//        return 10;
-//    }
-//}
 
 -(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
@@ -383,7 +367,7 @@
         UITapGestureRecognizer *tmp_gesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(getPointList)];
         [my_point addGestureRecognizer:tmp_gesture];
         [cell setAccessoryType:UITableViewCellAccessoryNone];
-        if (ApplicationDelegate.islogin != YES) {
+        if (ApplicationDelegate.login != YES) {
             user_pic.image = [UIImage imageNamed:@"user"];
             user_name.text = @"您尚未登录,点击右上角登录";
             user_tel.hidden = YES;
@@ -434,7 +418,7 @@
 #pragma mark-------action
 -(void)logoutAction :(UIButton*)sender
 {
-    if(ApplicationDelegate.islogin == YES){
+    if(ApplicationDelegate.login == YES){
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"确认注销吗" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:@"取消", nil];
         [alert show];
     }else{
@@ -449,7 +433,7 @@
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (buttonIndex == 0) {
-        ApplicationDelegate.islogin = NO;
+        ApplicationDelegate.login = NO;
         [self.userInfoTableview reloadData];
         NSLog(@"注销了,要重新登录");
         [self setAlian:@"0"];
@@ -468,14 +452,5 @@
     [firVC setNavBarTitle:@"积分记录" withFont:14.0];
     [self.navigationController pushViewController:firVC animated:YES];
 }
-/*
- #pragma mark - Navigation
- 
- // In a storyboard-based application, you will often want to do a little preparation before navigation
- - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
- // Get the new view controller using [segue destinationViewController].
- // Pass the selected object to the new view controller.
- }
- */
 
 @end

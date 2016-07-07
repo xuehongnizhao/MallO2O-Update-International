@@ -209,25 +209,28 @@
 #pragma mark---------set default address
 -(void)setDefaultAddress :(userAddressInfo*)info
 {
-    NSString *url = [SwpTools swpToolGetInterfaceURL:@"takeout_address_default");
+    NSString *url = [SwpTools swpToolGetInterfaceURL:@"takeout_address_default"];
     NSDictionary *dict = @{
                            @"session_key":[UserModel shareInstance].session_key,
                            @"app_key":url,
                            @"as_id":info.as_id,
                            @"u_id":[UserModel shareInstance].u_id
                            };
-    [SVProgressHUD showWithStatus:@"正在设置，请稍候" maskType:SVProgressHUDMaskTypeClear];
-    [Base64Tool postSomethingToServe:url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        if ([param[@"code"] integerValue] == 200) {
+    [SVProgressHUD showWithStatus:@"正在设置，请稍候"];
+    
+    [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
             [SVProgressHUD dismiss];
             [self.delegate selectAddress:info.as_address phone:info.as_tel];
             [self.navigationController popViewControllerAnimated:YES];
         }else{
-            [SVProgressHUD showErrorWithStatus:param[@"message"]];
+            [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
         }
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络异常"];
-    }];
+
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
 }
 
 #pragma mark---------delete address
@@ -236,22 +239,26 @@
     if ([info.is_default integerValue]==1) {
         [SVProgressHUD showErrorWithStatus:@"默认收货地址不允许删除"];
     }else{
-        NSString *url = [SwpTools swpToolGetInterfaceURL:@"takeout_address_delete");
+        NSString *url = [SwpTools swpToolGetInterfaceURL:@"takeout_address_delete"];
         NSDictionary *dict = @{
                                @"app_key":url,
                                @"session_key":[UserModel shareInstance].session_key,
                                @"as_id":info.as_id,
                                @"u_id":[UserModel shareInstance].u_id
                                };
-        [Base64Tool postSomethingToServe:url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-            if ([param[@"code"] integerValue]==200) {
+        
+        [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+            if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
                 NSLog(@"删除成功");
             }else{
-                [SVProgressHUD showErrorWithStatus:param[@"message"]];
+                [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
             }
-        } andErrorBlock:^(NSError *error) {
-            [SVProgressHUD showErrorWithStatus:@"网络异常"];
-        }];
+
+            } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+                [SVProgressHUD showErrorWithStatus:@"网络异常"];
+                
+            }];
+
         [self.addressArray removeObject:info];
         [self.addressTableview reloadData];
     }
@@ -266,36 +273,31 @@
 
 -(void)getDataFormNet
 {
-    NSString *url = [SwpTools swpToolGetInterfaceURL:@"takeout_address");
+    NSString *url = [SwpTools swpToolGetInterfaceURL:@"takeout_address"];
     NSDictionary *dict = @{
                            @"app_key":url,
                            @"u_id":[UserModel shareInstance].u_id
                            };
-    [Base64Tool postSomethingToServe:url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        NSString *code = [NSString stringWithFormat:@"%@",[param objectForKey:@"code"]];
-        if ([code isEqualToString:@"200"]) {
+    
+    [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
             [self.addressArray removeAllObjects];
             [SVProgressHUD dismiss];
-            NSArray *tmpArray = [param objectForKey:@"obj"];
+            NSArray *tmpArray = [resultObject objectForKey:@"obj"];
             for (NSDictionary *dic in tmpArray) {
                 userAddressInfo *info = [[userAddressInfo alloc] initWithNSDictionary:dic];
                 [self.addressArray addObject:info];
             }
         }else{
-            [SVProgressHUD showErrorWithStatus:[param objectForKey:@"message"]];
+            [SVProgressHUD showErrorWithStatus:[resultObject objectForKey:@"message"]];
         }
         [self.addressTableview reloadData];
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络异常"];
-    }];
+
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
 }
-/*
-#pragma mark - Navigation
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
+
 
 @end

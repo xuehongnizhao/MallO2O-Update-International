@@ -596,7 +596,7 @@ linHangyeCommendViewDelegate>
             NSArray* moduleArray=[ccDisplayModel mj_objectArrayWithKeyValuesArray:param[@"obj"]];
             if (moduleArray.count!=0)
             {
-                self.commodityDisplayView =  [self mj_createDisplayViewWithModuleArray:moduleArray];
+                self.commodityDisplayView =  [self createDisplayViewWithModuleArray:moduleArray];
             }
             //
         }

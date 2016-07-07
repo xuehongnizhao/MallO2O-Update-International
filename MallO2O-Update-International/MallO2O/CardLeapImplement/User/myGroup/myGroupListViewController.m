@@ -35,7 +35,7 @@
     // Do any additional setup after loading the view.
     [self initData];
     [self setUI];
-    [self.myGroupTableview headerBeginRefreshing];
+    [self.myGroupTableview.mj_header beginRefreshing];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -108,35 +108,35 @@
 #pragma mark-----get data
 -(void)getDataFromNet
 {
-    NSString *url = [SwpTools swpToolGetInterfaceURL:@"my_group");
+    NSString *url = [SwpTools swpToolGetInterfaceURL:@"my_group"];
     NSDictionary *dict = @{
                            @"app_key":url,
                            @"u_id":[UserModel shareInstance].u_id,
                            @"page":[NSString stringWithFormat:@"%d",page],
                            @"status":cate_id
                            };
-    [Base64Tool postSomethingToServe:url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        if ([param[@"code"] integerValue]==200) {
+    [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
             if(page == 1)
             {
                 [myGroupArray removeAllObjects];
             }
-            NSArray *arr = param[@"obj"];
+            NSArray *arr = resultObject[@"obj"];
             for (NSDictionary *dic in arr) {
                 myGroupInfo *info = [[myGroupInfo alloc]initWithDictionary:dic];
                 [myGroupArray addObject:info];
             }
             [self.myGroupTableview reloadData];
         }else{
-            [SVProgressHUD showErrorWithStatus:param[@"message"]];
+            [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
         }
-        [self.myGroupTableview headerEndRefreshing];
-        [self.myGroupTableview footerEndRefreshing];
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络异常"];
-        [self.myGroupTableview headerEndRefreshing];
-        [self.myGroupTableview footerEndRefreshing];
-    }];
+  
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
+    [self.myGroupTableview.mj_header beginRefreshing];
+    [self.myGroupTableview.mj_footer beginRefreshing];
 }
 
 #pragma mark-----get UI
@@ -147,14 +147,8 @@
         _myGroupTableview.delegate = self;
         _myGroupTableview.dataSource = self;
         [UZCommonMethod hiddleExtendCellFromTableview:_myGroupTableview];
-        [_myGroupTableview addHeaderWithTarget:self action:@selector(headerBeginRefreshing)];
-        [_myGroupTableview addFooterWithTarget:self action:@selector(footerBeginRefreshing)];
-        _myGroupTableview.footerPullToRefreshText = @"上拉可以加载更多数据了";
-        _myGroupTableview.footerReleaseToRefreshText = @"松开马上加载更多数据了";
-        _myGroupTableview.footerRefreshingText = @"正在更新数据";
-        _myGroupTableview.headerPullToRefreshText = @"下拉可以刷新了";
-        _myGroupTableview.headerReleaseToRefreshText = @"松开马上刷新了";
-        _myGroupTableview.headerRefreshingText = @"马上回来";
+        _myGroupTableview.mj_header=[MJRefreshHeader headerWithRefreshingTarget:self refreshingAction:@selector(headerBeginRefreshing)];
+        _myGroupTableview.mj_footer=[MJRefreshFooter footerWithRefreshingTarget:self refreshingAction:@selector(footerBeginRefreshing)];
         if ([_myGroupTableview respondsToSelector:@selector(setSeparatorInset:)]) {
             [_myGroupTableview setSeparatorInset:UIEdgeInsetsMake(0,0,0,0)];
         }
@@ -261,17 +255,8 @@
 
 -(void)refreshAction
 {
-    [self.myGroupTableview headerBeginRefreshing];
+    [self.myGroupTableview.mj_header beginRefreshing];
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

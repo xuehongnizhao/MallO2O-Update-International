@@ -30,29 +30,23 @@
 @synthesize inputTextView = _inputTextView;
 @synthesize send ;
 - (id)init {
-     CGFloat my_height = SCREEN_HEIGHT-64-216*LinHeightPercent;
-    self = [super initWithFrame:CGRectMake(0, my_height, 320*LinPercent, 216*LinHeightPercent)];
+     CGFloat my_height = SCREEN_HEIGHT-64-216*Balance_Heith;
+    self = [super initWithFrame:CGRectMake(0, my_height, 320*Balance_Width, 216*Balance_Heith)];
     if (self) {
 
         self.isShow=NO;
-        self.inputTextView=[[UITextView alloc]initWithFrame:CGRectMake(0, 0, 320*LinPercent, 200)];
+        self.inputTextView=[[UITextView alloc]initWithFrame:CGRectMake(0, 0, 320*Balance_Width, 200)];
         self.backgroundColor = [UIColor colorWithRed:236.0/255.0 green:236.0/255.0 blue:236.0/255.0 alpha:1];
-//        NSLog(@"path=%@",[[NSBundle mainBundle] pathForResource:@"YBInput" ofType:@"bundle"]);
-//        NSString* bundlePath=[[NSBundle mainBundle] pathForResource:@"expression" ofType:@"plist"];
-//        NSBundle* bundle=[NSBundle bundleWithPath:bundlePath];
-//            _faceMap = [[NSDictionary dictionaryWithContentsOfFile:
-//                         [bundle pathForResource:@"face_map"
-//                                                         ofType:@"plist"]] retain];
         _faceMap=[[NSDictionary dictionaryWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"expression" ofType:@"plist"]] retain];
       //  NSLog(@"facemAP:%@",_faceMap);
 
         [[NSUserDefaults standardUserDefaults] setObject:_faceMap forKey:@"FaceMap"];
         [[NSUserDefaults standardUserDefaults] synchronize];
         //表情盘
-        faceView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, 0, 320*LinPercent, 190*LinHeightPercent)];
+        faceView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, 0, 320*Balance_Width, 190*Balance_Heith)];
         faceView.pagingEnabled = YES;
 //        faceView.layer.borderWidth = 1;
-        faceView.contentSize = CGSizeMake((FACE_COUNT_ALL / FACE_COUNT_PAGE + 1) * 320*LinPercent, 190*LinHeightPercent);
+        faceView.contentSize = CGSizeMake((FACE_COUNT_ALL / FACE_COUNT_PAGE + 1) * 320*Balance_Width, 190*Balance_Heith);
         faceView.showsHorizontalScrollIndicator = NO;
         faceView.showsVerticalScrollIndicator = NO;
         faceView.delegate = self;
@@ -65,11 +59,11 @@
                  forControlEvents:UIControlEventTouchUpInside];
             //计算每一个表情按钮的坐标和在哪一屏
             CGFloat x = (((i - 1) % FACE_COUNT_PAGE) % FACE_COUNT_CLU) *
-            (FACE_ICON_SIZE*LinPercent + 10) +20+ ((i - 1) / FACE_COUNT_PAGE * 320*LinPercent);
+            (FACE_ICON_SIZE*Balance_Width + 10) +20+ ((i - 1) / FACE_COUNT_PAGE * 320*Balance_Width);
             //NSLog(@"facbutton.x=%f",x);
-            CGFloat y = (((i - 1) % FACE_COUNT_PAGE) / FACE_COUNT_CLU) * (FACE_ICON_SIZE*LinPercent + 8)+20;
+            CGFloat y = (((i - 1) % FACE_COUNT_PAGE) / FACE_COUNT_CLU) * (FACE_ICON_SIZE*Balance_Width + 8)+20;
             //NSLog(@"facbuuton.y=%f",y);
-            faceButton.frame = CGRectMake( x, y, FACE_ICON_SIZE*LinPercent, FACE_ICON_SIZE*LinPercent);
+            faceButton.frame = CGRectMake( x, y, FACE_ICON_SIZE*Balance_Width, FACE_ICON_SIZE*Balance_Width);
             faceButton.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
             NSString* imagePath=[NSString stringWithFormat:@"Expression_%d.png",i];
             [faceButton setImage:[UIImage imageNamed:imagePath]
@@ -80,7 +74,7 @@
         }
         
         //添加PageControl
-        facePageControl = [[GrayPageControl alloc]initWithFrame:CGRectMake(110*LinPercent, 190*LinHeightPercent, 100, 20)];
+        facePageControl = [[GrayPageControl alloc]initWithFrame:CGRectMake(110*Balance_Width, 190*Balance_Heith, 100, 20)];
 //        facePageControl.layer.borderWidth = 1;
         [facePageControl addTarget:self
                             action:@selector(pageChange:)
@@ -99,7 +93,7 @@
         [back setImage:[UIImage imageNamed:@"del_emoji_normal"] forState:UIControlStateNormal];
         [back setImage:[UIImage imageNamed:@"del_emoji_select"] forState:UIControlStateSelected];
         [back addTarget:self action:@selector(backFace) forControlEvents:UIControlEventTouchUpInside];
-        back.frame = CGRectMake(272*LinPercent, 182*LinPercent, 38, 28);
+        back.frame = CGRectMake(272*Balance_Width, 182*Balance_Width, 38, 28);
         [self addSubview:back];
     }
 
@@ -115,7 +109,7 @@
 
 - (void)pageChange:(id)sender {
 
-    [faceView setContentOffset:CGPointMake(facePageControl.currentPage * 320*LinPercent, 0) animated:YES];
+    [faceView setContentOffset:CGPointMake(facePageControl.currentPage * 320*Balance_Width, 0) animated:YES];
     [facePageControl setCurrentPage:facePageControl.currentPage];
 }
 
@@ -154,14 +148,13 @@
 
         if ([self.send isEqualToString:@"1"])
         {
-            faceString = [NSString stringWithFormat:@"%@%@",self.inputTextView.text,faceString];
+            faceString = [NSMutableString stringWithFormat:@"%@%@",self.inputTextView.text,faceString];
             self.inputTextView.text = faceString;
             [delegate faceBoardTextViewDidChange:self.inputTextView andDelete:NO];
         }
         else
         {
             //发布
-            //faceString =[_faceMap objectForKey:[NSString stringWithFormat:@"%03d",i]];
             NSLog(@"faceString:%@",faceString);
             self.inputTextView.text = faceString;
             [delegate faceBoardTextViewDidChange:self.inputTextView andDelete:NO];

@@ -51,7 +51,7 @@
 
 -(void)viewDidAppear:(BOOL)animated
 {
-    if (ApplicationDelegate.islogin == NO) {
+    if (ApplicationDelegate.login == NO) {
         LoginViewController *firVC = [[LoginViewController alloc] init];
         [firVC setNavBarTitle:@"登录" withFont:14.0f];
         [self.navigationController pushViewController:firVC animated:YES];
@@ -115,33 +115,35 @@
 
 -(void)getDataFromNet
 {
-    NSString *url = [SwpTools swpToolGetInterfaceURL:@"my_takeout");
+    NSString *url = [SwpTools swpToolGetInterfaceURL:@"my_takeout"];
     NSDictionary *dict = @{
                            @"app_key":url,
                            @"page":[NSString stringWithFormat:@"%d",page],
                            @"u_id":[UserModel shareInstance].u_id,
                            @"where":cate_id
                            };
-    [Base64Tool  postSomethingToServe:url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        if ([param[@"code"] integerValue]==200) {
+    [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
             [SVProgressHUD dismiss];
             if (page == 1) {
                 [myOrderArray removeAllObjects];
             }
-            NSArray *arr = param[@"obj"];
+            NSArray *arr = resultObject[@"obj"];
             for (NSDictionary *dic in arr) {
                 myOrderCenterInfo *info = [[myOrderCenterInfo alloc] initWithDictionary:dic];
                 [myOrderArray addObject:info];
             }
             [self.myOrderTableview reloadData];
         }else{
-            [SVProgressHUD showErrorWithStatus:param[@"message"]];
+            [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
         }
-        [self.myOrderTableview headerEndRefreshing];
-        [self.myOrderTableview footerEndRefreshing];
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络异常"];
-    }];
+        [self.myOrderTableview.mj_header beginRefreshing];
+        [self.myOrderTableview.mj_footer beginRefreshing];
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
+
 }
 
 #pragma mark------get UI
@@ -153,14 +155,8 @@
         _myOrderTableview.dataSource = self;
         [UZCommonMethod hiddleExtendCellFromTableview:_myOrderTableview];
         _myOrderTableview.separatorInset = UIEdgeInsetsZero;
-        [_myOrderTableview addHeaderWithTarget:self action:@selector(headerBeginRefreshing)];
-        [_myOrderTableview addFooterWithTarget:self action:@selector(footerBeginRefreshing)];
-        _myOrderTableview.footerPullToRefreshText = @"上拉可以加载更多数据了";
-        _myOrderTableview.footerReleaseToRefreshText = @"松开马上加载更多数据了";
-        _myOrderTableview.footerRefreshingText = @"正在刷新";
-        _myOrderTableview.headerPullToRefreshText = @"下拉可以刷新了";
-        _myOrderTableview.headerReleaseToRefreshText = @"松开马上刷新了";
-        _myOrderTableview.headerRefreshingText = @"马上回来";
+        _myOrderTableview.mj_footer=[MJRefreshFooter footerWithRefreshingTarget:self refreshingAction:@selector(footerBeginRefreshing)];
+        _myOrderTableview.mj_header=[MJRefreshHeader headerWithRefreshingTarget:self refreshingAction:@selector(headerBeginRefreshing)];
         if ([_myOrderTableview respondsToSelector:@selector(setSeparatorInset:)]) {
             [_myOrderTableview setSeparatorInset:UIEdgeInsetsMake(0,0,0,0)];
         }
@@ -350,24 +346,11 @@
             }
             //判断支付成功 去跳转到支付成功页面  ---访问后台接口为准
             if ([resultDic[@"resultStatus"] integerValue] == 9000 && is_success) {
-                [self.myOrderTableview headerBeginRefreshing];
+                [self.myOrderTableview.mj_header beginRefreshing];
             }else{
-#pragma mark --- 12.10 去掉未支付订单自动删除的提示 by CC
-//                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"o2o助手" message:@"未支付订单将会在30分钟后自动删除" delegate:nil cancelButtonTitle:@"知道了" otherButtonTitles:nil, nil];
-//                [alert show];
             }
         }];
     }
 }
-
-/*
- #pragma mark - Navigation
- 
- // In a storyboard-based application, you will often want to do a little preparation before navigation
- - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
- // Get the new view controller using [segue destinationViewController].
- // Pass the selected object to the new view controller.
- }
- */
 
 @end

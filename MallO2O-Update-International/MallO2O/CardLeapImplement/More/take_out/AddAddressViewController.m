@@ -139,7 +139,7 @@
     if ([self checkValue]) {
         NSString *address = _address_T.text;
         NSString *phone = _phone_T.text;
-        NSString *url = [SwpTools swpToolGetInterfaceURL:@"takeout_address_insert");
+        NSString *url = [SwpTools swpToolGetInterfaceURL:@"takeout_address_insert"];
         NSDictionary *dict = @{
                                @"app_key":url,
                                @"u_id":[UserModel shareInstance].u_id,
@@ -148,17 +148,20 @@
                                @"as_tel":phone
                                };
         [SVProgressHUD showWithStatus:@"正在添加地址，请稍后"];
-        [Base64Tool postSomethingToServe:url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-            if ([param[@"code"] integerValue]==200) {
+        [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+            if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
                 [SVProgressHUD dismiss];
                 [self.delegate addAddressDelegate];
                 [self.navigationController popViewControllerAnimated:YES];
             }else{
-                [SVProgressHUD showErrorWithStatus:param[@"message"]];
+                [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
             }
-        } andErrorBlock:^(NSError *error) {
-            [SVProgressHUD showErrorWithStatus:@"网络异常"];
-        }];
+
+            } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+                [SVProgressHUD showErrorWithStatus:@"网络异常"];
+                
+            }];
+
     }
 }
 
@@ -169,21 +172,12 @@
     NSPredicate *pred = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", regex];
     BOOL isMatch = [pred evaluateWithObject:phone];
     if (!isMatch) {
-//        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"请输入正确的手机号码" delegate:nil cancelButtonTitle:@"知道了" otherButtonTitles:nil, nil];
-//        [alert show];
+
         [SVProgressHUD showErrorWithStatus:@"请输入正确的手机号码"];
         return NO;
     }
     return YES;
 }
-/*
-#pragma mark - Navigation
 
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

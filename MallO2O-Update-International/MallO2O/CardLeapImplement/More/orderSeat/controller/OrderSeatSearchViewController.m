@@ -99,23 +99,8 @@
  */
 - (void)setupRefresh
 {
-    // 1.下拉刷新(进入刷新状态就会调用self的headerRereshing)
-    [_LinGroupTableView addHeaderWithTarget:self action:@selector(headerRereshing)];
-    
-    // [_PostTableView headerEndRefreshing];
-    
-    // 2.上拉加载更多(进入刷新状态就会调用self的footerRereshing)
-    [_LinGroupTableView addFooterWithTarget:self action:@selector(footerRereshing)];
-    
-    // 设置文字(也可以不设置,默认的文字在MJRefreshConst中修改)
-    _LinGroupTableView.headerPullToRefreshText = @"下拉可以刷新了";
-    _LinGroupTableView.headerReleaseToRefreshText = @"松开马上刷新了";
-    _LinGroupTableView.headerRefreshingText = @" ";
-    
-    _LinGroupTableView.footerPullToRefreshText = @"上拉可以加载更多数据了";
-    _LinGroupTableView.footerReleaseToRefreshText = @"松开马上加载更多数据了";
-    _LinGroupTableView.footerRefreshingText = @" ";
-    
+    _LinGroupTableView.mj_footer=[MJRefreshFooter footerWithRefreshingTarget:self refreshingAction:@selector(footerBeginRefreshing)];
+    _LinGroupTableView.mj_header=[MJRefreshHeader headerWithRefreshingTarget:self refreshingAction:@selector(headerBeginRefreshing)];
 }
 
 /**
@@ -147,14 +132,6 @@
 #pragma mark 设置返回按钮和搜索按钮
 -(void)setBackButtonAndSearchButton
 {
-    //    UIButton* leftButton=[UIButton buttonWithType:UIButtonTypeCustom];
-    //    leftButton.frame=CGRectMake(0, 0, 44, 44);
-    //    [leftButton setImage:[UIImage imageNamed:@"news_back_no"] forState:UIControlStateNormal];
-    //    [leftButton setImage:[UIImage imageNamed:@"news_back_no"] forState:UIControlStateSelected];
-    //    leftButton.imageEdgeInsets=UIEdgeInsetsMake(0, -30, 0, 0);
-    //    [leftButton addTarget:self action:@selector(popViewController) forControlEvents:UIControlEventTouchUpInside];
-    //    self.navigationItem.leftBarButtonItem=[[UIBarButtonItem alloc]initWithCustomView:leftButton];
-    
     
     UIButton* rightButton=[UIButton buttonWithType:UIButtonTypeCustom];
     rightButton.frame=CGRectMake(0, 0, 44*Balance_Width, 30);
@@ -165,8 +142,6 @@
     rightButton.layer.borderColor = UIColorFromRGB(0xcd4a56).CGColor;
     rightButton.layer.masksToBounds = YES;
     rightButton.layer.cornerRadius = 3.0f;
-    //[rightButton setImage:[UIImage imageNamed:@"search_search"] forState:UIControlStateNormal];
-    //[rightButton setImage:[UIImage imageNamed:@"search_search"] forState:UIControlStateSelected];
     
     [rightButton addTarget:self action:@selector(searchPost) forControlEvents:UIControlEventTouchUpInside];
     self.navigationItem.rightBarButtonItem=[[UIBarButtonItem alloc]initWithCustomView:rightButton];
@@ -216,12 +191,12 @@
         
         if (![_u_lat isEqualToString:@"0"] && ![_u_lng isEqualToString:@"0"])
         {
-            [SVProgressHUD showWithStatus:@"搜索中..." maskType:SVProgressHUDMaskTypeBlack];
+            [SVProgressHUD showWithStatus:@"搜索中..."];
             NSString *city_id = [[NSUserDefaults standardUserDefaults]objectForKey:KCityID];
             if (city_id == nil) {
                 city_id = @"0";
             }
-            NSString *url = SEARCH_SEAT_POST;
+            NSString *url = [SwpTools swpToolGetInterfaceURL:@"seat_shop"];
             NSDictionary* dict=@{
                                  @"app_key":url,
                                  @"area_id":@"0",
@@ -233,15 +208,13 @@
                                  @"like":_searchBar.text,
                                  @"city_id":city_id
                                  };
-            
-            [Base64Tool postSomethingToServe:url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-                if ([[param objectForKey:@"code"] integerValue]==200)
-                {
+            [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+                if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
                     [SVProgressHUD dismiss];
                     //字典数组转换模型数组
-                    NSLog(@"%@",[param objectForKey:@"obj"]);
+                    NSLog(@"%@",[resultObject objectForKey:@"obj"]);
                     NSMutableArray *array = [[NSMutableArray alloc] init];
-                    NSArray *tmpArr = [param objectForKey:@"obj"];
+                    NSArray *tmpArr = [resultObject objectForKey:@"obj"];
                     for (NSDictionary *dic in tmpArr) {
                         orderSeatInfo *info = [[orderSeatInfo alloc] initWithDictionary:dic];
                         [array addObject:info];
@@ -252,13 +225,13 @@
                     if (isMore)
                     {
                         [postDataSourceArray addObjectsFromArray:array];
-                        [_LinGroupTableView footerEndRefreshing];
+                        [_LinGroupTableView.mj_footer beginRefreshing];
                     }
                     else
                     {
                         [postDataSourceArray removeAllObjects];
                         [postDataSourceArray addObjectsFromArray:array];
-                        [_LinGroupTableView headerEndRefreshing];
+                        [_LinGroupTableView.mj_header beginRefreshing];
                     }
                     if (postDataSourceArray.count!=0)
                     {
@@ -275,9 +248,12 @@
                 {
                     NSLog(@"搜索帖子数据异常");
                 }
-            } andErrorBlock:^(NSError *error) {
-                [SVProgressHUD showErrorWithStatus:@"暂无该类信息"];
-            }];
+
+                } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+                    [SVProgressHUD showErrorWithStatus:@"网络异常"];
+                    
+                }];
+
             
         }
         else
@@ -506,20 +482,11 @@
         isShowHistory=YES;
         [postDataSourceArray removeAllObjects];
         //tableView取消刷新控件
-        [_LinGroupTableView removeHeader];
-        [_LinGroupTableView removeFooter];
+        [_LinGroupTableView.mj_header removeFromSuperview];
+        [_LinGroupTableView.mj_footer removeFromSuperview];
         [_LinGroupTableView reloadData];
     }
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

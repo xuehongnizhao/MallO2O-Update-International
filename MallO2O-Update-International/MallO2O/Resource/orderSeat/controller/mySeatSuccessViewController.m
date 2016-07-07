@@ -40,22 +40,26 @@
 #pragma mark-----get Data From
 -(void)getDataFromNet
 {
-    NSString *url = connect_url(@"seat_order_status");
+    NSString *url = [SwpTools swpToolGetInterfaceURL:@"seat_order_status"];
     NSDictionary *dict = @{
                            @"app_key":url,
                            @"seat_id":self.seat_id
                            };
-    [Base64Tool postSomethingToServe:url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        if ([param[@"code"] integerValue] == 200) {
+    [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
             [SVProgressHUD dismiss];
-            messageInfo = [[orderSeatSuccessInfo alloc] initWithDictionary:param[@"obj"]];
+            messageInfo = [[orderSeatSuccessInfo alloc] initWithDictionary:resultObject[@"obj"]];
             [self.mySeatTableview reloadData];
         }else{
-            [SVProgressHUD showErrorWithStatus:param[@"message"]];
+            [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
         }
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络异常"];
-    }];
+
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
+        
+
 }
 
 #pragma mark-----set UI
@@ -71,13 +75,13 @@
     [_backToShopButton autoPinEdgeToSuperviewEdge:ALEdgeLeft withInset:20.0f];
     [_backToShopButton autoPinEdge:ALEdgeTop toEdge:ALEdgeBottom ofView:_mySeatTableview withOffset:20.0f];
     [_backToShopButton autoSetDimension:ALDimensionHeight toSize:40.0f];
-    [_backToShopButton autoSetDimension:ALDimensionWidth toSize:130.0f*LinPercent];
+    [_backToShopButton autoSetDimension:ALDimensionWidth toSize:130.0f*Balance_Width];
     
     [self.view addSubview:self.shareToFriendButton];
     [_shareToFriendButton autoPinEdgeToSuperviewEdge:ALEdgeRight withInset:20.0f];
     [_shareToFriendButton autoPinEdge:ALEdgeTop toEdge:ALEdgeBottom ofView:_mySeatTableview withOffset:20.0f];
     [_shareToFriendButton autoSetDimension:ALDimensionHeight toSize:40.0f];
-    [_shareToFriendButton autoSetDimension:ALDimensionWidth toSize:130.0f*LinPercent];
+    [_shareToFriendButton autoSetDimension:ALDimensionWidth toSize:130.0f*Balance_Width];
     
 }
 #pragma mark-----get UI
@@ -141,7 +145,6 @@
         orderSeatDetailViewController *firVC = [[orderSeatDetailViewController alloc] init];
         [firVC setHiddenTabbar:YES];
         [firVC setNavBarTitle:messageInfo.shop_name withFont:14.0f];
-//        [firVC.navigationItem setTitle:messageInfo.shop_name];
         firVC.shop_id = messageInfo.shop_id;
         [self.navigationController pushViewController:firVC animated:YES];
     }
@@ -206,75 +209,21 @@
                                 shareToSnsNames:@[UMShareToSms,UMShareToWechatSession]
                                        delegate:self];
     
-//    [UMSocialData defaultData].extConfig.wechatTimelineData.shareText = @"城市o2o";
-//    [UMSocialData defaultData].extConfig.wechatTimelineData.url = url;
-//    
-//    [UMSocialData defaultData].extConfig.wechatSessionData.title = @"城市o2o";
-//    [UMSocialData defaultData].extConfig.wechatSessionData.url = url;
-//    
-//    [UMSocialData defaultData].extConfig.qzoneData.title = @"城市o2o";
-//    [UMSocialData defaultData].extConfig.qzoneData.url = url;
-//    
-//    [UMSocialData defaultData].extConfig.sinaData.shareText = @"城市o2o";
-//    [UMSocialData defaultData].extConfig.sinaData.urlResource.url = @"www.baidu.com";
 }
-#warning 11.28 点击分享按钮就加积分
 - (void) UserSharePoint {
-    if (ApplicationDelegate.islogin == YES) {
-        NSString *url = connect_url(@"share_point");
+    if (ApplicationDelegate.login == YES) {
+        NSString *url = [SwpTools swpToolGetInterfaceURL:@"share_point"];
         NSDictionary *dict = @{
                                @"app_key":url,
                                @"u_id":[UserModel shareInstance].u_id
                                };
-        [Base64Tool postSomethingToServe:url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-            if ([param[@"code"] integerValue]==200) {
-//                [SVProgressHUD showSuccessWithStatus:@"分享成功"];
+        [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+            if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
             }
-        } andErrorBlock:^(NSError *error) {
-            [SVProgressHUD showErrorWithStatus:@"网络异常"];
-        }];
-    }else{
-        [SVProgressHUD showErrorWithStatus:@"您尚未登录，无法给您增加积分"];
-    }
-}
-#pragma mark--------分享回掉方法（弃用）
--(void)didFinishGetUMSocialDataInViewController1:(UMSocialResponseEntity *)response
-{
-    NSLog(@"分享完成，去执行接口增加积分");
-    NSLog(@"进入代理方法");
-    //根据`responseCode`得到发送结果,如果分享成功
-    if(response.responseCode == UMSResponseCodeSuccess)
-    {
-        [SVProgressHUD showSuccessWithStatus:@"分享成功"];
-        if (ApplicationDelegate.islogin == YES) {
-            NSString *url = connect_url(@"share_point");
-            NSDictionary *dict = @{
-                                   @"app_key":url,
-                                   @"u_id":[UserModel shareInstance].u_id
-                                   };
-            [Base64Tool postSomethingToServe:url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-                if ([param[@"code"] integerValue]==200) {
-                    [SVProgressHUD showSuccessWithStatus:@"分享成功"];
-                }
-            } andErrorBlock:^(NSError *error) {
+            } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
                 [SVProgressHUD showErrorWithStatus:@"网络异常"];
+                
             }];
-        }else{
-            [SVProgressHUD showErrorWithStatus:@"您尚未登录，无法给您增加积分"];
-        }
-    }
-    else if (response.responseCode == UMSResponseCodeFaild){
-        [SVProgressHUD showSuccessWithStatus:@"分享失败"];
     }
 }
-
-/*
-#pragma mark - Navigation
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
-
 @end

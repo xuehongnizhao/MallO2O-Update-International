@@ -110,7 +110,7 @@
 -(void)finishAction:(UIButton*)sender
 {
     //评价 之后跳转会评价列表页面
-    NSString *url = [SwpTools swpToolGetInterfaceURL:@"takeout_add_review");
+    NSString *url = [SwpTools swpToolGetInterfaceURL:@"takeout_add_review"];
     NSString *text = self.userInput_T.text;
     if (text == nil || [text isEqualToString:@""] == YES) {
         text = @" ";
@@ -125,17 +125,20 @@
                                @"shop_id":self.info.shop_id,
                                @"order_id":self.order_id
                                };
-        [Base64Tool postSomethingToServe:url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-            if ([param[@"code"] integerValue]==200) {
-                [SVProgressHUD dismiss];
-                [self.delegate finishDelegateAction:self.index];
-                [self.navigationController popViewControllerAnimated:YES];
-            }else{
-                [SVProgressHUD showErrorWithStatus:param[@"message"]];
-            }
-        } andErrorBlock:^(NSError *error) {
+    [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
+            [SVProgressHUD dismiss];
+            [self.delegate finishDelegateAction:self.index];
+            [self.navigationController popViewControllerAnimated:YES];
+        }else{
+            [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
+        }
+
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
             [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
         }];
+
 }
 
 -(BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
@@ -150,14 +153,6 @@
     return YES;
 }
 
-/*
-#pragma mark - Navigation
 
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

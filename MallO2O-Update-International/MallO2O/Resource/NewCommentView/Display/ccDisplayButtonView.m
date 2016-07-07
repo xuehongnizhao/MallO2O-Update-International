@@ -124,7 +124,7 @@
     if (!_buttonLabel)
     {
         _buttonLabel=[[UILabel alloc]initForAutoLayout];
-        _buttonLabel.font=[UIFont systemFontOfSize:11*LinPercent];
+        _buttonLabel.font=[UIFont systemFontOfSize:11*Balance_Width];
         _buttonLabel.textColor = UIColorFromRGB(indexTitle);
         _buttonLabel.textAlignment=NSTextAlignmentCenter;
     }

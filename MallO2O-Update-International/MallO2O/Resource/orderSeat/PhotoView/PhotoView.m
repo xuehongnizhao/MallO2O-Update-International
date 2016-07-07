@@ -29,7 +29,7 @@
         flowLayout.scrollDirection=UICollectionViewScrollDirectionVertical;
         flowLayout.itemSize=CGSizeMake(IMAGE_SIZE, IMAGE_SIZE);
         
-        photoCollectionView=[[UICollectionView alloc]initWithFrame:CGRectMake(10, 0, 300*LinPercent, 216*LinHeightPercent) collectionViewLayout:flowLayout];
+        photoCollectionView=[[UICollectionView alloc]initWithFrame:CGRectMake(10, 0, 300*Balance_Width, 216*Balance_Heith) collectionViewLayout:flowLayout];
 //        photoCollectionView.layer.borderWidth = 1;
         [photoCollectionView registerClass:[imageCell class] forCellWithReuseIdentifier:@"collectionCell"];
         photoCollectionView.backgroundColor=[UIColor whiteColor];
@@ -52,7 +52,7 @@
 }
 -(void)reloaddata
 {
-    NSLog(@"photoarray.count:%ld",self.photoArray.count);
+    NSLog(@"photoarray.count:%d",self.photoArray.count);
     if (self.photoArray.count<9)
     {
         [self.photoArray addObject:[UIImage imageNamed:@"issue_add_sel"]];
@@ -66,7 +66,7 @@
 }
 -(void)addNewsImageArray:(NSArray *)newArray
 {
-    NSLog(@"newArray:%ld",newArray.count);
+    NSLog(@"newArray:%d",newArray.count);
     [self.photoArray removeAllObjects];
     [self.photoArray addObjectsFromArray:newArray];
     [self reloaddata];
@@ -135,13 +135,13 @@
 
 #pragma mark @@@@ ----> 返回每个cell的大小
 - (CGSize) collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
-    return CGSizeMake(60*LinPercent, 60*LinHeightPercent);
+    return CGSizeMake(60*Balance_Width, 60*Balance_Heith);
 }
 
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSLog(@"self.photoArray.count=%ld",self.photoArray.count);
-    NSLog(@"indexPath.row=%ld",indexPath.row);
+    NSLog(@"self.photoArray.count=%d",self.photoArray.count);
+    NSLog(@"indexPath.row=%d",indexPath.row);
     if (self.isAddImage==YES)
     {
         if (indexPath.row<[self.photoArray count]-1&&[self.photoArray count]<=9)
@@ -161,14 +161,5 @@
             [self.delegate showBrowserWithIndex:indexPath.row];
     }
 }
-
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect
-{
-    // Drawing code
-}
-*/
 
 @end

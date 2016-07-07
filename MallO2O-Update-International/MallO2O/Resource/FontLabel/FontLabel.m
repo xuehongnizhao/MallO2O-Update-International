@@ -190,6 +190,5 @@
 - (void)dealloc {
 	[zFont release];
 	[zAttributedText release];
-	[super dealloc];
 }
 @end

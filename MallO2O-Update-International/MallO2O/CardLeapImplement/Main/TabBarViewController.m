@@ -7,7 +7,6 @@
 //
 
 #import "TabBarViewController.h"
-#import "ContactViewController.h"
 #import "ExtraViewController.h"
 #import "HomeViewController.h"
 #import "MoreViewController.h"
@@ -18,7 +17,6 @@
 #import "LoginViewController.h"
 #import "UserInfoViewController.h"
 #import "ShopListViewController.h"
-#import "LinFriendCircleController.h"
 
 @interface TabBarViewController ()<RDVTabBarControllerDelegate>
 {
@@ -35,8 +33,6 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     [self setupViewControllers];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(UnHomeHint:) name:NOTIFICATION_ROOT_NEW_MESSAGE object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(UnLexiangHint:) name:NOTIFICATION_CIRCLE_NEW_MESSAGE object:nil];
     isReply = NO;
     count = @"0";
 }
@@ -242,13 +238,5 @@
     return _circleImage;
 }
 
-/*
-#pragma mark - Navigation
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

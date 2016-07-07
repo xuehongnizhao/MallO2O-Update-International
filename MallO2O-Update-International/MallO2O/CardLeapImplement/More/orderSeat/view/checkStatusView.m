@@ -55,15 +55,15 @@
 -(void)updateOrderState
 {
     if (![self.identifier isEqualToString:@"1"]) {
-        NSString *url = [SwpTools swpToolGetInterfaceURL:@"seat_status");
+        NSString *url = [SwpTools swpToolGetInterfaceURL:@"seat_status"];
         NSDictionary *dict = @{
                                @"app_key":url,
                                @"seat_id":self.seat_id
                                };
-        [Base64Tool postSomethingToServe:url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-            if ([param[@"code"] integerValue]==200) {
+        [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+            if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
                 [SVProgressHUD dismiss];
-                if ([[param[@"obj"] objectForKey:@"is_status"] integerValue]==1) {
+                if ([[resultObject[@"obj"] objectForKey:@"is_status"] integerValue]==1) {
                     [self removeFromSuperview];
                     [timer invalidate];
                     [self.delegate orderSuccessAction];
@@ -71,34 +71,40 @@
                     
                 }
             }else{
-                [SVProgressHUD showErrorWithStatus:param[@"message"]];
+                [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
             }
-        } andErrorBlock:^(NSError *error) {
-            [SVProgressHUD showErrorWithStatus:@"网络异常"];
-        }];
-    }else{
-        NSString *url = [SwpTools swpToolGetInterfaceURL:@"hotel_status");
+
+            } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+                [SVProgressHUD showErrorWithStatus:@"网络异常"];
+                
+            }];
+
+        }else{
+        NSString *url = [SwpTools swpToolGetInterfaceURL:@"hotel_status"];
         NSDictionary *dict = @{
                                @"app_key":url,
                                @"hotel_id":self.seat_id
                                };
-        [Base64Tool postSomethingToServe:url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-            if ([param[@"code"] integerValue]==200) {
-                [SVProgressHUD dismiss];
-                if ([[param[@"obj"] objectForKey:@"is_status"] integerValue]==1) {
-                    [self removeFromSuperview];
-                    [timer invalidate];
-                    [self.delegate orderSuccessAction];
+            [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+                if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
+                    [SVProgressHUD dismiss];
+                    if ([[resultObject[@"obj"] objectForKey:@"is_status"] integerValue]==1) {
+                        [self removeFromSuperview];
+                        [timer invalidate];
+                        [self.delegate orderSuccessAction];
+                    }else{
+                        
+                    }
                 }else{
-                    
+                    [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
                 }
-            }else{
-                [SVProgressHUD showErrorWithStatus:param[@"message"]];
-            }
-        } andErrorBlock:^(NSError *error) {
-            [SVProgressHUD showErrorWithStatus:@"网络异常"];
-        }];
-    }
+
+                } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+                    [SVProgressHUD showErrorWithStatus:@"网络异常"];
+                    
+                }];
+
+          }
 }
 
 #pragma mark-----set UI

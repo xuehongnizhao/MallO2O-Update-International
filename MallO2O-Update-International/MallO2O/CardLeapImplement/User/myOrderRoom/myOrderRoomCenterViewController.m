@@ -81,14 +81,8 @@
         _myOrderRoomTableview.dataSource = self;
         _myOrderRoomTableview.separatorInset = UIEdgeInsetsZero;
         [UZCommonMethod hiddleExtendCellFromTableview:_myOrderRoomTableview];
-        [_myOrderRoomTableview addHeaderWithTarget:self action:@selector(headerBeginRefreshing)];
-        [_myOrderRoomTableview addFooterWithTarget:self action:@selector(footerBeginRefreshing)];
-        _myOrderRoomTableview.footerPullToRefreshText = @"上拉可以加载更多数据了";
-        _myOrderRoomTableview.footerReleaseToRefreshText = @"松开马上加载更多数据了";
-        _myOrderRoomTableview.footerRefreshingText = @"正在加载数据";
-        _myOrderRoomTableview.headerPullToRefreshText = @"下拉可以刷新了";
-        _myOrderRoomTableview.headerReleaseToRefreshText = @"松开马上刷新了";
-        _myOrderRoomTableview.headerRefreshingText = @"马上回来";
+        _myOrderRoomTableview.mj_footer=[MJRefreshFooter footerWithRefreshingTarget:self refreshingAction:@selector(footerBeginRefreshing)];
+        _myOrderRoomTableview.mj_header=[MJRefreshHeader headerWithRefreshingTarget:self refreshingAction:@selector(headerBeginRefreshing)];
         if ([_myOrderRoomTableview respondsToSelector:@selector(setSeparatorInset:)]) {
             [_myOrderRoomTableview setSeparatorInset:UIEdgeInsetsMake(0,0,0,0)];
         }
@@ -126,7 +120,7 @@
 #pragma mark---------get data
 -(void)getDataFromNet
 {
-    NSString *url = [SwpTools swpToolGetInterfaceURL:@"my_hotel");
+    NSString *url = [SwpTools swpToolGetInterfaceURL:@"my_hotel"];
     NSDictionary *dict = @{
                            @"app_key":url,
                            @"hotel_status":cate_id,
@@ -134,9 +128,9 @@
                            @"session_key":[UserModel shareInstance].session_key,
                            @"page":[NSString stringWithFormat:@"%d",page]
                            };
-    [Base64Tool postSomethingToServe:url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        if ([param[@"code"] integerValue]==200) {
-            NSArray *arr = param[@"obj"];
+    [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
+            NSArray *arr = resultObject[@"obj"];
             if (page ==  1) {
                 [myOrderSeatArray removeAllObjects];
             }
@@ -146,14 +140,16 @@
             }
             [self.myOrderRoomTableview reloadData];
         }else{
-            [SVProgressHUD showErrorWithStatus:param[@"message"]];
+            [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
         }
-        [self.myOrderRoomTableview footerEndRefreshing];
-        [self.myOrderRoomTableview
-         headerEndRefreshing];
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络异常"];
-    }];
+        [self.myOrderRoomTableview.mj_header beginRefreshing];
+        [self.myOrderRoomTableview.mj_footer beginRefreshing];
+
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
+
 }
 
 #pragma mark------tableview delegate
@@ -238,14 +234,5 @@
     [self getDataFromNet];
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

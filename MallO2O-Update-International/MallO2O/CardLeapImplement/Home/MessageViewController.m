@@ -82,27 +82,27 @@
  */
 - (void) viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-//    // 获取私信
-//    if (ApplicationDelegate.islogin == NO) {
-//        if (self.isGetPrivate) {
-//            [self selectButton:self.privateButton];
-//        } else {
-//            [self selectButton:self.publicButton];
-//        }
-//    }else{
-//        if (self.isGetPrivate == NO) {
-//            [self selectButton:self.privateButton];
-//        } else {
-//            [self selectButton:self.publicButton];
-//        }
-//    }
+    //    // 获取私信
+    //    if (ApplicationDelegate.islogin == NO) {
+    //        if (self.isGetPrivate) {
+    //            [self selectButton:self.privateButton];
+    //        } else {
+    //            [self selectButton:self.publicButton];
+    //        }
+    //    }else{
+    //        if (self.isGetPrivate == NO) {
+    //            [self selectButton:self.privateButton];
+    //        } else {
+    //            [self selectButton:self.publicButton];
+    //        }
+    //    }
 }
 
 - (void) viewDidDisappear:(BOOL)animated {
     
     [super viewDidDisappear:animated];
-
-//    [self.messageArray removeAllObjects];
+    
+    //    [self.messageArray removeAllObjects];
 }
 
 #pragma mark ----- 初始化控件
@@ -231,9 +231,8 @@
         messageTableView.dataSource = self;
         messageTableView.delegate   = self;
         messageTableView.rowHeight  = 60;
-        
-        messageTableView.mj_header=[MJRefreshHeader headerWithRefreshingTarget:self refreshingAction:@selector(upLoad)];
-        messageTableView.mj_footer=[MJRefreshFooter footerWithRefreshingTarget:self refreshingAction:@selector(downRefresh)];
+        messageTableView.mj_footer=[MJRefreshFooter footerWithRefreshingTarget:self refreshingAction:@selector(upLoad)];
+        messageTableView.mj_header=[MJRefreshHeader headerWithRefreshingTarget:self refreshingAction:@selector(downRefresh)];
         
         if ([messageTableView respondsToSelector:@selector(setSeparatorInset:)]) {
             [messageTableView setSeparatorInset:UIEdgeInsetsMake(0,0,0,0)];
@@ -320,18 +319,19 @@
  *  网络获取 公告数据
  */
 - (void) getPublicData {
+    
     NSString *typePage  = [NSString stringWithFormat:@"%ld", (long)self.page];
     self.isPublicChange = YES;
-    NSString *url       = [SwpTools swpToolGetInterfaceURL:@"message_list"];
+    NSString *url       =  [SwpTools swpToolGetInterfaceURL:@"message_list"];
     NSDictionary *dict  = @{
-                           @"app_key" : url,
-                           @"page"    : typePage,
-                           };
-    SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+                            @"app_key" : url,
+                            @"page"    : typePage,
+                            };
+    [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
         [self.messageTableView.mj_header beginRefreshing];
         [self.messageTableView.mj_footer beginRefreshing];
         if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
-        
+ 
                 NSMutableArray *array = resultObject[@"obj"];
                 [SVProgressHUD dismiss];
                 if (array.count != 0) {
@@ -344,32 +344,32 @@
                 [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
             }
 
-    } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
-        [SVProgressHUD showErrorWithStatus:@"网络异常！"];
-
-    }
-
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
+        
+}
 
 /**
  *  获取 私信的数据
  */
 - (void) getPrivateData {
-    NSString *typePage  = [NSString stringWithFormat:@"%ld", self.page];
+    NSString *typePage  = [NSString stringWithFormat:@"%d", self.page];
     self.isPublicChange = NO;
-    NSString  *url      = ALL_URL(@"my_message_list");
+    NSString  *url      = [SwpTools swpToolGetInterfaceURL:@"my_message_list"];
     UserModel *user     = [UserModel shareInstance];
     NSDictionary *dict  = @{
-                           @"app_key" : url,
-                           @"u_id"    : user.u_id,
-                           @"page"    : typePage,
-                           };
-    
-    [Base64Tool postSomethingToServe:url andParams:dict isBase64:YES CompletionBlock:^(id param) {
-        
-        [self.messageTableView headerEndRefreshing];
-        [self.messageTableView footerEndRefreshing];
-        if ([param[@"code"] isEqualToString:@"200"]) {
-            NSMutableArray *array = param[@"obj"];
+                            @"app_key" : url,
+                            @"u_id"    : user.u_id,
+                            @"page"    : typePage,
+                            };
+    [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
+            [self.messageTableView.mj_header beginRefreshing];
+            [self.messageTableView.mj_footer beginRefreshing];
+
+            NSMutableArray *array = resultObject[@"obj"];
             [SVProgressHUD dismiss];
             if (self.page == 1) {
                 [self.messageArray removeAllObjects];
@@ -377,15 +377,16 @@
             if (array.count != 0) {
                 self.messageArray = [self privateDataTreatment:array];
             } else {
-                //[SVProgressHUD showErrorWithStatus:@"没有数据啦！"];
             }
             [self.messageTableView reloadData];
         } else {
-            [SVProgressHUD showErrorWithStatus:param[@"message"]];
+            [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
         }
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络不给力！"];
-    }];
+
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
 }
 
 /**
@@ -394,7 +395,7 @@
  *  @return BOOL
  */
 - (BOOL) isLogin {
-    if (!ApplicationDelegate.islogin) {
+    if (!ApplicationDelegate.login) {
         LoginViewController *login = [[LoginViewController alloc] init];
         [self.navigationController pushViewController:login animated:YES];
         return NO;
@@ -410,7 +411,7 @@
  *  @return NSMutableArray
  */
 - (NSMutableArray *) publicDataTreatment:(NSMutableArray *)param {
-
+    
     NSMutableArray *array = [NSMutableArray array];
     
     if (self.page != 1) {
@@ -485,7 +486,7 @@
  *  @return NSInteger
  */
 - (UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-
+    
     PublicAndPrivateMessageTableViewCell *cell = [PublicAndPrivateMessageTableViewCell publicAndPrivateMessageWithTableView:tableView];
     
     if ([cell respondsToSelector:@selector(setSeparatorInset:)]) {
@@ -508,12 +509,12 @@
     
     self.page = 1;
     if (self.isPublicChange) {
-//        [self getPublicData];
+        //        [self getPublicData];
         [self selectButton:self.publicButton];
     } else {
-
+        
         [self selectButton:self.privateButton];
-//        [self getPrivateData];
+        //        [self getPrivateData];
     }
 }
 
@@ -524,24 +525,17 @@
     
     self.page++;
     if (self.isPublicChange) {
-//        [self selectButton:self.publicButton];
+        //        [self selectButton:self.publicButton];
         [self getPublicData];
     } else {
-//        [self selectButton:self.privateButton];
+        //        [self selectButton:self.privateButton];
         [self getPrivateData];
     }
 }
 
 
-#pragma mark ----- UITableView delegate
-/**
- *  UITableView  代理方法 点击了 每个Cell(跳转详情)
- *
- *  @param tableView
- *  @param indexPath
- */
 - (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-
+    
     PublicAndPrivateMessageFrame *mseeageFrame = self.messageArray[indexPath.row];
     MessageInfoViewController    *messageInfo  = [[MessageInfoViewController alloc] init];
     messageInfo.message_url = mseeageFrame.message.message_url;

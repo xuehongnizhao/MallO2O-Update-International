@@ -270,7 +270,7 @@
     }
 
     UserModel    *user  = [UserModel shareInstance];
-    NSString     *url   = ALL_URL(@"edit_pass");
+    NSString     *url   = [SwpTools swpToolGetInterfaceURL:@"edit_pass"];
     NSDictionary *dict  = @{
                             @"app_key"     : url,
                             @"session_key" : user.session_key,
@@ -280,18 +280,21 @@
                             };
     
     // POST 接口
-    [Base64Tool postSomethingToServe:url andParams:dict isBase64:YES CompletionBlock:^(id param) {
-        if ([param[@"code"] isEqualToString:@"200"]) {
-            [SVProgressHUD showSuccessWithStatus:param[@"message"]];
+    [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
+            [SVProgressHUD showSuccessWithStatus:resultObject[@"message"]];
             [self.navigationController popViewControllerAnimated:YES];
         } else {
-            [SVProgressHUD showErrorWithStatus:param[@"message"]];
+            [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
         }
         
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络异常！"];
-    }];
 
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
+
+  
 }
 
 
@@ -317,7 +320,7 @@
         return NO;
     }
     
-    if (![self.oldPasswordView.text isEqualToString:userDefault(@"PASSWORD")]) {
+    if (![self.oldPasswordView.text isEqualToString:GetUserDefault(@"PASSWORD")]) {
         [SVProgressHUD showErrorWithStatus:@"原密码不正确"];
         return NO;
     }

@@ -19,7 +19,7 @@
 #import "TabBarViewController.h"
 //忘记密码
 #import "ForgetPasswordViewController.h"
-#import "APService.h"
+#import "JPUSHService.h"
 
 @interface LoginViewController ()<UITextFieldDelegate,clickButtonDelegate,UMSocialUIDelegate>
 {
@@ -144,8 +144,8 @@
         UIView *myView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 30, 30)];
         [myView addSubview:passImage];
         _passWord.leftView = myView;
-        if (userDefault(@"PASSWORD")!=nil) {
-            _passWord.text=userDefault(@"PASSWORD");
+        if (GetUserDefault(@"PASSWORD")!=nil) {
+            _passWord.text=GetUserDefault(@"PASSWORD");
         }
     }
     return _passWord;
@@ -174,8 +174,8 @@
         UIView *myView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 30, 30)];
         [myView addSubview:passImage];
         _userName.leftView = myView;
-        if (userDefault(@"USERNAME")!=nil) {
-            _userName.text=userDefault(@"USERNAME");
+        if (GetUserDefault(@"USERNAME")!=nil) {
+            _userName.text=GetUserDefault(@"USERNAME");
         }
     }
     return _userName;
@@ -262,19 +262,20 @@
                               @"th_id":@"0",
                               @"baidu_id":baidu_id
                               };
-        [SVProgressHUD showWithStatus:@"正在登录" maskType:SVProgressHUDMaskTypeClear];
-        [Base64Tool postSomethingToServe:USER_LOGIN andParams:dic isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-            NSString *code = [NSString stringWithFormat:@"%@",[param objectForKey:@"code"]];
-            if ([code isEqualToString:@"200"]) {
+        [SVProgressHUD showWithStatus:@"正在登录" ];
+        [SwpRequest swpPOST:USER_LOGIN parameters:dic isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+            if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
                 [SVProgressHUD dismiss];
-                NSDictionary *userDic = [param objectForKey:@"obj"];
+                NSDictionary *userDic = [resultObject objectForKey:@"obj"];
                 [self loginSuccess:userDic];
             }else{
-                [SVProgressHUD showErrorWithStatus:[param objectForKey:@"message"]];
+                [SVProgressHUD showErrorWithStatus:[resultObject objectForKey:@"message"]];
             }
-        } andErrorBlock:^(NSError *error) {
-            [SVProgressHUD showErrorWithStatus:@"网络不给力"];
-        }];
+
+            } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+                [SVProgressHUD showErrorWithStatus:@"网络异常"];
+                
+            }];
     }else{
         [SVProgressHUD showErrorWithStatus:@"请正确填写用户名和密码"];
     }
@@ -294,7 +295,7 @@
     [UserModel shareInstance].user_nickname = [userDic objectForKey:@"user_nickname"];
     [UserModel shareInstance].pay_point = [userDic objectForKey:@"pay_point"];
     //登录状态
-    ApplicationDelegate.islogin = YES;
+    ApplicationDelegate.login = YES;
     //记录手机号，密码
     NSString *userName = self.userName.text;
     NSString *passWord = self.passWord.text;
@@ -304,7 +305,7 @@
     [[NSUserDefaults standardUserDefaults] synchronize];
     //跳转个人信息界面
     NSLog(@"登录成功了，该去做点别的了");
-    NSString *baidu_id = userDefault(@"baidu_id");
+    NSString *baidu_id = GetUserDefault(@"baidu_id");
     
     baidu_id = [NSString stringWithFormat:@"%@%@",baidu_id,[UserModel shareInstance].u_id];
     [self setAlian:baidu_id];
@@ -372,17 +373,16 @@
                           @"th_id":usid,
                           @"baidu_id":baidu_id
                           };
-    [SVProgressHUD showWithStatus:@"授权成功，正在登录" maskType:SVProgressHUDMaskTypeClear];
-    [Base64Tool postSomethingToServe:USER_LOGIN andParams:dic isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        NSString *code = [NSString stringWithFormat:@"%@",[param objectForKey:@"code"]];
-        if ([code isEqualToString:@"200"]) {
+    [SVProgressHUD showWithStatus:@"授权成功，正在登录"];
+    [SwpRequest swpPOST:USER_LOGIN parameters:dic isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
             //登录成功,获取用户信息
             [SVProgressHUD dismiss];
-            NSDictionary *userDic = [param objectForKey:@"obj"];
+            NSDictionary *userDic = [resultObject objectForKey:@"obj"];
             [self loginSuccess:userDic];
-        }else if ([code isEqualToString:@"400"]){
+        }else if ([resultObject[swpNetwork.swpNetworkCode] isEqualToString:@"400"]){
             [SVProgressHUD dismiss];
-            if ([[param[@"obj"] objectForKey:@"type"] integerValue] == 1) {
+            if ([[resultObject[@"obj"] objectForKey:@"type"] integerValue] == 1) {
                 //跳转第三方登录绑定界面
                 BindPhoneViewController *firVC = [[BindPhoneViewController alloc] init];
                 firVC.navigationItem.title = @"绑定手机";
@@ -391,27 +391,23 @@
                 [self.navigationController pushViewController:firVC animated:YES];
             }
         }else{
-            [SVProgressHUD showErrorWithStatus:[param objectForKey:@"message"]];
+            [SVProgressHUD showErrorWithStatus:[resultObject objectForKey:@"message"]];
         }
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络不给力，请稍后重试"];
-    }];
-}
+
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
+
+    }
 
 #pragma mark----设置别名
 -(void)setAlian :(NSString*)alian
 {
-    [APService setTags:nil
-                 alias:alian
-      callbackSelector:@selector(tagsAliasCallback:tags:alias:)
-                target:self];
+    [JPUSHService setTags:nil alias:alian fetchCompletionHandle:^(int iResCode, NSSet *iTags, NSString *iAlias) {
+        NSLog(@"rescode: %d, \ntags: %@, \nalias: %@\n", iResCode, iTags, iAlias);
+    } ];
 }
-
-#pragma mark---------设备号获取以及回调函数
-- (void)tagsAliasCallback:(int)iResCode tags:(NSSet*)tags alias:(NSString*)alias {
-    NSLog(@"rescode: %d, \ntags: %@, \nalias: %@\n", iResCode, tags , alias);
-}
-
 -(void)didFinishGetUMSocialDataInViewController:(UMSocialResponseEntity *)response
 {
     NSLog(@"%@",response);

@@ -204,20 +204,22 @@
                              @"app_key":GET_SECURITY_CODE,
                              @"type":@"2"
                              };
-        [Base64Tool postSomethingToServe:GET_SECURITY_CODE andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-            NSDictionary* dic=(NSDictionary*)param;
-            if ([param[@"code"] integerValue]==200) {
-                NSLog(@"get message:%@",[dic  objectForKey:@"message"]);
-                _checkCode = [NSString stringWithFormat:@"%@",[dic objectForKey:@"obj"]];
+        [SwpRequest swpPOST:GET_SECURITY_CODE parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+            if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
+                NSLog(@"get message:%@",[resultObject  objectForKey:@"message"]);
+                _checkCode = [NSString stringWithFormat:@"%@",[resultObject objectForKey:@"obj"]];
             }else{
-                [SVProgressHUD showErrorWithStatus:param[@"message"]];
+                [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
                 [sender setTitle:@"获取验证码" forState:UIControlStateNormal];
                 sender.userInteractionEnabled = YES;
             }
-        } andErrorBlock:^(NSError *error) {
-            [SVProgressHUD showErrorWithStatus:@"网络不给力,稍后重试"];
-        }];
-    }
+
+            } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+                [SVProgressHUD showErrorWithStatus:@"网络异常"];
+                
+            }];
+
+          }
     
 }
 

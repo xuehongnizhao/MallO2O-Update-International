@@ -85,24 +85,25 @@
     if (city_id == nil) {
         city_id = @"0";
     }
-    NSString *url = [SwpTools swpToolGetInterfaceURL:@"cate_list");
+    NSString *url = [SwpTools swpToolGetInterfaceURL:@"cate_list"];
     NSDictionary *dic = @{
                           @"app_key":url,
                           @"city_id":city_id
                           };
-    [Base64Tool postSomethingToServe:url andParams:dic isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        NSString *code = [NSString stringWithFormat:@"%@",[param objectForKey:@"code"]];
-        if ([code isEqualToString:@"200"]) {
+    [SwpRequest swpPOST:url parameters:dic isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
             //------------解析------------
-            NSDictionary *dict = (NSDictionary*)param;
+            NSDictionary *dict = (NSDictionary*)resultObject;
             [self parseCateDic:dict];
             [self getAreaFromNet];
         }else{
-            [SVProgressHUD showErrorWithStatus:[param objectForKey:@"message"]];
+            [SVProgressHUD showErrorWithStatus:[resultObject objectForKey:@"message"]];
         }
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络异常"];
-    }];
+
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
 }
 
 #pragma mark-----解析商家分类
@@ -128,24 +129,25 @@
     if (city_id == nil) {
         city_id = @"0";
     }
-    NSString *url = [SwpTools swpToolGetInterfaceURL:@"area_list");
+    NSString *url = [SwpTools swpToolGetInterfaceURL:@"area_list"];
     NSDictionary *dic = @{
                           @"app_key":url,
                           @"city_id":city_id
                           };
-    [Base64Tool postSomethingToServe:url andParams:dic isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        NSString *code = [NSString stringWithFormat:@"%@",[param objectForKey:@"code"]];
-        if ([code isEqualToString:@"200"]) {
+    [SwpRequest swpPOST:url parameters:dic isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
             //------------解析------------
-            NSDictionary *dict = (NSDictionary*)param;
+            NSDictionary *dict = (NSDictionary*)resultObject;
             [self parseAreaDic:dict];
             [self getDataFromNet];
         }else{
-            [SVProgressHUD showErrorWithStatus:[param objectForKey:@"message"]];
+            [SVProgressHUD showErrorWithStatus:[resultObject objectForKey:@"message"]];
         }
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络异常"];
-    }];
+
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
 }
 
 #pragma mark------解析商圈分类
@@ -196,7 +198,7 @@
     if (city_id == nil) {
         city_id = @"0";
     }
-    NSString *url = [SwpTools swpToolGetInterfaceURL:@"shop_list");
+    NSString *url = [SwpTools swpToolGetInterfaceURL:@"shop_list"];
     [_pramasDict setObject:_cat_id forKey:@"cat_id"];
     [_pramasDict setObject:_page forKey:@"page"];
     [_pramasDict setObject:_area_id forKey:@"area_id"];
@@ -205,27 +207,27 @@
     [_pramasDict setObject:baidu_lng forKey:@"lng"];
     [_pramasDict setObject:url forKey:@"app_key"];
     [_pramasDict setObject:city_id forKey:@"city_id"];
-    if (ApplicationDelegate.islogin == NO) {
+    if (ApplicationDelegate.login == NO) {
         [_pramasDict setObject:@"0" forKey:@"u_id"];
     }else{
         [_pramasDict setObject:[UserModel shareInstance].u_id forKey:@"u_id"];
     }
-    [Base64Tool postSomethingToServe:url andParams:_pramasDict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        NSString *code = [NSString stringWithFormat:@"%@",[param objectForKey:@"code"]];
-        if ([code isEqualToString:@"200"]) {
+    [SwpRequest swpPOST:url parameters:_pramasDict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
             [SVProgressHUD dismiss];
-            NSLog(@"%@",param);
+            NSLog(@"%@",resultObject);
             //-----------------解析------------------
-            NSDictionary *dic = (NSDictionary*)param;
+            NSDictionary *dic = (NSDictionary*)resultObject;
             [self parseShopList:dic];
         }else{
-            [SVProgressHUD showErrorWithStatus:[param objectForKey:@"message"]];
+            [SVProgressHUD showErrorWithStatus:[resultObject objectForKey:@"message"]];
         }
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络异常"];
-        [self.shopTableview headerEndRefreshing];
-        [self.shopTableview footerEndRefreshing];
-    }];
+
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
+
 }
 
 #pragma mark------解析列表数据
@@ -239,8 +241,8 @@
         ShopListInfo *info = [[ShopListInfo alloc] initWithDictionary:dic];
         [_shopArray addObject:info];
     }
-    [self.shopTableview headerEndRefreshing];
-    [self.shopTableview footerEndRefreshing];
+    [self.shopTableview.mj_footer beginRefreshing];
+    [self.shopTableview.mj_header beginRefreshing];
     //刷新列表
     [self.shopTableview reloadData];
 }
@@ -369,15 +371,9 @@
         _shopTableview = [[UITableView alloc] initForAutoLayout];
         _shopTableview.delegate = self;
         _shopTableview.dataSource = self;
-        [_shopTableview addHeaderWithTarget:self action:@selector(headerBeginRefreshing)];
-        [_shopTableview addFooterWithTarget:self action:@selector(footerBeginRefreshing)];
-        _shopTableview.footerPullToRefreshText = @"上拉可以加载更多数据了";
-        _shopTableview.footerReleaseToRefreshText = @"松开马上加载更多数据了";
-        _shopTableview.footerRefreshingText = @" ";
-        _shopTableview.headerPullToRefreshText = @"下拉可以刷新了";
-        _shopTableview.headerReleaseToRefreshText = @"松开马上刷新了";
-        _shopTableview.headerRefreshingText = @" ";
-        [UZCommonMethod hiddleExtendCellFromTableview:_shopTableview];
+        _shopTableview.mj_footer=[MJRefreshFooter footerWithRefreshingTarget:self refreshingAction:@selector(footerBeginRefreshing)];
+        _shopTableview.mj_header=[MJRefreshHeader headerWithRefreshingTarget:self refreshingAction:@selector(headerBeginRefreshing)];
+            [UZCommonMethod hiddleExtendCellFromTableview:_shopTableview];
         if ([_shopTableview respondsToSelector:@selector(setSeparatorInset:)]) {
             [_shopTableview setSeparatorInset:UIEdgeInsetsMake(0,0,0,0)];
         }

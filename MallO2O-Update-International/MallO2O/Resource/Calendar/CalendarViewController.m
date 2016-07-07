@@ -120,7 +120,7 @@ static NSString *DayCell = @"DayCell";
 
 #pragma mark @@@@ ----> 返回每个cell的大小
 - (CGSize) collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
-    return CGSizeMake(45*LinPercent, 70);
+    return CGSizeMake(45*Balance_Width, 70);
 }
 
 //每个UICollectionView展示的内容

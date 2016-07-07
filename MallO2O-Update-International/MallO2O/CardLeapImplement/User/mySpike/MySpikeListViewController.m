@@ -67,33 +67,34 @@
 #pragma mark------------get Data
 -(void)getDataFromNet
 {
-    NSString *url = [SwpTools swpToolGetInterfaceURL:@"my_spike");
+    NSString *url = [SwpTools swpToolGetInterfaceURL:@"my_spike"];
     NSDictionary *dict = @{
                            @"app_key":url,
                            @"u_id":[UserModel shareInstance].u_id,
                            @"page":[NSString stringWithFormat:@"%d",page],
                            @"where":cate_id
                            };
-    [Base64Tool postSomethingToServe:url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        if ([param[@"code"] integerValue] == 200) {
+    [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
             if (page == 1) {
                 [mySpikeArray removeAllObjects];
             }
             [SVProgressHUD dismiss];
-            NSArray *arr = [param objectForKey:@"obj"];
+            NSArray *arr = [resultObject objectForKey:@"obj"];
             for (NSDictionary *dict in arr) {
                 mySpikeInfo *info = [[mySpikeInfo alloc] initWithDictionary:dict];
                 [mySpikeArray addObject:info];
             }
             [self.mySpikeTableview reloadData];
         }else{
-            [SVProgressHUD showErrorWithStatus:param[@"message"]];
+            [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
         }
-        [self.mySpikeTableview headerEndRefreshing];
-        [self.mySpikeTableview footerEndRefreshing];
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络异常"];
-    }];
+        [self.mySpikeTableview.mj_header beginRefreshing];
+        [self.mySpikeTableview.mj_footer beginRefreshing];
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
 }
 
 #pragma mark------------init data
@@ -113,15 +114,10 @@
         _mySpikeTableview.dataSource = self;
         _mySpikeTableview.separatorInset=UIEdgeInsetsZero;
         [UZCommonMethod hiddleExtendCellFromTableview:_mySpikeTableview];
-        [_mySpikeTableview addHeaderWithTarget:self action:@selector(headerBeginRefreshing)];
-        [_mySpikeTableview addFooterWithTarget:self action:@selector(footerBeginRefreshing)];
-        _mySpikeTableview.footerPullToRefreshText = @"上拉可以加载更多数据了";
-        _mySpikeTableview.footerReleaseToRefreshText = @"松开马上加载更多数据了";
-        _mySpikeTableview.footerRefreshingText = @"正在加载";
-        _mySpikeTableview.headerPullToRefreshText = @"下拉可以刷新了";
-        _mySpikeTableview.headerReleaseToRefreshText = @"松开马上刷新了";
-        _mySpikeTableview.headerRefreshingText = @"马上回来";
-        if ([_mySpikeTableview respondsToSelector:@selector(setSeparatorInset:)]) {
+        _mySpikeTableview.mj_footer=[MJRefreshFooter footerWithRefreshingTarget:self refreshingAction:@selector(footerBeginRefreshing)];
+        _mySpikeTableview.mj_header=[MJRefreshHeader headerWithRefreshingTarget:self refreshingAction:@selector(headerBeginRefreshing)];
+
+            if ([_mySpikeTableview respondsToSelector:@selector(setSeparatorInset:)]) {
             [_mySpikeTableview setSeparatorInset:UIEdgeInsetsMake(0,0,0,0)];
         }
         if ([_mySpikeTableview respondsToSelector:@selector(setLayoutMargins:)]) {
@@ -305,22 +301,22 @@
                                    @"session_key":[UserModel shareInstance].session_key,
                                    @"grab_id":grab_id
                                    };
-            [[LinLoadingView shareInstances:self.view] startAnimation];  //开始转动
-            [Base64Tool postSomethingToServe:url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-                if ([param[@"code"] integerValue]==200) {
-                    [[LinLoadingView shareInstances:self.view] stopWithAnimation:[param objectForKey:@"message"]];  //停止转动
-                    //[SVProgressHUD dismiss];
+            [SVProgressHUD show];
+            [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+                if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
+                    [SVProgressHUD dismiss];
                     page = 1;
                     [self getDataFromNet];
                 }else{
-                    [[LinLoadingView shareInstances:self.view] stopWithAnimation:param[@"message"]];  //停止转动
-                    //[SVProgressHUD showErrorWithStatus:param[@"message"]];
+                    [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
                 }
-            } andErrorBlock:^(NSError *error) {
-                [[LinLoadingView shareInstances:self.view] stopWithAnimation:@"网络不给力"];  //停止转动
-                //[SVProgressHUD showErrorWithStatus:@"网络异常"];
-            }];
-        }else{
+
+                } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+                    [SVProgressHUD showErrorWithStatus:@"网络异常"];
+                    
+                }];
+
+            }else{
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"小编提示" message:@"您还没有选择要删除的优惠券" delegate:nil cancelButtonTitle:@"知道了" otherButtonTitles:@"取消", nil];
             [alert show];
         }
@@ -328,14 +324,5 @@
     }
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

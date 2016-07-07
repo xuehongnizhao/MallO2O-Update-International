@@ -387,14 +387,14 @@
         [self.navigationController pushViewController:firVC animated:YES];
     }else if (index == 1){
         //退款
-        NSString *url = [SwpTools swpToolGetInterfaceURL:@"group_back");
+        NSString *url = [SwpTools swpToolGetInterfaceURL:@"group_back"];
         NSDictionary *dict = @{
                                @"app_key":url,
                                @"order_id":self.info.order_id
                                };
-        [SVProgressHUD showWithStatus:@"正在提交申请" maskType:SVProgressHUDMaskTypeClear];
-        [Base64Tool postSomethingToServe:url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-            if ([param[@"code"] integerValue]==200) {
+        [SVProgressHUD showWithStatus:@"正在提交申请"];
+        [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+            if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
                 //退款成功  修改状态  然后跳转页面
                 [SVProgressHUD dismiss];
                 self.info.status = @"4";
@@ -403,15 +403,18 @@
                 myGroupPayBackViewController *firVC = [[myGroupPayBackViewController alloc] init];
                 [firVC setHiddenTabbar:YES];
                 [firVC setNavBarTitle:@"退款成功" withFont:14.0f];
-//                [firVC.navigationItem setTitle:@"退款成功"];
+                //                [firVC.navigationItem setTitle:@"退款成功"];
                 firVC.info=self.info;
                 [self.navigationController pushViewController:firVC animated:YES];
             }else{
-                [SVProgressHUD showErrorWithStatus:param[@"message"]];
+                [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
             }
-        } andErrorBlock:^(NSError *error) {
-            [SVProgressHUD showErrorWithStatus:@"网络异常"];
-        }];
+
+            } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+                [SVProgressHUD showErrorWithStatus:@"网络异常"];
+                
+            }];
+
     }
 }
 
@@ -421,20 +424,5 @@
     self.info.status = @"3";
     [_myGroupDetailTableview reloadData];
 }
-
--(void)completeAction
-{
-    NSLog(@"支付完成跳转回");
-    
-}
-
-/*
-#pragma mark - Navigation
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

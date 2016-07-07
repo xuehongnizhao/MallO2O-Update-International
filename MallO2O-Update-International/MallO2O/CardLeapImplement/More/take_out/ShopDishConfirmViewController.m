@@ -210,11 +210,10 @@
 -(void)submitAtion :(UIButton*)sender
 {
     NSLog(@"跳转到");
-    if (ApplicationDelegate.islogin == NO) {
+    if (ApplicationDelegate.login == NO) {
         LoginViewController *firVC = [[LoginViewController alloc] init];
         [firVC setHiddenTabbar:YES];
         [firVC setNavBarTitle:@"登录" withFont:14.0f];
-        //        [firVC.navigationItem setTitle:@"登录"];
         [self.navigationController pushViewController:firVC animated:YES];
     }else{
         SubmitOrderViewController *firVC = [[SubmitOrderViewController alloc] init];
@@ -224,7 +223,6 @@
         CGFloat price = (self.ship_price == nil) ?[self.total_price floatValue]:[self.ship_price floatValue] + [self.total_price floatValue];
         firVC.totalPrice = [NSString stringWithFormat:@"%0.2f",price];
         [firVC setNavBarTitle:@"提交订单" withFont:14.0f];
-        //        [firVC.navigationItem setTitle:@"提交订单"];
         [self.navigationController pushViewController:firVC animated:YES];
     }
 }
@@ -246,13 +244,5 @@
     return jsonStr;
 }
 
-/*
- #pragma mark - Navigation
- // In a storyboard-based application, you will often want to do a little preparation before navigation
- - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
- // Get the new view controller using [segue destinationViewController].
- // Pass the selected object to the new view controller.
- }
- */
 
 @end

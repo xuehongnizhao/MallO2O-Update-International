@@ -10,7 +10,7 @@
 
 @interface EditUserInfoViewController ()<UITableViewDataSource,UITableViewDelegate,
                                         UIActionSheetDelegate,UIImagePickerControllerDelegate,
-                                        UITextFieldDelegate>
+                                        UITextFieldDelegate,UINavigationControllerDelegate>
 {
     UIImage *user_image_local;
 }
@@ -348,22 +348,24 @@
         [self postMessage];
     }else{
         //上传 头像
-        NSString *pic_url = ALL_URL(@"yz_upload_pic");
+        NSString *pic_url = [SwpTools swpToolGetInterfaceURL:@"yz_upload_pic"];
         NSData* data=UIImageJPEGRepresentation(user_image_local, 0.3);
         NSDictionary *dict = @{
                                @"app_key":pic_url,
                                @"u_id":[UserModel shareInstance].u_id,
                                @"session_key":[UserModel shareInstance].session_key
                                };
-        [Base64Tool postFileTo:pic_url andParams:dict andFile:data andFileName:@"pic" isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-            if ([param[@"code"] integerValue]==200) {
-                [UserModel shareInstance].user_pic = [param[@"obj"] objectForKey:@"user_pic"];
+        [SwpRequest swpPOSTAddFile:pic_url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt fileName:@"pic" fileData:data swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+            if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
+                [UserModel shareInstance].user_pic = [resultObject[@"obj"] objectForKey:@"user_pic"];
                 [self postMessage];
             }else{
-                [SVProgressHUD showErrorWithStatus:param[@"message"]];
+                [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
             }
-        } andErrorBlock:^(NSError *error) {
+
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
             [SVProgressHUD showErrorWithStatus:@"网络异常"];
+
         }];
     }
 }
@@ -376,8 +378,8 @@
     NSString *user_tel = self.user_phone_T.text;
     NSString *user_address = self.user_address_T.text;
     if (user_name.length != 0 && user_sex.length!=0 && user_tel.length!=0 && user_address.length!=0) {
-        [SVProgressHUD showWithStatus:@"正在提交信息" maskType:SVProgressHUDMaskTypeNone];
-        NSString *user_url = ALL_URL(@"yz_edit_info");
+        [SVProgressHUD showWithStatus:@"正在提交信息"];
+        NSString *user_url = [SwpTools swpToolGetInterfaceURL:@"yz_edit_info"];
         NSString *sex;
         if ([user_sex isEqualToString:@"男"]) {
             sex = @"1";
@@ -393,8 +395,8 @@
                                @"u_id":[UserModel shareInstance].u_id,
                                @"session_key":[UserModel shareInstance].session_key
                                };
-        [Base64Tool postSomethingToServe:user_url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-            if ([param[@"code"] integerValue]==200) {
+        [SwpRequest swpPOST:user_url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+            if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
                 NSLog(@"修改成功");
                 [SVProgressHUD dismiss];
                 [UserModel shareInstance].user_nickname = user_name;
@@ -403,12 +405,15 @@
                 [UserModel shareInstance].user_tel = user_tel;
                 [self.navigationController popViewControllerAnimated:YES];
             }else{
-                [SVProgressHUD showErrorWithStatus:param[@"message"]];
+                [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
             }
-        } andErrorBlock:^(NSError *error) {
-            [SVProgressHUD showErrorWithStatus:@"网络异常"];
-        }];
-    }else{
+
+            } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+                [SVProgressHUD showErrorWithStatus:@"网络异常"];
+                
+            }];
+
+        }else{
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"小助手" message:@"信息不完整" delegate:self cancelButtonTitle:@"知道了" otherButtonTitles:nil, nil];
         [alert show];
     }
@@ -483,11 +488,6 @@
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
     NSLog(@"info==%@",info);
-    //UIImagePickerControllerEditedImage
-    //UIImagePickerControllerOriginalImage
-    //UIImagePickerControllerCropRect
-    //UIImagePickerControllerMediaType
-    //UIImagePickerControllerReferenceURL
     
     UIImage *image= [info objectForKey:@"UIImagePickerControllerEditedImage"];
     user_image_local = image;
@@ -495,14 +495,5 @@
     [self.userInfoDetailTableview reloadData];
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

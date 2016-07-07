@@ -112,22 +112,22 @@
     
     if (self.evenMoreJomp.isAboutApp) {
 //        NSLog(@"关于我们");
-        string = [self joinUrlString:ALL_URL(@"yz_about")];
+        string = [self joinUrlString: [SwpTools swpToolGetInterfaceURL:@"yz_about"]];
     }
     
     if (self.evenMoreJomp.isPrivacy) {
 //        NSLog(@"隐私权限");
-        string = [self joinUrlString:ALL_URL(@"privacy")];
+        string = [self joinUrlString:[SwpTools swpToolGetInterfaceURL:@"privacy"]];
     }
     
     if (self.evenMoreJomp.isHelp) {
 //        NSLog(@"使用帮助");
-        string = [self joinUrlString:ALL_URL(@"help")];
+        string = [self joinUrlString:[SwpTools swpToolGetInterfaceURL:@"help"]];
     }
     
     if (self.evenMoreJomp.isCode) {
 //        NSLog(@"二维码");
-        string = [self joinUrlString:ALL_URL(@"code_img")];
+        string = [self joinUrlString:[SwpTools swpToolGetInterfaceURL:@"code_img"]];
     }
     
     NSURL *url = [NSURL URLWithString:string];

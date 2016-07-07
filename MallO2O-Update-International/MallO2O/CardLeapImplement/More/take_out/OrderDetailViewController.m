@@ -9,7 +9,7 @@
 #import "OrderDetailViewController.h"
 #import "RviewDishListViewController.h"
 #import "UMSocial.h"
-
+#import "NSDictionary+RequestEncoding.h"
 @interface OrderDetailViewController ()<UIWebViewDelegate,UIAlertViewDelegate,UMSocialUIDelegate>
 {
     NSString *delete_order_id;
@@ -47,78 +47,75 @@
 #pragma mark-----------get Data
 -(void)getDataFromNet
 {
-    NSString *url = [SwpTools swpToolGetInterfaceURL:@"takeout_status_message");
+    NSString *url = [SwpTools swpToolGetInterfaceURL:@"takeout_status_message"];
     NSDictionary *dict = @{
                            @"order_id":self.order_id,
                            @"app_key":url
                            };
-    [SVProgressHUD showWithStatus:@"正在加载订单" maskType:SVProgressHUDMaskTypeClear];
-    [Base64Tool postSomethingToServe:url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        if ([param[@"code"] integerValue]==200) {
+    [SVProgressHUD showWithStatus:@"正在加载订单"];
+    [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
             [SVProgressHUD dismiss];
             //----get share_url-------------------
-            share_url = [NSString stringWithFormat:@"%@",[param[@"obj"] objectForKey:@"share_url"]];
+            share_url = [NSString stringWithFormat:@"%@",[resultObject[@"obj"] objectForKey:@"share_url"]];
             //----save dishes array---------------
             dishArray = [[NSMutableArray alloc] init ];
-            NSArray *arr = [param[@"obj"] objectForKey:@"order_desc"];
+            NSArray *arr = [resultObject[@"obj"] objectForKey:@"order_desc"];
             for (NSDictionary *dict in arr) {
                 [dishArray addObject:dict];
             }
             //----pass data to html test----------
-            NSMutableDictionary *dic = (NSMutableDictionary*)param;
+            NSMutableDictionary *dic = (NSMutableDictionary*)resultObject;
             NSString *methodContent=[dic jsonEncodedKeyValueString];
             NSString *info = [NSString stringWithFormat:@"%@(%@)",@"takeout_message",methodContent];
             //拼接html的web数据
             [_orderDetailWeb stringByEvaluatingJavaScriptFromString:info];
-            if ([[param[@"obj"] objectForKey:@"comfirm_status"] integerValue]==5 || [[param[@"obj"] objectForKey:@"comfirm_status"] integerValue]==3) {
+            if ([[resultObject[@"obj"] objectForKey:@"comfirm_status"] integerValue]==5 || [[resultObject[@"obj"] objectForKey:@"comfirm_status"] integerValue]==3) {
                 //                [timer invalidate];
             }
         }else{
-            [SVProgressHUD showErrorWithStatus:param[@"message"]];
+            [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
         }
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络异常"];
-    }];
-}
+
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
+
+    }
 
 -(void)updateMessageForOrder
 {
-    NSString *url = [SwpTools swpToolGetInterfaceURL:@"takeout_status_message");
+    NSString *url = [SwpTools swpToolGetInterfaceURL:@"takeout_status_message"];
     NSDictionary *dict = @{
                            @"order_id":self.order_id,
                            @"app_key":url
                            };
-    //[SVProgressHUD showWithStatus:@"正在刷新订单" maskType:SVProgressHUDMaskTypeClear];
-    [Base64Tool postSomethingToServe:url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        if ([param[@"code"] integerValue]==200) {
+    [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
             [SVProgressHUD dismiss];
             //----pass data to html test----------
-            NSMutableDictionary *dic = (NSMutableDictionary*)param;
+            NSMutableDictionary *dic = (NSMutableDictionary*)resultObject;
             NSString *methodContent=[dic jsonEncodedKeyValueString];
             NSString *info = [NSString stringWithFormat:@"%@(%@)",@"takeout_message_two",methodContent];
             //拼接html的web数据
             [_orderDetailWeb stringByEvaluatingJavaScriptFromString:info];
-            if ([[param[@"obj"] objectForKey:@"comfirm_status"] integerValue]==5 || [[param[@"obj"] objectForKey:@"comfirm_status"] integerValue]==3) {
+            if ([[resultObject[@"obj"] objectForKey:@"comfirm_status"] integerValue]==5 || [[resultObject[@"obj"] objectForKey:@"comfirm_status"] integerValue]==3) {
                 //                [timer invalidate];
             }
         }else{
-            [SVProgressHUD showErrorWithStatus:param[@"message"]];
+            [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
         }
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络异常"];
-    }];
+
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
 }
 
 #pragma mark-----------load html
 -(void)loadHTML
 {
-    //    NSString *htmlStr = @"takeout_status_message.html";
-    //    _orderDetailWeb.scrollView.showsVerticalScrollIndicator = NO;
-    //    NSString* htmlPath = [[NSBundle mainBundle] pathForResource:htmlStr ofType:nil];
-    //    NSURL *url=[NSURL fileURLWithPath:htmlPath];
-    //    NSURLRequest *request=[NSURLRequest requestWithURL:url];
-    //    _orderDetailWeb.scalesPageToFit=NO;
-    //    [_orderDetailWeb loadRequest:request];
     _orderDetailWeb.scrollView.showsVerticalScrollIndicator = NO;
     NSURL *url = [NSURL URLWithString:self.takeout_url];
     NSURLRequest *request=[NSURLRequest requestWithURL:url];
@@ -180,11 +177,6 @@
     
     //[self initTimer];
 }
-#pragma mark-----------set timer
--(void)initTimer
-{
-    //    timer = [NSTimer scheduledTimerWithTimeInterval:10.0 target:self selector:@selector(updateOrderState) userInfo:nil repeats:YES];
-}
 
 -(void)updateOrderState
 {
@@ -202,62 +194,6 @@
         [self goToReview];
     }
     return YES;
-#pragma mark --- 11.26日 取消大多数的交互操作，只留一个“评价”按钮的web交互
-    //    NSString *requestString = [[request URL] absoluteString];
-    //    NSArray *components = [requestString componentsSeparatedByString:@":"];
-    //
-    //    NSLog(@"components==%@",components);
-    //
-    //    if ([components count] > 1 && [components[0] isEqualToString:@"testapp"])
-    //    {
-    //        if ([components[1] isEqualToString:@"order_id"]){
-    //            timely = @"0";
-    //            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"是否及时送达" delegate:self cancelButtonTitle:@"及时" otherButtonTitles:@"不及时", nil];
-    //            alert.tag = 2;
-    //            [alert show];
-    //            confirmId = components[2];
-    //            confirmStatus = components[3];
-    //        }else if ([components[1] isEqualToString:@"delete_order_id"]){
-    //            NSString *order_id = components[2];
-    //            NSString *status = components[3];
-    //            delete_order_id = order_id;
-    //            if ([status integerValue]==0) {
-    //               [self deleteOrder:order_id];
-    //            }else{
-    //                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"商家已经确认,取消订单可能需要等待审核" delegate:self cancelButtonTitle:@"确认取消" otherButtonTitles:@"不了", nil];
-    //                alert.tag = 1;
-    //                [alert show];
-    //            }
-    //        }else if ([components[1] isEqualToString:@"phone"]){
-    //            NSString *phone_num = components[2];
-    //            NSArray *phoneArray = [phone_num componentsSeparatedByString:@","];
-    //            if ([phoneArray count]>1) {
-    //
-    //                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"请选择" message:@"" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:phoneArray[0],phoneArray[1], nil];
-    //                alert.tag = 3;
-    //                phoneNumberArray = [[NSMutableArray alloc] initWithArray:phoneArray];
-    //                [alert show];
-    //
-    //            }else{
-    //                [self call_phone:[phoneArray objectAtIndex:0]];
-    //            }
-    //
-    //        }else if ([components[1] isEqualToString:@"review"]){
-    //            [self goToReview];
-    //        }
-    //    }
-    //    return YES;
-}
-
--(void)webViewDidFinishLoad:(UIWebView *)webView
-{
-    NSLog(@"加载完成");
-    //    [self getDataFromNet];
-}
-
--(void)webViewDidStartLoad:(UIWebView *)webView
-{
-    NSLog(@"开始加载");
 }
 
 #pragma mark-----------alertview delegate
@@ -297,17 +233,9 @@
                                     shareToSnsNames:@[UMShareToWechatSession,UMShareToSms]
                                            delegate:self];
         
-        //    [UMSocialData defaultData].extConfig.wechatTimelineData.shareText = @"城市o2o";
-        //    [UMSocialData defaultData].extConfig.wechatTimelineData.url = url;
-        //
         [UMSocialData defaultData].extConfig.wechatSessionData.title = @"如e生活";
         [UMSocialData defaultData].extConfig.wechatSessionData.url = url;
     }
-    //
-    //    [UMSocialData defaultData].extConfig.qzoneData.title = @"城市o2o";
-    //    [UMSocialData defaultData].extConfig.qzoneData.url = url;
-    //
-    //    [UMSocialData defaultData].extConfig.sinaData.shareText = sinaText;
 }
 
 -(void)didFinishGetUMSocialDataResponse:(UMSocialResponseEntity *)response
@@ -324,48 +252,51 @@
 #pragma mark-----------order function
 -(void)deleteOrder:(NSString*)order_id
 {
-    NSString *url = [SwpTools swpToolGetInterfaceURL:@"del_status");
+    NSString *url = [SwpTools swpToolGetInterfaceURL:@"del_status"];
     NSDictionary *dict = @{
                            @"app_key":url,
                            @"order_id":order_id
                            };
-    [Base64Tool postSomethingToServe:url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        if ([param[@"code"] integerValue] == 200) {
+    [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
             [SVProgressHUD dismiss];
             [self updateMessageForOrder];
         }else{
-            [SVProgressHUD showErrorWithStatus:param[@"message"]];
+            [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
         }
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络异常"];
-    }];
+
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
+
 }
 
 -(void)confirmOrder:(NSString*)order_id status :(NSString*)status
 {
-    NSString *url = [SwpTools swpToolGetInterfaceURL:@"update_status");
+    NSString *url = [SwpTools swpToolGetInterfaceURL:@"update_status"];
     NSDictionary *dict = @{
                            @"app_key":url,
                            @"order_id":order_id,
                            @"confirm_status":status,
                            @"timely":timely
                            };
-    [Base64Tool postSomethingToServe:url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        if ([param[@"code"] integerValue] == 200) {
+    [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
             [SVProgressHUD dismiss];
-            //            [timer invalidate];
             [self updateMessageForOrder];
         }else{
-            [SVProgressHUD showErrorWithStatus:param[@"message"]];
+            [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
         }
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络异常"];
-    }];
-}
 
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
+
+}
 -(void)call_phone:(NSString*)phone_num
 {
-    //[UZCommonMethod callPhone:phone_num superView:self.view];
     NSString *phoneNumber = phone_num;// 电话号码
     NSURL *phoneURL = [NSURL URLWithString:[NSString stringWithFormat:@"tel:%@",phoneNumber]];
     phoneWeb=[[UIWebView alloc]init];
@@ -379,30 +310,14 @@
 {
     RviewDishListViewController *firVC = [[RviewDishListViewController alloc] init];
     [firVC setNavBarTitle:@"待评价菜品" withFont:14.0f];
-    //    [firVC.navigationItem setTitle:@"待评价菜品"];
+
     firVC.order_id = self.order_id;
     [self.navigationController pushViewController:firVC animated:YES];
 }
-
--(void)viewWillDisappear:(BOOL)animated
-{
-    //    [timer invalidate];
-}
-
 -(void)viewWillAppear:(BOOL)animated
 {
-    //    [self initTimer];
+    [super viewWillAppear:animated];
     [self updateOrderState];
 }
-
-/*
- #pragma mark - Navigation
- 
- // In a storyboard-based application, you will often want to do a little preparation before navigation
- - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
- // Get the new view controller using [segue destinationViewController].
- // Pass the selected object to the new view controller.
- }
- */
 
 @end

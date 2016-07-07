@@ -45,7 +45,7 @@
     [self setLogInWebBridge];
     [self setUpLoadVoiceWebBridgeEnd];
     [self setShakeVoiceWebBridge];
-    [self initRecorder];
+//    [self initRecorder];
     
 }
 

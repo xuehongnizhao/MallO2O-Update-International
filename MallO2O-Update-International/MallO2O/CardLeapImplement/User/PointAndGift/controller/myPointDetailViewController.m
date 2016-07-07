@@ -64,14 +64,9 @@
         _myPointTableview.delegate = self;
         _myPointTableview.dataSource = self;
         [UZCommonMethod hiddleExtendCellFromTableview:_myPointTableview];
-        [_myPointTableview addHeaderWithTarget:self action:@selector(headerBeginRefreshing)];
-        [_myPointTableview addFooterWithTarget:self action:@selector(footerBeginRefreshing)];
-        _myPointTableview.footerPullToRefreshText = @"上拉可以加载更多数据了";
-        _myPointTableview.footerReleaseToRefreshText = @"松开马上加载更多数据了";
-        _myPointTableview.footerRefreshingText = @"正在更新数据";
-        _myPointTableview.headerPullToRefreshText = @"下拉可以刷新了";
-        _myPointTableview.headerReleaseToRefreshText = @"松开马上刷新了";
-        _myPointTableview.headerRefreshingText = @"马上回来";
+        _myPointTableview.mj_footer=[MJRefreshFooter footerWithRefreshingTarget:self refreshingAction:@selector(footerBeginRefreshing)];
+        _myPointTableview.mj_header=[MJRefreshHeader headerWithRefreshingTarget:self refreshingAction:@selector(headerBeginRefreshing)];
+
         if ([_myPointTableview respondsToSelector:@selector(setSeparatorInset:)]) {
             [_myPointTableview setSeparatorInset:UIEdgeInsetsMake(0,0,0,0)];
         }
@@ -116,22 +111,22 @@
     ExchangeRecordDetailViewController *firVC = [[ExchangeRecordDetailViewController alloc] init];
     [firVC setHiddenTabbar:YES];
     [firVC setNavBarTitle:@"积分说明" withFont:14.0f];
-    firVC.url = [NSString stringWithFormat:@"http://%@/%@",baseUrl,ALL_URL(@"point_message")];
+    firVC.url = [NSString stringWithFormat:@"http://%@/%@",baseUrl, [SwpTools swpToolGetInterfaceURL:@"point_message"]];
     [self.navigationController pushViewController:firVC animated:YES];
 }
 
 #pragma mark-------获取网络数据
 -(void)getDataFromNetwork
 {
-    NSString *url = [SwpTools swpToolGetInterfaceURL:@"my_point_log");
+    NSString *url = [SwpTools swpToolGetInterfaceURL:@"my_point_log"];
     NSDictionary *dict = @{
                            @"app_key":url,
                            @"u_id":[UserModel shareInstance].u_id,
                            @"page":[NSString stringWithFormat:@"%d",page]
                            };
-    [Base64Tool postSomethingToServe:url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        if ([param[@"code"] integerValue]==200) {
-            NSArray *myArray = param[@"obj"];
+    [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
+            NSArray *myArray = resultObject[@"obj"];
             if (page == 1) {
                 [myPointListArray removeAllObjects];
             }
@@ -139,15 +134,17 @@
                 myPointInfo *info = [[myPointInfo alloc] initWithDictionary:dic];
                 [myPointListArray addObject:info];
             }
-            [self.myPointTableview headerEndRefreshing];
-            [self.myPointTableview footerEndRefreshing];
+            [self.myPointTableview.mj_header beginRefreshing];
+            [self.myPointTableview.mj_footer beginRefreshing];
             [self.myPointTableview reloadData];
         }else{
-            [SVProgressHUD showErrorWithStatus:param[@"message"]];
+            [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
         }
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络异常"];
-    }];
+
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
 }
 
 #pragma mark-------tableview delegate

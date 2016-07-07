@@ -70,7 +70,8 @@
                            @"app_key":url,
                            @"shop_id":self.shop_id
                            };
-    [SVProgressHUD showWithStatus:@"正在加载" maskType:SVProgressHUDMaskTypeClear];
+    [SVProgressHUD showWithStatus:@"正在加载"];
+    
     [Base64Tool postSomethingToServe:url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
         NSString *code = [NSString stringWithFormat:@"%@",[param objectForKey:@"code"]];
         if ([code isEqualToString:@"200"]) {
@@ -100,23 +101,22 @@
 
 -(void)getDishFromNet
 {
-    NSString *url = [SwpTools swpToolGetInterfaceURL:@"takeout_message_index");
+    NSString *url = [SwpTools swpToolGetInterfaceURL:@"takeout_message_index"];
     NSDictionary *dict = @{
                            @"app_key":url,
                            @"page":[NSString stringWithFormat:@"%d",page],
                            @"shop_id":self.shop_id,
                            @"cat_id":cate_id
                            };
-    [SVProgressHUD showWithStatus:@"正在加载" maskType:SVProgressHUDMaskTypeClear];
-    [Base64Tool postSomethingToServe:url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        NSString *code = [NSString stringWithFormat:@"%@",[param objectForKey:@"code"]];
-        if ([code isEqualToString:@"200"]) {
+    [SVProgressHUD showWithStatus:@"正在加载"];
+    [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
             NSMutableArray *dataArray = [[NSMutableArray alloc] init];
             if (page == 1) {
                 [dishArray removeAllObjects];
             }
             [SVProgressHUD dismiss];
-            NSArray *array = [param objectForKey:@"obj"];
+            NSArray *array = [resultObject objectForKey:@"obj"];
             for (NSDictionary *dic in array) {
                 takeoutDishInfo *info = [[takeoutDishInfo alloc] initWithDictionary:dic];
                 info.count = 0;
@@ -129,12 +129,15 @@
             [pageDict setObject:[NSString stringWithFormat:@"%d",page] forKey:cate_id];
             [_dishTableview reloadData];
         }else{
-            [SVProgressHUD showErrorWithStatus:[param objectForKey:@"message"]];
+            [SVProgressHUD showErrorWithStatus:[resultObject objectForKey:@"message"]];
         }
-        [_dishTableview footerEndRefreshing];
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络异常"];
-    }];
+        [_dishTableview.mj_footer beginRefreshing];
+
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
+
 }
 
 #pragma mark-----初始化数据

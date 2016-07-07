@@ -207,14 +207,13 @@ static NSString *pageCount = @"10";
         [self.myLevel addSubview:imageview];
     }
 }
-#warning  星星处理 mark
 //设置用户操作view中的数据值
 - (void)settingOperationView
 {
     NSInteger beginPage = (page-1) * [pageCount integerValue] + 1;
     NSInteger endPage = beginPage + 9;
     
-    self.descriptionLabel.text = [NSString stringWithFormat:@"第%ld-%ld家",(long)beginPage,endPage];
+    self.descriptionLabel.text = [NSString stringWithFormat:@"第%d-%d家",(long)beginPage,endPage];
     
     if (page <= 1) {
         [self.leftButton setEnabled:NO];
@@ -271,18 +270,7 @@ static NSString *pageCount = @"10";
     float zoomLevel = 0.01;
     MKCoordinateRegion region = MKCoordinateRegionMake(self.myLocation.coordinate,
                                                        MKCoordinateSpanMake(zoomLevel, zoomLevel));
-    
-    //    //坐标的转换
-    //    double latitude = self.myLocation.coordinate.latitude ;
-    //    double longtitude = self.myLocation.coordinate.longitude;
-    //    double baiDuLat , baiDuLng;
-    //    double x = longtitude, y = latitude;
-    //    double z = sqrt(x * x + y * y) + 0.00002 * sin(y * x_pi);
-    //    double theta = atan2(y, x) + 0.000003 * cos(x * x_pi);
-    //    baiDuLng = z * cos(theta) + 0.0065;
-    //    baiDuLat = z * sin(theta) + 0.006;
-    //CLLocationCoordinate2D *tempLocation ;
-    //    NSLog(@"我的经纬度是 ---------%f-----------%f",latitude,longtitude);
+
     region.center = self.myLocation.location.coordinate;
     [self.mapView setRegion:[self.mapView regionThatFits:region] animated:NO];
     [self removeTheCoverView];
@@ -452,8 +440,8 @@ static NSString *pageCount = @"10";
     if ([self.shops count]>0) {
         NSLog(@"zoom level %d", [self getZoomLevel:mapView]);
         NSLog(@"the late and the lng is %f and %f",mapView.centerCoordinate.latitude,mapView.centerCoordinate.longitude);
-        NSLog(@"the distance is %f",[Base64Tool LantitudeLongitudeDist:baidu_lng other_Lat:baidu_lat self_Lon:mapView.centerCoordinate.longitude self_Lat:mapView.centerCoordinate.latitude]);
-        if ([Base64Tool LantitudeLongitudeDist:baidu_lng other_Lat:baidu_lat self_Lon:mapView.centerCoordinate.longitude self_Lat:mapView.centerCoordinate.latitude]>1000) {
+        NSLog(@"the distance is %f",[SwpTools LantitudeLongitudeDist:baidu_lng other_Lat:baidu_lat self_Lon:mapView.centerCoordinate.longitude self_Lat:mapView.centerCoordinate.latitude]);
+        if ([SwpTools LantitudeLongitudeDist:baidu_lng other_Lat:baidu_lat self_Lon:mapView.centerCoordinate.longitude self_Lat:mapView.centerCoordinate.latitude]>1000) {
             baidu_lat = mapView.centerCoordinate.latitude;
             baidu_lng = mapView.centerCoordinate.longitude;
             [self getShopList:baidu_lat lng:baidu_lng];
@@ -471,7 +459,7 @@ static NSString *pageCount = @"10";
  */
 -(void)getShopList:(float)lat lng:(float)lng
 {
-    NSString *tmp_url  = connect_url(@"seat_map");
+    NSString *tmp_url  =  [SwpTools swpToolGetInterfaceURL:@"seat_map"];
     NSString *city_id = [[NSUserDefaults standardUserDefaults]objectForKey:KCityID];
     if (city_id == nil) {
         city_id = @"0";
@@ -492,12 +480,12 @@ static NSString *pageCount = @"10";
                            @"cate":self.category,
                            @"area":self.identifer
                            };
-    [Base64Tool postSomethingToServe:tmp_url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        if ([param[@"code"] integerValue]==200) {
+    [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
             [SVProgressHUD dismiss];
             shopArray = [[NSMutableArray alloc] init];
             //封装数据
-            NSArray *arr = [param objectForKey:@"obj"];
+            NSArray *arr = [resultObject objectForKey:@"obj"];
             for (NSDictionary *dict in arr) {
                 orderSeatInfo *info = [[orderSeatInfo alloc] initWithDictionary:dict];
                 [shopArray addObject:info];
@@ -508,23 +496,16 @@ static NSString *pageCount = @"10";
             [self settingOperationView];
             [self.mapView reloadInputViews];
         }else{
-            [SVProgressHUD showErrorWithStatus:param[@"message"]];
+            [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
         }
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络异常"];
-    }];
+
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
+
 }
 
-
-#pragma mark - Lifecycle
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
-}
 
 - (void)viewDidLoad
 {
@@ -607,11 +588,7 @@ static NSString *pageCount = @"10";
     [_operationView autoSetDimension:ALDimensionWidth toSize:40.0f];
     [_operationView autoSetDimension:ALDimensionHeight toSize:40.0f];
 }
-#pragma mark---------click action
--(void)clickAction :(UIButton*)sender
-{
-    
-}
+
 #pragma mark--------get UI
 -(UIView *)operationView
 {
@@ -736,11 +713,6 @@ static NSString *pageCount = @"10";
     return _mapView;
 }
 
-- (void)viewDidAppear:(BOOL)animated
-{
-    //    self.mapView.showsUserLocation = YES;
-    //    self.mapView.userTrackingMode = MKUserTrackingModeNone;
-}
 
 - (void)viewWillDisappear:(BOOL)animated
 {
@@ -775,22 +747,5 @@ static NSString *pageCount = @"10";
     }
 }
 
--(void)viewDidLayoutSubviews
-{
-    //[self changePositions];
-}
-
-
-
-
-/*
- #pragma mark - Navigation
- 
- // In a storyboard-based application, you will often want to do a little preparation before navigation
- - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
- // Get the new view controller using [segue destinationViewController].
- // Pass the selected object to the new view controller.
- }
- */
 
 @end

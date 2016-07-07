@@ -59,35 +59,38 @@
 #pragma mark-------获取网络数据在这里
 -(void)getDataFromNet
 {
-    NSString *tmp_url = ALL_URL(@"mall");
+    NSString *tmp_url =  [SwpTools swpToolGetInterfaceURL:@"mall"];
     NSDictionary *dict = @{
                            @"app_key":tmp_url,
                            @"page":[NSString stringWithFormat:@"%d",page],
                            @"u_id":[UserModel shareInstance].u_id
                            };
-    [Base64Tool postSomethingToServe:tmp_url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        if ([param[@"code"] integerValue]==200) {
+    [_myGiftTableview.mj_header beginRefreshing];
+    [_myGiftTableview.mj_footer beginRefreshing];
+    [SwpRequest swpPOST:tmp_url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        [_myGiftTableview reloadData];
+
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
             if (page == 1) {
                 [giftArray removeAllObjects];
             }
-            NSArray *array = [param[@"obj"] objectForKey:@"list"];
+            NSArray *array = [resultObject[@"obj"] objectForKey:@"list"];
             for (NSDictionary *dic in array) {
                 myPointGiftInfo *info = [[myPointGiftInfo alloc] initWithDictionary:dic];
                 [giftArray addObject:info];
             }
             //刷新列表
-            [_myGiftTableview reloadData];
-            [_myGiftTableview headerEndRefreshing];
-            [_myGiftTableview footerEndRefreshing];
+
         }else{
-            [SVProgressHUD showErrorWithStatus:param[@"message"]];
+            [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
         }
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络异常"];
-        [_myGiftTableview headerEndRefreshing];
-        [_myGiftTableview footerEndRefreshing];
-    }];
-}
+
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
+
+   }
 
 #pragma mark------tableview delegate
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -193,14 +196,8 @@
         _myGiftTableview.delegate = self;
         _myGiftTableview.dataSource = self;
         [UZCommonMethod hiddleExtendCellFromTableview:_myGiftTableview];
-        [_myGiftTableview addHeaderWithTarget:self action:@selector(headerBeginRefreshing)];
-        [_myGiftTableview addFooterWithTarget:self action:@selector(footerBeginRefreshing)];
-        _myGiftTableview.footerPullToRefreshText = @"上拉可以加载更多数据了";
-        _myGiftTableview.footerReleaseToRefreshText = @"松开马上加载更多数据了";
-        _myGiftTableview.footerRefreshingText = @"正在更新数据";
-        _myGiftTableview.headerPullToRefreshText = @"下拉可以刷新了";
-        _myGiftTableview.headerReleaseToRefreshText = @"松开马上刷新了";
-        _myGiftTableview.headerRefreshingText = @"马上回来";
+        _myGiftTableview.mj_footer=[MJRefreshFooter footerWithRefreshingTarget:self refreshingAction:@selector(footerBeginRefreshing)];
+        _myGiftTableview.mj_header=[MJRefreshHeader headerWithRefreshingTarget:self refreshingAction:@selector(headerBeginRefreshing)];
         if ([_myGiftTableview respondsToSelector:@selector(setSeparatorInset:)]) {
             [_myGiftTableview setSeparatorInset:UIEdgeInsetsMake(0,0,0,0)];
         }
@@ -233,14 +230,6 @@
     [firVC setNavBarTitle:@"兑换记录" withFont:14.0f];
     [self.navigationController pushViewController:firVC animated:YES];
 }
-/*
-#pragma mark - Navigation
 
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

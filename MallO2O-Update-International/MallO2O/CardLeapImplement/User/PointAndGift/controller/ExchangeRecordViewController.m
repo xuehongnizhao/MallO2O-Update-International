@@ -10,7 +10,7 @@
 #import "recordInfo.h"
 #import "recordTableViewCell.h"
 #import "ExchangeRecordDetailViewController.h"
-
+#import "UIViewController+XHLoadingNavigationItemTitle.h"
 @interface ExchangeRecordViewController ()<UITableViewDataSource,UITableViewDelegate>
 {
     NSMutableArray *recordArray;
@@ -98,27 +98,30 @@
 #pragma mark-----获取网络数据
 -(void)getDataFromNet
 {
-    NSString *tmp_url = ALL_URL(@"mall_list");
+    NSString *tmp_url = [SwpTools swpToolGetInterfaceURL:@"mall_list"];
     NSDictionary *dict = @{
                            @"app_key":tmp_url,
                            @"u_id":[UserModel shareInstance].u_id
                            };
     [self startAnimationTitle];
-    [Base64Tool postSomethingToServe:tmp_url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        if ([param[@"code"] integerValue]==200) {
-            NSArray *myArray = param[@"obj"];
+    [SwpRequest swpPOST:tmp_url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
+            NSArray *myArray = resultObject[@"obj"];
             for (NSDictionary *dic in myArray) {
                 recordInfo *info = [[recordInfo alloc] initWithDictionary:dic];
                 [recordArray addObject:info];
             }
             [self.recordTableview reloadData];
         }else{
-            [SVProgressHUD showErrorWithStatus:param[@"message"]];
+            [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
         }
         [self stopAnimationTitle];
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络异常"];
-    }];
+
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
+
 }
 
 #pragma mark-----get UI
@@ -138,14 +141,5 @@
     }
     return _recordTableview;
 }
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end
