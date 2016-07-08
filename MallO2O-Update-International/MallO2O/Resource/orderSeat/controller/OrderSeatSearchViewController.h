@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-#define SEARCH_SEAT_POST connect_url(@"seat_shop")
+
 
 /**
  *  该类为搜索类 拥有记忆历史输入功能还搜索帖子功能

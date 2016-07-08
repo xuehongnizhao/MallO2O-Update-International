@@ -242,7 +242,6 @@
 		042B5CA61D2CDE5500B91DDC /* UserInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 042B5A7F1D2CDE5500B91DDC /* UserInfoViewController.m */; };
 		042B5CC31D2CDF6100B91DDC /* shake_sound.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 042B5CC21D2CDF6100B91DDC /* shake_sound.m4a */; };
 		042B5CC61D2CDF8100B91DDC /* configuration.plist in Resources */ = {isa = PBXBuildFile; fileRef = 042B5CC51D2CDF8100B91DDC /* configuration.plist */; };
-		042B5CC81D2CDF9B00B91DDC /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 042B5CC71D2CDF9B00B91DDC /* Info.plist */; };
 		042B5CD01D2CE05200B91DDC /* BaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 042B5CCB1D2CE05200B91DDC /* BaseViewController.m */; };
 		042B5CD11D2CE05200B91DDC /* TabBarViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 042B5CCF1D2CE05200B91DDC /* TabBarViewController.m */; };
 		042B5CFC1D2CE0B100B91DDC /* UIView+Animations.m in Sources */ = {isa = PBXBuildFile; fileRef = 042B5CD51D2CE0B100B91DDC /* UIView+Animations.m */; };
@@ -309,6 +308,9 @@
 		0469B6061B3BA52A00DBD666 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0469B6051B3BA52A00DBD666 /* CoreGraphics.framework */; };
 		0469B6081B3BA53500DBD666 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0469B6071B3BA53500DBD666 /* UIKit.framework */; };
 		0469B60A1B3BA53C00DBD666 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0469B6091B3BA53C00DBD666 /* Foundation.framework */; };
+		049BD5811D2F2DD900D25B06 /* ShowAllImageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 049BD5801D2F2DD900D25B06 /* ShowAllImageViewController.m */; };
+		049BD5841D2F342F00D25B06 /* WechatOrderInformation.m in Sources */ = {isa = PBXBuildFile; fileRef = 049BD5831D2F342F00D25B06 /* WechatOrderInformation.m */; };
+		049BD58A1D2F3D1800D25B06 /* UIImageView+MJWebCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 049BD5891D2F3D1800D25B06 /* UIImageView+MJWebCache.m */; };
 		049E02AF1D2DE7BD0068C759 /* DSNavigationBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 049E02AE1D2DE7BD0068C759 /* DSNavigationBar.m */; };
 		049E02BC1D2DEBD20068C759 /* FontLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 049E02B21D2DEBD20068C759 /* FontLabel.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		049E02BD1D2DEBD20068C759 /* FontLabelStringDrawing.m in Sources */ = {isa = PBXBuildFile; fileRef = 049E02B41D2DEBD20068C759 /* FontLabelStringDrawing.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -353,7 +355,6 @@
 		049E03371D2DFC040068C759 /* orderSeatDetailInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 049E03361D2DFC040068C759 /* orderSeatDetailInfo.m */; };
 		049E03461D2DFC300068C759 /* orderSeatDetailTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 049E03391D2DFC300068C759 /* orderSeatDetailTableViewCell.m */; };
 		049E03471D2DFC300068C759 /* orderSeatDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 049E033B1D2DFC300068C759 /* orderSeatDetailViewController.m */; };
-		049E03481D2DFC300068C759 /* orderSeatInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 049E033D1D2DFC300068C759 /* orderSeatInfo.m */; };
 		049E03491D2DFC300068C759 /* orderSeatSuccessInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 049E033F1D2DFC300068C759 /* orderSeatSuccessInfo.m */; };
 		049E034A1D2DFC300068C759 /* orderSeatSuccessTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 049E03411D2DFC300068C759 /* orderSeatSuccessTableViewCell.m */; };
 		049E034B1D2DFC300068C759 /* orderSeatTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 049E03431D2DFC300068C759 /* orderSeatTableViewCell.m */; };
@@ -389,8 +390,6 @@
 		049E03AD1D2E08100068C759 /* PhotoBrowserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 049E03A71D2E080F0068C759 /* PhotoBrowserViewController.m */; };
 		049E03AE1D2E08100068C759 /* PhotoView.m in Sources */ = {isa = PBXBuildFile; fileRef = 049E03A91D2E080F0068C759 /* PhotoView.m */; };
 		049E03B41D2E2D300068C759 /* UIViewController+XHLoadingNavigationItemTitle.m in Sources */ = {isa = PBXBuildFile; fileRef = 049E03B31D2E2D300068C759 /* UIViewController+XHLoadingNavigationItemTitle.m */; };
-		049E03BE1D2E2F650068C759 /* CellViewMgrController.m in Sources */ = {isa = PBXBuildFile; fileRef = 049E03B71D2E2F650068C759 /* CellViewMgrController.m */; };
-		049E03BF1D2E2F650068C759 /* CustomSegmentedControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 049E03B91D2E2F650068C759 /* CustomSegmentedControl.m */; };
 		049E03C11D2E2F650068C759 /* ReviewLable.m in Sources */ = {isa = PBXBuildFile; fileRef = 049E03BD1D2E2F650068C759 /* ReviewLable.m */; };
 		049E03F81D2E33400068C759 /* MHTabBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = 049E03F71D2E33400068C759 /* MHTabBarController.m */; };
 		049E04001D2E34A60068C759 /* TYDotIndicatorView.m in Sources */ = {isa = PBXBuildFile; fileRef = 049E03FB1D2E34A60068C759 /* TYDotIndicatorView.m */; };
@@ -1182,6 +1181,12 @@
 		0469B6051B3BA52A00DBD666 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		0469B6071B3BA53500DBD666 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		0469B6091B3BA53C00DBD666 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		049BD57F1D2F2DD900D25B06 /* ShowAllImageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShowAllImageViewController.h; sourceTree = "<group>"; };
+		049BD5801D2F2DD900D25B06 /* ShowAllImageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShowAllImageViewController.m; sourceTree = "<group>"; };
+		049BD5821D2F342F00D25B06 /* WechatOrderInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WechatOrderInformation.h; sourceTree = "<group>"; };
+		049BD5831D2F342F00D25B06 /* WechatOrderInformation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WechatOrderInformation.m; sourceTree = "<group>"; };
+		049BD5881D2F3D1800D25B06 /* UIImageView+MJWebCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImageView+MJWebCache.h"; sourceTree = "<group>"; };
+		049BD5891D2F3D1800D25B06 /* UIImageView+MJWebCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+MJWebCache.m"; sourceTree = "<group>"; };
 		049E02AD1D2DE7BD0068C759 /* DSNavigationBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DSNavigationBar.h; sourceTree = "<group>"; };
 		049E02AE1D2DE7BD0068C759 /* DSNavigationBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DSNavigationBar.m; sourceTree = "<group>"; };
 		049E02B11D2DEBD20068C759 /* FontLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontLabel.h; sourceTree = "<group>"; };
@@ -1271,8 +1276,6 @@
 		049E03391D2DFC300068C759 /* orderSeatDetailTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = orderSeatDetailTableViewCell.m; sourceTree = "<group>"; };
 		049E033A1D2DFC300068C759 /* orderSeatDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = orderSeatDetailViewController.h; sourceTree = "<group>"; };
 		049E033B1D2DFC300068C759 /* orderSeatDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = orderSeatDetailViewController.m; sourceTree = "<group>"; };
-		049E033C1D2DFC300068C759 /* orderSeatInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = orderSeatInfo.h; sourceTree = "<group>"; };
-		049E033D1D2DFC300068C759 /* orderSeatInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = orderSeatInfo.m; sourceTree = "<group>"; };
 		049E033E1D2DFC300068C759 /* orderSeatSuccessInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = orderSeatSuccessInfo.h; sourceTree = "<group>"; };
 		049E033F1D2DFC300068C759 /* orderSeatSuccessInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = orderSeatSuccessInfo.m; sourceTree = "<group>"; };
 		049E03401D2DFC300068C759 /* orderSeatSuccessTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = orderSeatSuccessTableViewCell.h; sourceTree = "<group>"; };
@@ -1334,10 +1337,6 @@
 		049E03A91D2E080F0068C759 /* PhotoView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotoView.m; sourceTree = "<group>"; };
 		049E03B21D2E2D300068C759 /* UIViewController+XHLoadingNavigationItemTitle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+XHLoadingNavigationItemTitle.h"; sourceTree = "<group>"; };
 		049E03B31D2E2D300068C759 /* UIViewController+XHLoadingNavigationItemTitle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+XHLoadingNavigationItemTitle.m"; sourceTree = "<group>"; };
-		049E03B61D2E2F650068C759 /* CellViewMgrController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CellViewMgrController.h; sourceTree = "<group>"; };
-		049E03B71D2E2F650068C759 /* CellViewMgrController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CellViewMgrController.m; sourceTree = "<group>"; };
-		049E03B81D2E2F650068C759 /* CustomSegmentedControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomSegmentedControl.h; sourceTree = "<group>"; };
-		049E03B91D2E2F650068C759 /* CustomSegmentedControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomSegmentedControl.m; sourceTree = "<group>"; };
 		049E03BC1D2E2F650068C759 /* ReviewLable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReviewLable.h; sourceTree = "<group>"; };
 		049E03BD1D2E2F650068C759 /* ReviewLable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReviewLable.m; sourceTree = "<group>"; };
 		049E03F61D2E33400068C759 /* MHTabBarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MHTabBarController.h; sourceTree = "<group>"; };
@@ -3270,8 +3269,6 @@
 				049E03391D2DFC300068C759 /* orderSeatDetailTableViewCell.m */,
 				049E033A1D2DFC300068C759 /* orderSeatDetailViewController.h */,
 				049E033B1D2DFC300068C759 /* orderSeatDetailViewController.m */,
-				049E033C1D2DFC300068C759 /* orderSeatInfo.h */,
-				049E033D1D2DFC300068C759 /* orderSeatInfo.m */,
 				049E033E1D2DFC300068C759 /* orderSeatSuccessInfo.h */,
 				049E033F1D2DFC300068C759 /* orderSeatSuccessInfo.m */,
 				049E03401D2DFC300068C759 /* orderSeatSuccessTableViewCell.h */,
@@ -3433,10 +3430,6 @@
 		049E03B51D2E2F650068C759 /* model */ = {
 			isa = PBXGroup;
 			children = (
-				049E03B61D2E2F650068C759 /* CellViewMgrController.h */,
-				049E03B71D2E2F650068C759 /* CellViewMgrController.m */,
-				049E03B81D2E2F650068C759 /* CustomSegmentedControl.h */,
-				049E03B91D2E2F650068C759 /* CustomSegmentedControl.m */,
 				049E03BC1D2E2F650068C759 /* ReviewLable.h */,
 				049E03BD1D2E2F650068C759 /* ReviewLable.m */,
 			);
@@ -4077,6 +4070,12 @@
 		46CC86651B14073300FDA003 /* Resource */ = {
 			isa = PBXGroup;
 			children = (
+				049BD5881D2F3D1800D25B06 /* UIImageView+MJWebCache.h */,
+				049BD5891D2F3D1800D25B06 /* UIImageView+MJWebCache.m */,
+				049BD5821D2F342F00D25B06 /* WechatOrderInformation.h */,
+				049BD5831D2F342F00D25B06 /* WechatOrderInformation.m */,
+				049BD57F1D2F2DD900D25B06 /* ShowAllImageViewController.h */,
+				049BD5801D2F2DD900D25B06 /* ShowAllImageViewController.m */,
 				049E04431D2E4C960068C759 /* map */,
 				049E04401D2E47460068C759 /* NVDate.h */,
 				049E04411D2E47460068C759 /* NVDate.m */,
@@ -4292,7 +4291,7 @@
 		46D0D8231B14004500E388FC /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0720;
+				LastUpgradeCheck = 0730;
 				ORGANIZATIONNAME = songweipng;
 				TargetAttributes = {
 					46D0D82A1B14004500E388FC = {
@@ -4350,7 +4349,6 @@
 				049E04581D2E4C960068C759 /* MapStoryboard.storyboard in Resources */,
 				049E03971D2E028C0068C759 /* DoPhotoCell.xib in Resources */,
 				26C06B451C5E37AF0023517C /* mapapi.bundle in Resources */,
-				042B5CC81D2CDF9B00B91DDC /* Info.plist in Resources */,
 				049E03AB1D2E08100068C759 /* imageCell.xib in Resources */,
 				049E04541D2E4C960068C759 /* right_no@2x.png in Resources */,
 				26E128A11C3DF1D9004A3CDD /* AlipaySDK.bundle in Resources */,
@@ -4617,7 +4615,6 @@
 				049E03341D2DFB510068C759 /* choosePickerView.m in Sources */,
 				042B5C801D2CDE5500B91DDC /* myGroupInfo.m in Sources */,
 				042B5BCA1D2CDE5500B91DDC /* MessageInfoViewController.m in Sources */,
-				049E03BF1D2E2F650068C759 /* CustomSegmentedControl.m in Sources */,
 				049E03301D2DFB510068C759 /* OrderSeatSearchViewController.m in Sources */,
 				049E03111D2DF8060068C759 /* CalendarViewController.m in Sources */,
 				042B5C141D2CDE5500B91DDC /* GroupPaySuccessViewController.m in Sources */,
@@ -4652,6 +4649,7 @@
 				042B5C151D2CDE5500B91DDC /* GroupPayViewController.m in Sources */,
 				04B8A3AA1B7ADC890086D1EB /* UUProgressHUD.m in Sources */,
 				042B5C911D2CDE5500B91DDC /* MySpikeListViewController.m in Sources */,
+				049BD58A1D2F3D1800D25B06 /* UIImageView+MJWebCache.m in Sources */,
 				049E04591D2E4C960068C759 /* ORAShopMapsViewController.m in Sources */,
 				049E02DE1D2DF3B90068C759 /* JPSThumbnailAnnotationView.m in Sources */,
 				042B5C981D2CDE5500B91DDC /* myPointDetailViewController.m in Sources */,
@@ -4683,7 +4681,6 @@
 				042B5C661D2CDE5500B91DDC /* sumitSuccessViewController.m in Sources */,
 				042B5BA71D2CDE5500B91DDC /* CityUpdateDescViewController.m in Sources */,
 				042B5D021D2CE0B100B91DDC /* XMNAlbumModel.m in Sources */,
-				049E03481D2DFC300068C759 /* orderSeatInfo.m in Sources */,
 				049E02DA1D2DF3B90068C759 /* DLStarRatingControl.m in Sources */,
 				042B5C0D1D2CDE5500B91DDC /* groupListTableViewCell.m in Sources */,
 				46CC86951B14073300FDA003 /* UZCommonTableViewController.m in Sources */,
@@ -4706,6 +4703,7 @@
 				049E04391D2E41FC0068C759 /* bitstream.c in Sources */,
 				042B5C821D2CDE5500B91DDC /* myOrderRoomCenterInfo.m in Sources */,
 				042B5C3B1D2CDE5500B91DDC /* SearchViewController.m in Sources */,
+				049BD5811D2F2DD900D25B06 /* ShowAllImageViewController.m in Sources */,
 				042B5BBE1D2CDE5500B91DDC /* CityCollectionViewCell.m in Sources */,
 				042B5C961D2CDE5500B91DDC /* ExchangeRecordDetailViewController.m in Sources */,
 				042B5BFF1D2CDE5500B91DDC /* ShopDetailTableViewCell.m in Sources */,
@@ -4724,6 +4722,7 @@
 				042B5C431D2CDE5500B91DDC /* AddAddressViewController.m in Sources */,
 				042B5C461D2CDE5500B91DDC /* dishConfirmTableViewCell.m in Sources */,
 				042B5BA31D2CDE5500B91DDC /* TwoCateController.m in Sources */,
+				049BD5841D2F342F00D25B06 /* WechatOrderInformation.m in Sources */,
 				049E03461D2DFC300068C759 /* orderSeatDetailTableViewCell.m in Sources */,
 				042B5BA41D2CDE5500B91DDC /* CityInfoViewController.m in Sources */,
 				042B5D0E1D2CE0B100B91DDC /* XMNPhotoStickLayout.m in Sources */,
@@ -4858,7 +4857,6 @@
 				0469B5F71B3BA0BA00DBD666 /* NSDataEx.m in Sources */,
 				042B5BD81D2CDE5500B91DDC /* slideModel.m in Sources */,
 				042B5C511D2CDE5500B91DDC /* userAddressInfo.m in Sources */,
-				049E03BE1D2E2F650068C759 /* CellViewMgrController.m in Sources */,
 				042B5C8E1D2CDE5500B91DDC /* myOrderSeatCenterViewController.m in Sources */,
 				042B5CA01D2CDE5500B91DDC /* ForgetPasswordViewController.m in Sources */,
 				042B5C211D2CDE5500B91DDC /* orderRoomSuccessTableViewCell.m in Sources */,
@@ -4984,10 +4982,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = FADE0867A18D4CA18F5829B9 /* Pods-MallO2O.debug.xcconfig */;
 			buildSettings = {
-				ARCHS = (
-					"$(ARCHS_STANDARD)",
-					"$(ARCHS_STANDARD_32_BIT)",
-				);
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
@@ -5059,10 +5053,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4A6E08605BD1FAE9C82EB2DB /* Pods-MallO2O.release.xcconfig */;
 			buildSettings = {
-				ARCHS = (
-					"$(ARCHS_STANDARD)",
-					"$(ARCHS_STANDARD_32_BIT)",
-				);
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;

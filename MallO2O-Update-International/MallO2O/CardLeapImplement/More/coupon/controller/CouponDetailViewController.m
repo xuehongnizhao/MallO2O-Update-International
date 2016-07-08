@@ -156,7 +156,7 @@
         _shareButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
         [_shareButton setImage:[UIImage imageNamed:@"coupon_share_no"] forState:UIControlStateNormal];
         [_shareButton setImage:[UIImage imageNamed:@"coupon_share_sel"] forState:UIControlStateHighlighted];
-        [_shareButton addTarget:self action:@selector(shareActino:) forControlEvents:UIControlEventTouchUpInside];
+        [_shareButton addTarget:self action:@selector(shareAction:) forControlEvents:UIControlEventTouchUpInside];
         _shareButton.imageEdgeInsets =  UIEdgeInsetsMake(0, 10, 0, -10);
     }
     return _shareButton;

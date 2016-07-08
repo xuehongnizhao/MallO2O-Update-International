@@ -217,7 +217,7 @@ static NSString *pageCount = @"10";
     NSInteger beginPage = (page-1) * [pageCount integerValue] + 1;
     NSInteger endPage = beginPage + 9;
     
-    self.descriptionLabel.text = [NSString stringWithFormat:@"第%ld-%ld家",beginPage,endPage];
+    self.descriptionLabel.text = [NSString stringWithFormat:@"第%d-%d家",beginPage,endPage];
     
     if (page <= 1) {
         [self.leftButton setEnabled:NO];
@@ -459,8 +459,8 @@ static NSString *pageCount = @"10";
     if ([self.shops count]>0) {
         NSLog(@"zoom level %d", [self getZoomLevel:mapView]);
         NSLog(@"the late and the lng is %f and %f",mapView.centerCoordinate.latitude,mapView.centerCoordinate.longitude);
-        NSLog(@"the distance is %f",[Base64Tool LantitudeLongitudeDist:baidu_lng other_Lat:baidu_lat self_Lon:mapView.centerCoordinate.longitude self_Lat:mapView.centerCoordinate.latitude]);
-        if ([Base64Tool LantitudeLongitudeDist:baidu_lng other_Lat:baidu_lat self_Lon:mapView.centerCoordinate.longitude self_Lat:mapView.centerCoordinate.latitude]>1000) {
+        NSLog(@"the distance is %f",[SwpTools LantitudeLongitudeDist:baidu_lng other_Lat:baidu_lat self_Lon:mapView.centerCoordinate.longitude self_Lat:mapView.centerCoordinate.latitude]);
+        if ([SwpTools LantitudeLongitudeDist:baidu_lng other_Lat:baidu_lat self_Lon:mapView.centerCoordinate.longitude self_Lat:mapView.centerCoordinate.latitude]>1000) {
             baidu_lat = mapView.centerCoordinate.latitude;
             baidu_lng = mapView.centerCoordinate.longitude;
             [self getShopList:baidu_lat lng:baidu_lng];
@@ -478,19 +478,13 @@ static NSString *pageCount = @"10";
  */
 -(void)getShopList:(float)lat lng:(float)lng
 {
-    NSString *tmp_url  = connect_url(@"shop_list");
-    //    NSDictionary *dict = @{
-    //                           @"app_key":tmp_url,
-    //                           @"lat":[NSString stringWithFormat:@"%f",lat],
-    //                           @"lng":[NSString stringWithFormat:@"%f",lng],
-    //                           @"zoom":[NSString stringWithFormat:@"%d",[self getZoomLevel:_mapView]]
-    //                           };
-    [Base64Tool postSomethingToServe:tmp_url andParams:_shopListDic isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        if ([param[@"code"] integerValue]==200) {
+    NSString *tmp_url  =  [SwpTools swpToolGetInterfaceURL:@"shop_list"];
+    [SwpRequest swpPOST:tmp_url parameters:_shopListDic isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
             [SVProgressHUD dismiss];
             shopArray = [[NSMutableArray alloc] init];
             //封装数据
-            NSArray *arr = [param objectForKey:@"obj"];
+            NSArray *arr = [resultObject objectForKey:@"obj"];
             for (NSDictionary *dict in arr) {
                 ShopListInfo *info = [[ShopListInfo alloc] initWithDictionary:dict];
                 [shopArray addObject:info];
@@ -501,22 +495,16 @@ static NSString *pageCount = @"10";
             [self settingOperationView];
             [self.mapView reloadInputViews];
         }else{
-            [SVProgressHUD showErrorWithStatus:param[@"message"]];
+            [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
         }
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络异常"];
-    }];
-}
 
-#pragma mark - Lifecycle
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
-}
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
+
+   }
+
 
 - (void)viewDidLoad
 {
@@ -732,14 +720,9 @@ static NSString *pageCount = @"10";
     return _mapView;
 }
 
-- (void)viewDidAppear:(BOOL)animated
-{
-    //    self.mapView.showsUserLocation = YES;
-    //    self.mapView.userTrackingMode = MKUserTrackingModeNone;
-}
-
 - (void)viewWillDisappear:(BOOL)animated
 {
+    [super viewWillDisappear:animated ];
     self.mapView = nil;
     [SVProgressHUD dismiss];
     self.mapView.showsUserLocation = NO;
@@ -753,10 +736,6 @@ static NSString *pageCount = @"10";
     self.myLocation = nil;
 }
 
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-}
 
 -(void)changePositions
 {
@@ -771,8 +750,5 @@ static NSString *pageCount = @"10";
     }
 }
 
--(void)viewDidLayoutSubviews
-{
-    //[self changePositions];
-}
+
 @end

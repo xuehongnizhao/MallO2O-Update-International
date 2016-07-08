@@ -62,32 +62,32 @@
     }
     NSLog(@"myArray:%@",myArray);
     
-    scrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, 0, 320*LinPercent, self.view.frame.size.height)];
+    scrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, 0, 320*Balance_Width, self.view.frame.size.height)];
     scrollView.delegate = self;
     scrollView.pagingEnabled = YES;
     scrollView.userInteractionEnabled = YES;
     scrollView.showsHorizontalScrollIndicator = NO;
     scrollView.showsVerticalScrollIndicator = NO;
-    [scrollView setContentSize:CGSizeMake(320*LinPercent * count, 568*LinHeightPercent)];
+    [scrollView setContentSize:CGSizeMake(320*Balance_Width * count, 568*Balance_Heith)];
 
     [self.view addSubview:scrollView];
     
     [self addPhoto];
     
-    [scrollView setContentOffset:CGPointMake(self.photoIndex*320*LinPercent, 0)];
+    [scrollView setContentOffset:CGPointMake(self.photoIndex*320*Balance_Width, 0)];
 
     if (self.photoArray.count>1)
     {
         if (IS_HEIGHT_GTE_568 == 0) {
             indexLabel=[[UILabel alloc]initWithFrame:CGRectMake(50, 450, 220, 50)];
         }else{
-            indexLabel=[[UILabel alloc]initWithFrame:CGRectMake(50, 500*LinHeightPercent, 220*LinPercent, 50)];
+            indexLabel=[[UILabel alloc]initWithFrame:CGRectMake(50, 500*Balance_Heith, 220*Balance_Width, 50)];
         }
         indexLabel.font = [UIFont boldSystemFontOfSize:20];
         indexLabel.backgroundColor = [UIColor clearColor];
         indexLabel.textColor = [UIColor whiteColor];
         indexLabel.textAlignment = NSTextAlignmentCenter;
-        indexLabel.text=[NSString stringWithFormat:@"%ld / %d",self.photoIndex+1,count];
+        indexLabel.text=[NSString stringWithFormat:@"%d / %d",self.photoIndex+1,count];
         indexLabel.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
         [self.view addSubview:indexLabel];
     }
@@ -95,7 +95,7 @@
     if (IS_HEIGHT_GTE_568 == 0) {
         backButton.frame=CGRectMake(10, 450, 40, 50);
     }else{
-        backButton.frame=CGRectMake(10, 500*LinHeightPercent, 40, 50);
+        backButton.frame=CGRectMake(10, 500*Balance_Heith, 40, 50);
     }
     [backButton setBackgroundImage:[UIImage imageNamed:@"issue_back_no"] forState:UIControlStateNormal];
     [backButton addTarget:self action:@selector(backToController) forControlEvents:UIControlEventTouchUpInside];
@@ -103,7 +103,7 @@
     [self.view addSubview:backButton];
     if (![self.is_exit isEqualToString:@"0"]) {
         delete=[UIButton buttonWithType:UIButtonTypeRoundedRect];
-        delete.frame=CGRectMake(250*LinPercent, 513*LinHeightPercent, 25, 25);
+        delete.frame=CGRectMake(250*Balance_Width, 513*Balance_Heith, 25, 25);
         delete.backgroundColor=[UIColor clearColor];
         [delete setBackgroundImage:[UIImage imageNamed:@"close"] forState:UIControlStateNormal];
         [delete addTarget:self action:@selector(delete) forControlEvents:UIControlEventTouchUpInside];
@@ -159,11 +159,11 @@
     [myArray removeObjectAtIndex:currentIndex];
     [imageViewArray removeObjectAtIndex:currentIndex];
     --count;
-    [scrollView setContentSize:CGSizeMake(320*LinPercent * count, 568)];
-    indexLabel.text=[NSString stringWithFormat:@"%ld / %d",currentIndex+1,count];
+    [scrollView setContentSize:CGSizeMake(320*Balance_Width * count, 568)];
+    indexLabel.text=[NSString stringWithFormat:@"%d / %d",currentIndex+1,count];
     if (currentIndex!=0)
     {
-        [scrollView setContentOffset:CGPointMake(320*LinPercent*(currentIndex-1), 0)];
+        [scrollView setContentOffset:CGPointMake(320*Balance_Width*(currentIndex-1), 0)];
     }
     [self addPhoto];
 }

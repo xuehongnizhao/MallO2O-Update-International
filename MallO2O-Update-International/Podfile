@@ -22,4 +22,6 @@ pod 'UMengSocialCOM'        #友盟
 pod 'RegexKitLite'          #正则表达式
 pod 'Reachability'          #网络环境
 pod 'SDCycleScrollView'     #轮播
+pod 'JSBadgeView'           #右上角数字提示
+pod 'MJPhotoBrowser'        #图片查看
 end

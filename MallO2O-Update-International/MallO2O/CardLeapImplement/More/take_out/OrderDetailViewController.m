@@ -9,7 +9,6 @@
 #import "OrderDetailViewController.h"
 #import "RviewDishListViewController.h"
 #import "UMSocial.h"
-#import "NSDictionary+RequestEncoding.h"
 @interface OrderDetailViewController ()<UIWebViewDelegate,UIAlertViewDelegate,UMSocialUIDelegate>
 {
     NSString *delete_order_id;
@@ -66,7 +65,7 @@
             }
             //----pass data to html test----------
             NSMutableDictionary *dic = (NSMutableDictionary*)resultObject;
-            NSString *methodContent=[dic jsonEncodedKeyValueString];
+            NSString *methodContent=[self jsonEncodedKeyValueString:dic];;
             NSString *info = [NSString stringWithFormat:@"%@(%@)",@"takeout_message",methodContent];
             //拼接html的web数据
             [_orderDetailWeb stringByEvaluatingJavaScriptFromString:info];
@@ -84,6 +83,16 @@
 
     }
 
+-(NSString*) jsonEncodedKeyValueString:(NSMutableDictionary *)dic {
+    
+    NSError *error = nil;
+    NSData *data = [NSJSONSerialization dataWithJSONObject:self
+                                                   options:0 // non-pretty printing
+                                                     error:&error];
+    
+    return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+}
+
 -(void)updateMessageForOrder
 {
     NSString *url = [SwpTools swpToolGetInterfaceURL:@"takeout_status_message"];
@@ -96,7 +105,7 @@
             [SVProgressHUD dismiss];
             //----pass data to html test----------
             NSMutableDictionary *dic = (NSMutableDictionary*)resultObject;
-            NSString *methodContent=[dic jsonEncodedKeyValueString];
+            NSString *methodContent=[self jsonEncodedKeyValueString:dic];
             NSString *info = [NSString stringWithFormat:@"%@(%@)",@"takeout_message_two",methodContent];
             //拼接html的web数据
             [_orderDetailWeb stringByEvaluatingJavaScriptFromString:info];

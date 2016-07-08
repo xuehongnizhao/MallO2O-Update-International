@@ -72,7 +72,7 @@
     [_imageButton autoPinEdgeToSuperviewEdge:ALEdgeTop withInset:0.0f];
     [_imageButton autoPinEdgeToSuperviewEdge:ALEdgeLeft withInset:0.0f];
     [_imageButton autoPinEdgeToSuperviewEdge:ALEdgeRight withInset:0.0f];
-    [_imageButton autoSetDimensionsToSize:CGSizeMake(50*LinPercent, 50*LinHeightPercent)];
+    [_imageButton autoSetDimensionsToSize:CGSizeMake(50*Balance_Width, 50*Balance_Heith)];
     
     [_buttonLabel autoPinEdgeToSuperviewEdge:ALEdgeLeft withInset:0.0f];
     [_buttonLabel autoPinEdgeToSuperviewEdge:ALEdgeRight withInset:0.0f];
@@ -96,18 +96,11 @@
     if (!_buttonLabel)
     {
         _buttonLabel=[[UILabel alloc]initForAutoLayout];
-        _buttonLabel.font=[UIFont systemFontOfSize:11*LinPercent];
+        _buttonLabel.font=[UIFont systemFontOfSize:11*Balance_Width];
         _buttonLabel.textColor = UIColorFromRGB(indexTitle);
         _buttonLabel.textAlignment=NSTextAlignmentCenter;
     }
     return _buttonLabel;
 }
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect {
-    // Drawing code
-}
-*/
 
 @end

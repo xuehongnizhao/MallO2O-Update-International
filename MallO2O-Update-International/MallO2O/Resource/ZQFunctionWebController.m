@@ -11,6 +11,7 @@
 #import "UMSocial.h"
 #import "WebViewJavascriptBridge.h"
 #import "XMNPhotoPickerFramework.h"
+#import "Reachability.h"
 //#import "VoiceRecorderBase.h"
 //#import "AmrRecordWriter.h"
 #import "LoginViewController.h"
@@ -127,19 +128,18 @@
                                        @"app_key":upImageURL,
                                        @"uuid":data[@"uuid"]
                                        };
-                [SwpRequest swpPOST:upImageURL parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+                [SwpRequest swpPOSTAddFile:upImageURL parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt fileName:@"pic" fileData:imageData swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
                     if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
                         responseCallback(data[@"true"]);
                     }else{
                         [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
                     }
 
-                    } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
-                        [SVProgressHUD showErrorWithStatus:@"网络异常"];
-                        
-                    }];
-                
-            }
+                } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+                    [SVProgressHUD showErrorWithStatus:@"网络异常"];
+
+                }];
+                }
             
         }];
         //4. 显示XMNPhotoPicker

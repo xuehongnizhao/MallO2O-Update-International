@@ -99,9 +99,9 @@
 #pragma mark----------get data
 -(void)getDataFromNet
 {
-    NSString *url = [SwpTools swpToolGetInterfaceURL:@"shop_message");
+    NSString *url = [SwpTools swpToolGetInterfaceURL:@"shop_message"];
     NSString *uid = @"0";
-    if (ApplicationDelegate.islogin == YES) {
+    if (ApplicationDelegate.login == YES) {
         uid = [UserModel shareInstance].u_id;
     }
     NSDictionary *dic = @{
@@ -109,23 +109,25 @@
                           @"app_key":url,
                           @"u_id":uid
                           };
-    [Base64Tool postSomethingToServe:url andParams:dic isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        NSString *code = [NSString stringWithFormat:@"%@",[param objectForKey:@"code"]];
-        if ([code isEqualToString:@"200"]) {
+    [SwpRequest swpPOST:url parameters:dic isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
             [SVProgressHUD dismiss];
-            NSLog(@"%@",param);
-            detailInfo = [[shopDetailInfo alloc] initWithDictionary:[param objectForKey:@"obj"]];
+            NSLog(@"%@",resultObject);
+            detailInfo = [[shopDetailInfo alloc] initWithDictionary:[resultObject objectForKey:@"obj"]];
             [self.shopDetailTableview reloadData];
             [self setButton];
         }else{
-            [SVProgressHUD showErrorWithStatus:[param objectForKey:@"message"]];
+            [SVProgressHUD showErrorWithStatus:[resultObject objectForKey:@"message"]];
         }
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络异常"];
-    }];
-    NSString *url1 = ALL_URL(@"business_extend");
+
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
+
+    NSString *url1 =  [SwpTools swpToolGetInterfaceURL:@"business_extend"];
     NSString *uid1 = @"0";
-    if (ApplicationDelegate.islogin == YES) {
+    if (ApplicationDelegate.login == YES) {
         uid1 = [UserModel shareInstance].u_id;
     }
     NSDictionary *dic1 = @{
@@ -133,25 +135,27 @@
                            @"app_key":url1,
                            @"u_id":uid1
                            };
-    [Base64Tool postSomethingToServe:url1 andParams:dic1 isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        NSString *code = [NSString stringWithFormat:@"%@",[param objectForKey:@"code"]];
-        if ([code isEqualToString:@"200"]) {
+    [SwpRequest swpPOST:url1 parameters:dic1 isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
             [SVProgressHUD dismiss];
-            NSLog(@"%@",param);
-            panorama=[[param objectForKey:@"obj"]objectForKey:@"360QJ"];
-            SJHDP=[[param objectForKey:@"obj"]objectForKey:@"SJHDP"];
-            SJSC=[[param objectForKey:@"obj"]objectForKey:@"SJSC"];
-            SJHD=[[param objectForKey:@"obj"]objectForKey:@"SJHD"];
-            SJZS=[[param objectForKey:@"obj"]objectForKey:@"SJZS"];
+            NSLog(@"%@",resultObject);
+            panorama=[[resultObject objectForKey:@"obj"]objectForKey:@"360QJ"];
+            SJHDP=[[resultObject objectForKey:@"obj"]objectForKey:@"SJHDP"];
+            SJSC=[[resultObject objectForKey:@"obj"]objectForKey:@"SJSC"];
+            SJHD=[[resultObject objectForKey:@"obj"]objectForKey:@"SJHD"];
+            SJZS=[[resultObject objectForKey:@"obj"]objectForKey:@"SJZS"];
             adInfoList=@[SJHDP,SJSC,SJHD,SJZS];
             [self.shopDetailTableview reloadData];
             NSLog(@"%@",adInfoList);
         }else{
-            [SVProgressHUD showErrorWithStatus:[param objectForKey:@"message"]];
+            [SVProgressHUD showErrorWithStatus:[resultObject objectForKey:@"message"]];
         }
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络异常"];
-    }];
+
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
+
     
 }
 
@@ -254,20 +258,21 @@
 }
 #pragma mark --- 11.28 点击分享按钮就加积分
 - (void) UserSharePoint {
-    if (ApplicationDelegate.islogin == YES) {
-        NSString *url = [SwpTools swpToolGetInterfaceURL:@"share_point");
+    if (ApplicationDelegate.login == YES) {
+        NSString *url = [SwpTools swpToolGetInterfaceURL:@"share_point"];
         NSDictionary *dict = @{
                                @"app_key":url,
                                @"u_id":[UserModel shareInstance].u_id
                                };
-        [Base64Tool postSomethingToServe:url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-            if ([param[@"code"] integerValue]==200) {
-                //                [SVProgressHUD showSuccessWithStatus:@"分享成功"];
+        [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+            if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
             }
-        } andErrorBlock:^(NSError *error) {
-            [SVProgressHUD showErrorWithStatus:@"网络异常"];
-        }];
-    }else{
+            } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+                [SVProgressHUD showErrorWithStatus:@"网络异常"];
+                
+            }];
+
+        }else{
         [SVProgressHUD showErrorWithStatus:@"您尚未登录，无法给您增加积分"];
     }
 }
@@ -280,19 +285,20 @@
     if(response.responseCode == UMSResponseCodeSuccess)
     {
         [SVProgressHUD showSuccessWithStatus:@"分享成功"];
-        if (ApplicationDelegate.islogin == YES) {
-            NSString *url = [SwpTools swpToolGetInterfaceURL:@"share_point");
+        if (ApplicationDelegate.login == YES) {
+            NSString *url = [SwpTools swpToolGetInterfaceURL:@"share_point"];
             NSDictionary *dict = @{
                                    @"app_key":url,
                                    @"u_id":[UserModel shareInstance].u_id
                                    };
-            [Base64Tool postSomethingToServe:url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-                if ([param[@"code"] integerValue]==200) {
+            [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+                if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
                     [SVProgressHUD showSuccessWithStatus:@"分享成功"];
                 }
-            } andErrorBlock:^(NSError *error) {
-                [SVProgressHUD showErrorWithStatus:@"网络异常"];
-            }];
+                } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+                    [SVProgressHUD showErrorWithStatus:@"网络异常"];
+                    
+                }];
         }else{
             [SVProgressHUD showErrorWithStatus:@"您尚未登录，无法给您增加积分"];
         }
@@ -306,7 +312,7 @@
 -(void)collectAciont :(UIButton*)sender
 {
     NSLog(@"点击收藏----登录才能收藏");
-    if (ApplicationDelegate.islogin == NO) {
+    if (ApplicationDelegate.login == NO) {
         LoginViewController *firVC = [[LoginViewController alloc] init];
         firVC.identifier = @"0";
         firVC.navigationItem.title = @"登录";
@@ -317,7 +323,7 @@
         if (detailInfo != nil) {
             collect = detailInfo.collection;
         }
-        NSString *url = [SwpTools swpToolGetInterfaceURL:@"shop_collection");
+        NSString *url = [SwpTools swpToolGetInterfaceURL:@"shop_collection"];
         NSDictionary *dict = @{
                                @"app_key":url,
                                @"shop_id":self.shop_id,
@@ -325,10 +331,9 @@
                                @"session_key":[UserModel shareInstance].session_key,
                                @"collection":collect
                                };
-        [Base64Tool postSomethingToServe:url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-            NSString *code = [NSString stringWithFormat:@"%@",[param objectForKey:@"code"]];
-            if ([code isEqualToString:@"200"]) {
-                [SVProgressHUD showSuccessWithStatus:[param objectForKey:@"message"]];
+        [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+            if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
+                [SVProgressHUD showSuccessWithStatus:[resultObject objectForKey:@"message"]];
                 if ([collect isEqualToString:@"0"]) {
                     //判断取消收藏 还是 收藏成功
                     detailInfo.collection = @"1";
@@ -341,12 +346,15 @@
                     [sender setImage:[UIImage imageNamed:@"shop_sc_sel"] forState:UIControlStateHighlighted];
                 }
             }else{
-                [SVProgressHUD showErrorWithStatus:[param objectForKey:@"message"]];
+                [SVProgressHUD showErrorWithStatus:[resultObject objectForKey:@"message"]];
             }
-        } andErrorBlock:^(NSError *error) {
-            [SVProgressHUD showErrorWithStatus:@"网络异常"];
-        }];
-    }
+
+            } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+                [SVProgressHUD showErrorWithStatus:@"网络异常"];
+                
+            }];
+
+        }
 }
 //-----------alert delegate-----------
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex

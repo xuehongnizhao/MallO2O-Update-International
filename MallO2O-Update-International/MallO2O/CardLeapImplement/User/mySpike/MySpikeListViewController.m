@@ -283,7 +283,7 @@
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (buttonIndex == 1) {
-        NSString *url = [SwpTools swpToolGetInterfaceURL:@"my_spike_del");
+        NSString *url = [SwpTools swpToolGetInterfaceURL:@"my_spike_del"];
         NSString *grab_id = @"";
         for (mySpikeInfo *info in mySpikeArray) {
             if ([info.is_delete integerValue]==1) {

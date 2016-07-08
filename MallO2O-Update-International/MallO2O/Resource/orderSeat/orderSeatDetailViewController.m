@@ -36,10 +36,6 @@
 
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
 
 - (void) initData
 {
@@ -51,23 +47,25 @@
 -(void)getDataFromNet
 {
 #pragma mark --- 11.24 订座数据接口
-    NSString *url = connect_url(@"seat_shop_message");
+    NSString *url = [SwpTools swpToolGetInterfaceURL:@"seat_shop_message"];
     NSDictionary *dict = @{
                          @"app_key":url,
                          @"shop_id":self.shop_id
                          };
-//    [SVProgressHUD showWithStatus:@"数据加载..." maskType:SVProgressHUDMaskTypeBlack];
-    [Base64Tool postSomethingToServe:url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        if ([param[@"code"] integerValue]==200) {
-            detailInfo = [[orderSeatDetailInfo alloc] initWithDictionary:param[@"obj"]];
+    [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
+            detailInfo = [[orderSeatDetailInfo alloc] initWithDictionary:resultObject[@"obj"]];
             [self.orderSeatDetailTableview reloadData];
-
+            
         }else{
-            [SVProgressHUD showErrorWithStatus:param[@"message"]];
+            [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
         }
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络异常"];
-    }];
+
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
+
 }
 
 #pragma mark-------set UI
@@ -353,21 +351,20 @@
 }
 #pragma mark --- 11.28 点击分享按钮就加积分
 - (void) UserSharePoint {
-    if (ApplicationDelegate.islogin == YES) {
-        NSString *url = connect_url(@"share_point");
+    if (ApplicationDelegate.login == YES) {
+        NSString *url = [SwpTools swpToolGetInterfaceURL:@"share_point"];
         NSDictionary *dict = @{
                                @"app_key":url,
                                @"u_id":[UserModel shareInstance].u_id
                                };
-        [Base64Tool postSomethingToServe:url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-            if ([param[@"code"] integerValue]==200) {
-//                [SVProgressHUD showSuccessWithStatus:@"分享成功"];
+        [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+            if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
             }
-        } andErrorBlock:^(NSError *error) {
-            [SVProgressHUD showErrorWithStatus:@"网络异常"];
-        }];
-    }else{
-        [SVProgressHUD showErrorWithStatus:@"您尚未登录，无法给您增加积分"];
+            } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+                [SVProgressHUD showErrorWithStatus:@"网络异常"];
+                
+            }];
+
     }
 }
 #pragma mark--------分享回掉方法（弃用）
@@ -379,19 +376,20 @@
     if(response.responseCode == UMSResponseCodeSuccess)
     {
         [SVProgressHUD showSuccessWithStatus:@"分享成功"];
-        if (ApplicationDelegate.islogin == YES) {
-            NSString *url = connect_url(@"share_point");
+        if (ApplicationDelegate.login == YES) {
+            NSString *url = [SwpTools swpToolGetInterfaceURL:@"share_point"];
             NSDictionary *dict = @{
                                    @"app_key":url,
                                    @"u_id":[UserModel shareInstance].u_id
                                    };
-            [Base64Tool postSomethingToServe:url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-                if ([param[@"code"] integerValue]==200) {
+            [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+                if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
                     [SVProgressHUD showSuccessWithStatus:@"分享成功"];
                 }
-            } andErrorBlock:^(NSError *error) {
-                [SVProgressHUD showErrorWithStatus:@"网络异常"];
-            }];
+                } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+                    [SVProgressHUD showErrorWithStatus:@"网络异常"];
+                    
+                }];
         }else{
             [SVProgressHUD showErrorWithStatus:@"您尚未登录，无法给您增加积分"];
         }
@@ -405,7 +403,7 @@
 {
     NSLog(@"立即预定");
     if (detailInfo!= nil) {
-        if (ApplicationDelegate.islogin == NO) {
+        if (ApplicationDelegate.login == NO) {
             LoginViewController *firVC = [[LoginViewController alloc] init];
             [firVC setHiddenTabbar:YES];
             [firVC setNavBarTitle:@"登录" withFont:14.0f];
@@ -422,15 +420,5 @@
         }
     }
 }
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

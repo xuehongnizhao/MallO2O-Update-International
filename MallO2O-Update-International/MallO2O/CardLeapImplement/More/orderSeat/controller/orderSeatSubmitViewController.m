@@ -186,8 +186,8 @@
         leftLable.textColor = UIColorFromRGB(singleTitle);
         leftLable.text = @"手  机";
         _connect_phone_T.leftView = leftLable;
-        if (userDefault(@"USERNAME")!=nil) {
-            _connect_phone_T.text=userDefault(@"USERNAME");
+        if (GetUserDefault(@"USERNAME")!=nil) {
+            _connect_phone_T.text=GetUserDefault(@"USERNAME");
         }
     }
     return _connect_phone_T;
@@ -479,7 +479,7 @@
 {
     NSLog(@"立即预定");
     //[submit_conde isEqualToString:self.connect_code_T.text]  验证码
-    NSString *url = [SwpTools swpToolGetInterfaceURL:@"seat_insert");
+    NSString *url = [SwpTools swpToolGetInterfaceURL:@"seat_insert"];
     connect_name = self.connect_name_T.text;
     connect_tel = self.connect_phone_T.text;
     date_s = [NSString stringWithFormat:@"%@年%@",year_s,date_s];
@@ -499,12 +499,12 @@
                                @"seat_tel":connect_tel,
                                @"seat_note":submit_desc
                                };
-        [SVProgressHUD showWithStatus:@"正在向商家提交" maskType:SVProgressHUDMaskTypeBlack];
-        [Base64Tool postSomethingToServe:url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-            if([param[@"code"] integerValue]==200){
+        [SVProgressHUD showWithStatus:@"正在向商家提交"];
+        [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+            if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
                 [SVProgressHUD dismiss];
-                NSString *url = [param[@"obj"] objectForKey:@"seat_url"];;
-                NSString *seat_id = [NSString stringWithFormat:@"%@",[param[@"obj"] objectForKey:@"seat_id"]];
+                NSString *url = [resultObject[@"obj"] objectForKey:@"seat_url"];;
+                NSString *seat_id = [NSString stringWithFormat:@"%@",[resultObject[@"obj"] objectForKey:@"seat_id"]];
                 orderSeatSuccessViewController *firVC = [[orderSeatSuccessViewController alloc] init];
                 firVC.url = url;
                 firVC.seat_id = seat_id;
@@ -512,14 +512,15 @@
                 [firVC setNavBarTitle:@"下单成功" withFont:14.0f];
                 [self.navigationController pushViewController:firVC animated:YES];
             }else{
-                [SVProgressHUD showErrorWithStatus:param[@"message"]];
+                [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
             }
-        } andErrorBlock:^(NSError *error) {
-            [SVProgressHUD showErrorWithStatus:@"网络异常"];
-        }];
-    }else{
-        [SVProgressHUD showErrorWithStatus:@"请输入预定信息"];
+
+            } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+                [SVProgressHUD showErrorWithStatus:@"网络异常"];
+                
+            }];
     }
+
 }
 
 #pragma mark-------获取验证码
@@ -559,15 +560,19 @@
                              @"user_name":user_name,
                              @"app_key":GET_SECURITY_CODE
                              };
-        [Base64Tool postSomethingToServe:GET_SECURITY_CODE andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-            NSDictionary* dic=(NSDictionary*)param;
-            NSLog(@"get message:%@",[dic  objectForKey:@"message"]);
-            submit_conde = [NSString stringWithFormat:@"%@",[dic objectForKey:@"obj"]];
-            sender.userInteractionEnabled = NO;
-        } andErrorBlock:^(NSError *error) {
-            [SVProgressHUD showErrorWithStatus:@"网络不给力,稍后重试"];
-        }];
-    }
+        [SwpRequest swpPOST:GET_SECURITY_CODE parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+            if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
+                NSDictionary* dic=(NSDictionary*)resultObject;
+                NSLog(@"get message:%@",[dic  objectForKey:@"message"]);
+                submit_conde = [NSString stringWithFormat:@"%@",[dic objectForKey:@"obj"]];
+                sender.userInteractionEnabled = NO;
+            }
+            } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+                [SVProgressHUD showErrorWithStatus:@"网络异常"];
+                
+            }];
+
+        }
 }
 
 #pragma mark----------检查用户输入手机号，尚未确定如何验证
@@ -580,27 +585,7 @@
         return NO;
         
     }
-    //    //1[0-9]{10}
-    //
-    //    //^((13[0-9])|(15[^4,\\D])|(18[0,5-9]))\\d{8}$
-    //    //    NSString *regex = @"[0-9]{11}";
-    //    NSString *regex = @"^((13[0-9])|(147)|(17[0-9])|(15[^4,\\D])|(18[0-9]))\\d{8}$";
-    //    NSPredicate *pred = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", regex];
-    //    BOOL isMatch = [pred evaluateWithObject:str];
-    //    if (!isMatch)
-    //    {
-    //        UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"请输入正确的手机号码" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
-    //        [alert show];
-    //        return NO;
-    //    }
-    //    if([passWord.text isEqualToString:@""])
-    //    {
-    //        UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"密码不能为空" delegate:nil cancelButtonTitle:@"好的" otherButtonTitles:nil, nil];
-    //
-    //        [alert show];
-    //        return NO;
-    //    }
-    return YES;
+      return YES;
 }
 
 -(void)finishActionDelegate:(NSString *)remarkStr
@@ -630,14 +615,4 @@
     myTime = [NSString stringWithFormat:@"%@年%@ %@",year_s,myTime,time];
     [self.orderSubmitTableview reloadData];
 }
-/*
- #pragma mark - Navigation
- 
- // In a storyboard-based application, you will often want to do a little preparation before navigation
- - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
- // Get the new view controller using [segue destinationViewController].
- // Pass the selected object to the new view controller.
- }
- */
-
 @end

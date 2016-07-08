@@ -81,6 +81,8 @@ EOM
 }
 if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_resource "IQKeyboardManager/IQKeyBoardManager/Resources/IQKeyboardManager.bundle"
+  install_resource "$PODS_CONFIGURATION_BUILD_DIR/JSBadgeView/JSBadgeView.bundle"
+  install_resource "MJPhotoBrowser/MJPhotoBrowser/MJPhotoBrowser/MJPhotoBrowser.bundle"
   install_resource "MJRefresh/MJRefresh/MJRefresh.bundle"
   install_resource "SVProgressHUD/SVProgressHUD/SVProgressHUD.bundle"
   install_resource "UMengSocialCOM/Umeng_SDK_Social_iOS_ARM64_5.2.1/UMSocial_Sdk_5.2.1/UMSocialSDKResourcesNew.bundle"
@@ -99,6 +101,8 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_resource "IQKeyboardManager/IQKeyBoardManager/Resources/IQKeyboardManager.bundle"
+  install_resource "$PODS_CONFIGURATION_BUILD_DIR/JSBadgeView/JSBadgeView.bundle"
+  install_resource "MJPhotoBrowser/MJPhotoBrowser/MJPhotoBrowser/MJPhotoBrowser.bundle"
   install_resource "MJRefresh/MJRefresh/MJRefresh.bundle"
   install_resource "SVProgressHUD/SVProgressHUD/SVProgressHUD.bundle"
   install_resource "UMengSocialCOM/Umeng_SDK_Social_iOS_ARM64_5.2.1/UMSocial_Sdk_5.2.1/UMSocialSDKResourcesNew.bundle"

@@ -71,11 +71,9 @@
                            @"shop_id":self.shop_id
                            };
     [SVProgressHUD showWithStatus:@"正在加载"];
-    
-    [Base64Tool postSomethingToServe:url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        NSString *code = [NSString stringWithFormat:@"%@",[param objectForKey:@"code"]];
-        if ([code isEqualToString:@"200"]) {
-            NSDictionary *dic = [param objectForKey:@"obj"];
+    [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
+            NSDictionary *dic = [resultObject objectForKey:@"obj"];
             myInfo = [[shopTakeCateInfo alloc] initWithDictionary:dic];
             [_cateTableview reloadData];
             while ([[_messageView subviews] lastObject]!= nil) {
@@ -92,11 +90,13 @@
             }
             //[SVProgressHUD dismiss];
         }else{
-            [SVProgressHUD showErrorWithStatus:[param objectForKey:@"message"]];
+            [SVProgressHUD showErrorWithStatus:[resultObject objectForKey:@"message"]];
         }
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络异常"];
-    }];
+
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
 }
 
 -(void)getDishFromNet
@@ -411,10 +411,8 @@
         _dishTableview.delegate = self;
         _dishTableview.dataSource = self;
         [UZCommonMethod hiddleExtendCellFromTableview:_dishTableview];
-        [_dishTableview addFooterWithTarget:self action:@selector(footerBeginRefreshing)];
-        _dishTableview.footerPullToRefreshText = @"上拉可以加载更多数据了";
-        _dishTableview.footerReleaseToRefreshText = @"松开马上加载更多数据了";
-        _dishTableview.footerRefreshingText = @" ";
+        _dishTableview.mj_footer=[MJRefreshFooter footerWithRefreshingTarget:self refreshingAction:@selector(footerBeginRefreshing)];
+        
         if ([_dishTableview respondsToSelector:@selector(setSeparatorInset:)]) {
             [_dishTableview setSeparatorInset:UIEdgeInsetsMake(0,0,0,0)];
         }
@@ -761,14 +759,5 @@
     [ddv autoPinEdgeToSuperviewEdge:ALEdgeBottom withInset:20.0f];
 }
 
-/*
- #pragma mark - Navigation
- 
- // In a storyboard-based application, you will often want to do a little preparation before navigation
- - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
- // Get the new view controller using [segue destinationViewController].
- // Pass the selected object to the new view controller.
- }
- */
 
 @end

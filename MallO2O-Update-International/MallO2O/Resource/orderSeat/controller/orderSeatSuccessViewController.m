@@ -27,20 +27,9 @@
     [self setUI];
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
 #pragma mark-------set UI
 -(void)setUI
 {
-#pragma mark --- 2015.12.21 查看订单进度按钮，去掉。（预定酒店和订座位）
-    //    [self.view addSubview:self.checkButton];
-    //    [_checkButton autoPinEdgeToSuperviewEdge:ALEdgeLeft withInset:10.0f];
-    //    [_checkButton autoPinEdgeToSuperviewEdge:ALEdgeRight withInset:10.0f];
-    //    [_checkButton autoPinEdgeToSuperviewEdge:ALEdgeBottom withInset:10.0f];
-    //    [_checkButton autoSetDimension:ALDimensionHeight toSize:40.0f];
     
     [self.view addSubview:self.submitSuccessWeb];
     [_submitSuccessWeb autoPinEdgeToSuperviewEdge:ALEdgeTop withInset:0.0f];
@@ -117,15 +106,15 @@
 -(void)deleteOrderSeat
 {
     [self.view disMissRealTimeBlur];
-    NSString *url = connect_url(@"seat_cancel");
+    NSString *url = [SwpTools swpToolGetInterfaceURL:@"seat_cancel"];
     NSDictionary *dict = @{
                            @"app_key":url,
                            @"seat_id":self.seat_id,
                            @"u_id":[UserModel shareInstance].u_id,
                            @"session_key":[UserModel shareInstance].session_key
                            };
-    [Base64Tool postSomethingToServe:url andParams:dict isBase64:[IS_USE_BASE64 boolValue] CompletionBlock:^(id param) {
-        if ([param[@"code"] integerValue]==200) {
+    [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
             [SVProgressHUD dismiss];
             NSLog(@"取消成功");
             NSLog(@"返回到商家详情");
@@ -137,12 +126,15 @@
                 }
             }
         }else{
-            [SVProgressHUD showErrorWithStatus:param[@"message"]];
+            [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
         }
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络异常"];
-    }];
-}
+
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
+
+    }
 
 -(void)orderSuccessAction
 {
@@ -156,13 +148,6 @@
     [self.navigationController pushViewController:firVC animated:YES];
 }
 
-/*
- #pragma mark - Navigation
- // In a storyboard-based application, you will often want to do a little preparation before navigation
- - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
- // Get the new view controller using [segue destinationViewController].
- // Pass the selected object to the new view controller.
- }
- */
+
 
 @end

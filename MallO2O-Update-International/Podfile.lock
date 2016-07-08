@@ -16,8 +16,13 @@ PODS:
     - AFNetworking/NSURLSession
   - Base64nl (1.2)
   - IQKeyboardManager (3.3.7)
+  - JSBadgeView (1.4.1)
   - Masonry (1.0.1)
   - MJExtension (3.0.11)
+  - MJPhotoBrowser (1.0.2):
+    - SDWebImage
+    - SVProgressHUD
+    - YLGIFImage
   - MJRefresh (3.1.9)
   - PureLayout (3.0.2)
   - RDVTabBarController (1.1.9)
@@ -31,13 +36,16 @@ PODS:
   - SVProgressHUD (2.0.3)
   - UMengSocialCOM (5.2.1)
   - WebViewJavascriptBridge (5.0.5)
+  - YLGIFImage (0.11)
 
 DEPENDENCIES:
   - AFNetworking
   - Base64nl
   - IQKeyboardManager
+  - JSBadgeView
   - Masonry
   - MJExtension
+  - MJPhotoBrowser
   - MJRefresh
   - PureLayout
   - RDVTabBarController
@@ -53,8 +61,10 @@ SPEC CHECKSUMS:
   AFNetworking: 5e0e199f73d8626b11e79750991f5d173d1f8b67
   Base64nl: a497bdcd1c01ea793d36b399016195a8713c0e95
   IQKeyboardManager: 249c3946acf61345c18b038eb50863fe2793e3a8
+  JSBadgeView: 3861ddee41094284d9468e6d0af5107f703aaac5
   Masonry: a1a931a0d08870ed8ae415a2ea5ea68ebcac77df
   MJExtension: f9ae6ddc0f1c482c3c9af750280ccebd14381958
+  MJPhotoBrowser: f55e8490231f44a78ca6455105a1c798a142c95f
   MJRefresh: c5f1f1653e5a1b932c90f78074f2bc86f3f9bd5e
   PureLayout: 4d550abe49a94f24c2808b9b95db9131685fe4cd
   RDVTabBarController: 67794f7a7a37f8e32f046f85ac67d06ab92d624a
@@ -65,7 +75,8 @@ SPEC CHECKSUMS:
   SVProgressHUD: b0830714205bea1317ea1a2ebc71e5633af334d4
   UMengSocialCOM: 074c135ce349aa4c8848d3fb8458757bcb6ffb67
   WebViewJavascriptBridge: a4d502315f1b8d9a51cd6a9174147ed567ec3bc5
+  YLGIFImage: c0ae132fe80e5282b2762a97d14e23ba71a748ae
 
-PODFILE CHECKSUM: ebaf075bc67e4d4e28240c5fff9c31a107708357
+PODFILE CHECKSUM: 71440725f00ba34adfc1fd38a3f5d8101f290081
 
 COCOAPODS: 1.0.0

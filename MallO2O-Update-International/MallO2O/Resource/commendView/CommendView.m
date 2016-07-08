@@ -81,7 +81,7 @@
     [_facePageControl autoPinEdgeToSuperviewEdge:ALEdgeLeft withInset:0.0f];
     [_facePageControl autoPinEdgeToSuperviewEdge:ALEdgeRight withInset:0.0f];
     [_facePageControl autoPinEdgeToSuperviewEdge:ALEdgeBottom withInset:0.0f];
-    [_facePageControl autoPinEdgeToSuperviewEdge:ALEdgeTop withInset:166.0f*LinHeightPercent];
+    [_facePageControl autoPinEdgeToSuperviewEdge:ALEdgeTop withInset:166.0f*Balance_Heith];
     //CGRectMake(110, 170, 100, 20)
     [_facePageControl addTarget:self
                         action:@selector(pageChange:)
@@ -90,12 +90,12 @@
     _facePageControl.currentPage = 0;
     //----------------------------
     //计算适配之后的空隙宽度
-    CGFloat blank = (width - FACE_ICON_WIDTH*LinPercent*4-30)/3.0;
+    CGFloat blank = (width - FACE_ICON_WIDTH*Balance_Width*4-30)/3.0;
     for (int i=1; i<=_buttonArray.count; i++)
     {
         //适配之后的宽高
-        CGFloat myWidth = FACE_ICON_WIDTH*LinPercent;
-        CGFloat myHeight = FACE_ICON_HEIGHT*LinHeightPercent;
+        CGFloat myWidth = FACE_ICON_WIDTH*Balance_Width;
+        CGFloat myHeight = FACE_ICON_HEIGHT*Balance_Heith;
         
         littleCateModel* module=[_buttonArray objectAtIndex:i-1];
         //计算每一个表情按钮的坐标和在哪一屏
@@ -118,7 +118,7 @@
 }
 
 - (void)pageChange:(id)sender {
-    [_faceView setContentOffset:CGPointMake(_facePageControl.currentPage * 320*LinPercent
+    [_faceView setContentOffset:CGPointMake(_facePageControl.currentPage * 320*Balance_Width
                                             , 0) animated:YES];
     [_facePageControl setCurrentPage:_facePageControl.currentPage];
 }
@@ -141,12 +141,5 @@
     return _cateArray;
 }
 
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect {
-    // Drawing code
-}
-*/
 
 @end

@@ -245,14 +245,14 @@
  */
 - (void) getFeedbackData {
     
-    NSString *url = [SwpTools swpToolGetInterfaceURL:@"feed_back_list");
+    NSString *url = [SwpTools swpToolGetInterfaceURL:@"feed_back_list"];
     NSDictionary *dict = @{
                            @"app_key" : url
                            };
-    [Base64Tool postSomethingToServe:url andParams:dict isBase64:YES CompletionBlock:^(id param) {
-        if ([param[@"code"] isEqualToString:@"200"]) {
+    [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
             [SVProgressHUD dismiss];
-            NSMutableArray *array = param[@"obj"];
+            NSMutableArray *array = resultObject[@"obj"];
             if (array.count != 0) {
                 self.feedback = [self feedbackDataTreatment:array];
                 [self.messageTableView reloadData];
@@ -262,10 +262,13 @@
         } else {
             [SVProgressHUD dismiss];
         }
-    } andErrorBlock:^(NSError *error) {
-        
-    }];
-}
+
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
+
+  }
 
 /**
  *  数据处理 (字典转模型数据) 存放模型数据的数组
@@ -305,7 +308,7 @@
     
     // 访问接口
     UserModel *user = [UserModel shareInstance];
-    NSString *url   = ALL_URL(@"feedback");
+    NSString *url   =  [SwpTools swpToolGetInterfaceURL:@"feedback"];
     
     NSDictionary *dict = @{
                            @"app_key"       : url,
@@ -313,9 +316,9 @@
                            @"session_key"   : user.session_key,
                            @"feed_desc"     : self.messageTextView.text
                            };
-    [Base64Tool postSomethingToServe:url andParams:dict isBase64:YES CompletionBlock:^(id param) {
-        if ([param[@"code"] isEqualToString:@"200"]) {
-            [SVProgressHUD showSuccessWithStatus:param[@"message"]];
+    [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+        if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
+            [SVProgressHUD showSuccessWithStatus:resultObject[@"message"]];
             // 获取列表数据
             [self getFeedbackData];
             // 清空数据
@@ -323,13 +326,15 @@
             // 显示 placeholder
             self.textLabelView.hidden = NO;
         } else {
-            [SVProgressHUD showErrorWithStatus:param[@"message"]];
+            [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
         }
-    } andErrorBlock:^(NSError *error) {
-        [SVProgressHUD showErrorWithStatus:@"网络不给力！"];
-    }];
-    
-}
+
+        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+            [SVProgressHUD showErrorWithStatus:@"网络异常"];
+            
+        }];
+
+  }
 
 
 #pragma mark ----- UITableView dataSource
