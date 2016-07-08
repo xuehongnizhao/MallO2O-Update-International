@@ -663,7 +663,7 @@
     // 图片数组
     NSArray        *picture     = [self pictureProcessing:self.pictures];
     // 图片数组名称
-    NSArray        *pictureName = [self pictureNameProcessing:picture];
+    NSString        *pictureName = @"message_pic";
     // 表单 验证
     if (![self checkDataMessage:message checkPicture:picture]) {
         return;
@@ -683,7 +683,7 @@
                            @"a_id"          : message.a_id,
                            @"c_id"          : message.c_id
                            };
-    [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+   [ SwpRequest swpPOSTAddFiles:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt fileName:pictureName fileDatas:picture swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
         if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
             //跳转我的发布
             CityUserController *userAdd = [[CityUserController alloc] init];
@@ -692,11 +692,12 @@
         } else {
             [SVProgressHUD showErrorWithStatus:resultObject[@"message"]];
         }
-
-        } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
-            [SVProgressHUD showErrorWithStatus:@"网络异常"];
-            
-        }];
+        
+    } swpResultError:^(NSURLSessionDataTask * _Nonnull task, NSError * _Nonnull error, NSString * _Nonnull errorMessage) {
+        [SVProgressHUD showErrorWithStatus:@"网络异常"];
+        
+    }];
+    
 
 }
 

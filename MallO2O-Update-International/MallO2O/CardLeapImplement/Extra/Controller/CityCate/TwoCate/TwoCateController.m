@@ -66,7 +66,7 @@
  *  @return     NSArray
  */
 - (NSArray *) dataTreatment:(NSArray *)param {
-    NSArray *array = [CityTwoCate objectArrayWithKeyValuesArray:param];
+    NSArray *array = [CityTwoCate mj_objectArrayWithKeyValuesArray:param];
     return array;
 }
 

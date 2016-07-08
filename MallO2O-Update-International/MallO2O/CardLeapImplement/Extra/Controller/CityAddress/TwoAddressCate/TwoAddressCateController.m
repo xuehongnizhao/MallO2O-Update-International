@@ -72,7 +72,7 @@
 
 
 - (NSArray *) dataTreatment:(NSArray *)param {
-    return [CityAddressTwoCate objectArrayWithKeyValuesArray:param];
+    return [CityAddressTwoCate mj_objectArrayWithKeyValuesArray:param];
 }
 
 

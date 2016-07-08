@@ -112,7 +112,7 @@
  *  @return    NSArray
  */
 - (NSArray *) updateOneAddressDataTreatment:(NSArray *)param {
-    return [CityAddressOneCate objectArrayWithKeyValuesArray:param];
+    return [CityAddressOneCate mj_objectArrayWithKeyValuesArray:param];
 }
 
 

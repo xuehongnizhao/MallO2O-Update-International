@@ -103,7 +103,7 @@
  *  @return
  */
 - (NSArray *) dataTreatment:(NSArray *) param {
-    return [CityAddressOneCate objectArrayWithKeyValuesArray:param];
+    return [CityAddressOneCate mj_objectArrayWithKeyValuesArray:param];
 }
 
 

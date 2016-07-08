@@ -557,8 +557,8 @@ linHangyeCommendViewDelegate>
             descBillboardsArray = [NSMutableArray array];
             NSLog(@"paramsdfas:%@",resultObject[@"obj"]);
             for (NSDictionary *dict in resultObject[@"obj"]) {
-                [billboardsArray addObject:resultObject[@"a_pic"]];
-                [descBillboardsArray addObject:resultObject[@"a_url"]];
+                [billboardsArray addObject:dict[@"a_pic"]];
+                [descBillboardsArray addObject:dict[@"a_url"]];
             }
             self.billboardsView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, Balance_Heith*145)];
 

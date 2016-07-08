@@ -113,7 +113,7 @@
  *  @return     NSArray
  */
 - (NSArray *) updataOneCateDataTreatment:(NSArray *)param {
-    return [CityOneCate objectArrayWithKeyValuesArray:param];
+    return [CityOneCate nj_objectArrayWithKeyValuesArray:param];
 }
 
 

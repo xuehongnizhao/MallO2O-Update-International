@@ -110,7 +110,7 @@
  *  @return     NSArray
  */
 - (NSArray *) updateTwoCateDataTreatment:(NSArray *)param {
-    return [CityTwoCate objectArrayWithKeyValuesArray:param];
+    return [CityTwoCate mj_objectArrayWithKeyValuesArray:param];
 }
 
 
