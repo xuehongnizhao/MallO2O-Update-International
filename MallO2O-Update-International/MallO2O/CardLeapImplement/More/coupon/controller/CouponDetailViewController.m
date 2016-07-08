@@ -215,7 +215,7 @@
     NSString *sinaText;
     sinaText = [NSString stringWithFormat:@"如e生活 %@",self.share_url];
 
-    
+
     [UMSocialSnsService presentSnsIconSheetView:self
                                          appKey:nil
                                       shareText:@"如e生活"

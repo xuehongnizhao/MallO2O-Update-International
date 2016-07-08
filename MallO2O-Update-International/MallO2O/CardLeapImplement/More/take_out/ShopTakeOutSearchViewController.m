@@ -105,8 +105,8 @@
  */
 - (void)setupRefresh
 {
-    _LinGroupTableView.mj_footer=[MJRefreshFooter footerWithRefreshingTarget:self refreshingAction:@selector(footerBeginRefreshing)];
-    _LinGroupTableView.mj_header=[MJRefreshHeader headerWithRefreshingTarget:self refreshingAction:@selector(headerBeginRefreshing)];
+    _LinGroupTableView.mj_footer=[MJRefreshFooter footerWithRefreshingTarget:self refreshingAction:@selector(footerRereshing)];
+    _LinGroupTableView.mj_header=[MJRefreshHeader headerWithRefreshingTarget:self refreshingAction:@selector(headerRereshing)];
 
 }
 

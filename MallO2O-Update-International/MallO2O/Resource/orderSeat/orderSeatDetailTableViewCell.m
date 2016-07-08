@@ -294,7 +294,7 @@
             [_messageWebView autoPinEdgeToSuperviewEdge:ALEdgeLeft];
             [_messageWebView autoPinEdgeToSuperviewEdge:ALEdgeRight];
             [_messageWebView autoPinEdgeToSuperviewEdge:ALEdgeBottom];
-            [SVProgressHUD showWithStatus:@"数据加载..." maskType:SVProgressHUDMaskTypeBlack];
+            [SVProgressHUD showWithStatus:@"数据加载..."];
             NSURL *url            = [NSURL URLWithString:info.message_url];
             NSURLRequest *request = [NSURLRequest requestWithURL:url];
             [_messageWebView loadRequest:request];
@@ -307,22 +307,13 @@
 #pragma mark ----- UIWebView代理
 - (void)webViewDidStartLoad:(UIWebView *)webView
 {
-#warning 2015.12.29 加载web时显示“数据加载...”字样
-    [SVProgressHUD showWithStatus:@"数据加载..." maskType:SVProgressHUDMaskTypeBlack];
+    [SVProgressHUD showWithStatus:@"数据加载..."];
 }
 - (void)webViewDidFinishLoad:(UIWebView *)webView
 {
     if (self.webViewHeightDelegate != nil) {
         if ([self.webViewHeightDelegate respondsToSelector:@selector(webViewDidLoad:)]) {
             CGFloat webHeight;
-//            CGRect frame = webView.frame;
-//            frame.size.width = SCREEN_WIDTH;
-//            frame.size.height = 1;
-//            webView.frame = frame;
-//            frame.size.height = webView.scrollView.contentSize.height;
-//            NSLog(@"frame = %@", [NSValue valueWithCGRect:frame]);
-//            webView.frame = frame;
-//            webHeight = frame.size.height;
             webHeight = [[webView stringByEvaluatingJavaScriptFromString:@"document.body.scrollHeight"] floatValue];
             NSLog(@"加载完成，获取高度%f",webHeight);
             [self.webViewHeightDelegate webViewDidLoad:webHeight];

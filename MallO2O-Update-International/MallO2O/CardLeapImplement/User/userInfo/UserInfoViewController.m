@@ -90,7 +90,7 @@
                             @"app_key":url1,
                             @"u_id":[UserModel shareInstance].u_id
                             };
-    [SwpRequest swpPOST:url parameters:dict isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
+    [SwpRequest swpPOST:url1 parameters:dict1 isEncrypt:swpNetwork.swpNetworkEncrypt swpResultSuccess:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull resultObject) {
         if (swpNetwork.swpNetworkCodeSuccess == [resultObject[swpNetwork.swpNetworkCode] intValue]) {
             _myBusinessURL=[[resultObject objectForKey:@"obj"]objectForKey:@"user_business"];
         }

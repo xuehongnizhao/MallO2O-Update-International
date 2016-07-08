@@ -213,7 +213,7 @@ static NSString *pageCount = @"10";
     NSInteger beginPage = (page-1) * [pageCount integerValue] + 1;
     NSInteger endPage = beginPage + 9;
     
-    self.descriptionLabel.text = [NSString stringWithFormat:@"第%d-%d家",(long)beginPage,endPage];
+    self.descriptionLabel.text = [NSString stringWithFormat:@"第%d-%d家",beginPage,endPage];
     
     if (page <= 1) {
         [self.leftButton setEnabled:NO];

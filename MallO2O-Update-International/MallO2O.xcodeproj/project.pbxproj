@@ -308,6 +308,9 @@
 		0469B6061B3BA52A00DBD666 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0469B6051B3BA52A00DBD666 /* CoreGraphics.framework */; };
 		0469B6081B3BA53500DBD666 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0469B6071B3BA53500DBD666 /* UIKit.framework */; };
 		0469B60A1B3BA53C00DBD666 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0469B6091B3BA53C00DBD666 /* Foundation.framework */; };
+		046FFBB31D2F594D005F8BE2 /* Abberancy.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 046FFBB01D2F594D005F8BE2 /* Abberancy.ttf */; };
+		046FFBB41D2F594D005F8BE2 /* Aller_Lt.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 046FFBB11D2F594D005F8BE2 /* Aller_Lt.ttf */; };
+		046FFBB51D2F594D005F8BE2 /* OpenSans-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 046FFBB21D2F594D005F8BE2 /* OpenSans-Light.ttf */; };
 		049BD5811D2F2DD900D25B06 /* ShowAllImageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 049BD5801D2F2DD900D25B06 /* ShowAllImageViewController.m */; };
 		049BD5841D2F342F00D25B06 /* WechatOrderInformation.m in Sources */ = {isa = PBXBuildFile; fileRef = 049BD5831D2F342F00D25B06 /* WechatOrderInformation.m */; };
 		049BD58A1D2F3D1800D25B06 /* UIImageView+MJWebCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 049BD5891D2F3D1800D25B06 /* UIImageView+MJWebCache.m */; };
@@ -472,9 +475,6 @@
 		26C06B441C5E37AF0023517C /* BaiduMapAPI_Utils.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 26C06B3C1C5E37AF0023517C /* BaiduMapAPI_Utils.framework */; };
 		26C06B451C5E37AF0023517C /* mapapi.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 26C06B3D1C5E37AF0023517C /* mapapi.bundle */; };
 		26C06B491C5F0CD30023517C /* UINavigationController+FDFullscreenPopGesture.m in Sources */ = {isa = PBXBuildFile; fileRef = 26C06B481C5F0CD30023517C /* UINavigationController+FDFullscreenPopGesture.m */; };
-		26E128A11C3DF1D9004A3CDD /* AlipaySDK.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 26E128931C3DF1D9004A3CDD /* AlipaySDK.bundle */; };
-		26E128A21C3DF1D9004A3CDD /* AlipaySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 26E128941C3DF1D9004A3CDD /* AlipaySDK.framework */; };
-		26E128A31C3DF1D9004A3CDD /* libpingpp+alipay.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 26E128951C3DF1D9004A3CDD /* libpingpp+alipay.a */; };
 		26E128A41C3DF1D9004A3CDD /* libpingpp+wx.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 26E128971C3DF1D9004A3CDD /* libpingpp+wx.a */; };
 		26E128A51C3DF1D9004A3CDD /* libWeChatSDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 26E128981C3DF1D9004A3CDD /* libWeChatSDK.a */; };
 		26E128A61C3DF1D9004A3CDD /* libpingppcore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 26E1289B1C3DF1D9004A3CDD /* libpingppcore.a */; };
@@ -1181,6 +1181,9 @@
 		0469B6051B3BA52A00DBD666 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		0469B6071B3BA53500DBD666 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		0469B6091B3BA53C00DBD666 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		046FFBB01D2F594D005F8BE2 /* Abberancy.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Abberancy.ttf; sourceTree = "<group>"; };
+		046FFBB11D2F594D005F8BE2 /* Aller_Lt.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Aller_Lt.ttf; sourceTree = "<group>"; };
+		046FFBB21D2F594D005F8BE2 /* OpenSans-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenSans-Light.ttf"; sourceTree = "<group>"; };
 		049BD57F1D2F2DD900D25B06 /* ShowAllImageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShowAllImageViewController.h; sourceTree = "<group>"; };
 		049BD5801D2F2DD900D25B06 /* ShowAllImageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShowAllImageViewController.m; sourceTree = "<group>"; };
 		049BD5821D2F342F00D25B06 /* WechatOrderInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WechatOrderInformation.h; sourceTree = "<group>"; };
@@ -1478,9 +1481,6 @@
 		26C06B3D1C5E37AF0023517C /* mapapi.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = mapapi.bundle; sourceTree = "<group>"; };
 		26C06B471C5F0CD30023517C /* UINavigationController+FDFullscreenPopGesture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UINavigationController+FDFullscreenPopGesture.h"; sourceTree = "<group>"; };
 		26C06B481C5F0CD30023517C /* UINavigationController+FDFullscreenPopGesture.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UINavigationController+FDFullscreenPopGesture.m"; sourceTree = "<group>"; };
-		26E128931C3DF1D9004A3CDD /* AlipaySDK.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = AlipaySDK.bundle; sourceTree = "<group>"; };
-		26E128941C3DF1D9004A3CDD /* AlipaySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AlipaySDK.framework; sourceTree = "<group>"; };
-		26E128951C3DF1D9004A3CDD /* libpingpp+alipay.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libpingpp+alipay.a"; sourceTree = "<group>"; };
 		26E128971C3DF1D9004A3CDD /* libpingpp+wx.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libpingpp+wx.a"; sourceTree = "<group>"; };
 		26E128981C3DF1D9004A3CDD /* libWeChatSDK.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libWeChatSDK.a; sourceTree = "<group>"; };
 		26E128991C3DF1D9004A3CDD /* WXApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WXApi.h; sourceTree = "<group>"; };
@@ -1611,7 +1611,6 @@
 				0469B6081B3BA53500DBD666 /* UIKit.framework in Frameworks */,
 				26E128A51C3DF1D9004A3CDD /* libWeChatSDK.a in Frameworks */,
 				18CB1ED01CEAC938009D4395 /* MAMapKit.framework in Frameworks */,
-				26E128A21C3DF1D9004A3CDD /* AlipaySDK.framework in Frameworks */,
 				0469B6061B3BA52A00DBD666 /* CoreGraphics.framework in Frameworks */,
 				26C06B431C5E37AF0023517C /* BaiduMapAPI_Search.framework in Frameworks */,
 				0469B6041B3BA52200DBD666 /* CoreText.framework in Frameworks */,
@@ -1627,7 +1626,6 @@
 				0469B5EF1B3BA0BA00DBD666 /* AlipaySDK.framework in Frameworks */,
 				26E128A41C3DF1D9004A3CDD /* libpingpp+wx.a in Frameworks */,
 				0469B5F21B3BA0BA00DBD666 /* libssl.a in Frameworks */,
-				26E128A31C3DF1D9004A3CDD /* libpingpp+alipay.a in Frameworks */,
 				0469B5F11B3BA0BA00DBD666 /* libcrypto.a in Frameworks */,
 				04E1C0A51B1ED23A00B81C9A /* libsqlite3.0.dylib in Frameworks */,
 				04E1C0A31B1ED1EC00B81C9A /* libstdc++.dylib in Frameworks */,
@@ -3756,20 +3754,9 @@
 		26E128911C3DF1D9004A3CDD /* Channels */ = {
 			isa = PBXGroup;
 			children = (
-				26E128921C3DF1D9004A3CDD /* Alipay */,
 				26E128961C3DF1D9004A3CDD /* Wx */,
 			);
 			path = Channels;
-			sourceTree = "<group>";
-		};
-		26E128921C3DF1D9004A3CDD /* Alipay */ = {
-			isa = PBXGroup;
-			children = (
-				26E128931C3DF1D9004A3CDD /* AlipaySDK.bundle */,
-				26E128941C3DF1D9004A3CDD /* AlipaySDK.framework */,
-				26E128951C3DF1D9004A3CDD /* libpingpp+alipay.a */,
-			);
-			path = Alipay;
 			sourceTree = "<group>";
 		};
 		26E128961C3DF1D9004A3CDD /* Wx */ = {
@@ -4218,6 +4205,9 @@
 		46D0D82E1B14004500E388FC /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				046FFBB01D2F594D005F8BE2 /* Abberancy.ttf */,
+				046FFBB11D2F594D005F8BE2 /* Aller_Lt.ttf */,
+				046FFBB21D2F594D005F8BE2 /* OpenSans-Light.ttf */,
 				042B5CC21D2CDF6100B91DDC /* shake_sound.m4a */,
 				46D0D8301B14004500E388FC /* main.m */,
 				042B5CC71D2CDF9B00B91DDC /* Info.plist */,
@@ -4251,12 +4241,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 46D0D8481B14004500E388FC /* Build configuration list for PBXNativeTarget "MallO2O" */;
 			buildPhases = (
-				DE36EB2DDEE737CE42CFD318 /* 📦 Check Pods Manifest.lock */,
+				B1FB403D61A0E1EDE5A15740 /* 📦 Check Pods Manifest.lock */,
 				46D0D8271B14004500E388FC /* Sources */,
 				46D0D8281B14004500E388FC /* Frameworks */,
 				46D0D8291B14004500E388FC /* Resources */,
-				21B6418353B7F0E306AA76FD /* 📦 Embed Pods Frameworks */,
-				345803DC8A5DCF7BD3472232 /* 📦 Copy Pods Resources */,
+				538BF881585354577A07DCCF /* 📦 Embed Pods Frameworks */,
+				C917AAB0F70203E66CD3E18C /* 📦 Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -4343,6 +4333,7 @@
 				04651A3A1B4130AF00DF0712 /* bt_star_a.png in Resources */,
 				042B5C5A1D2CDE5500B91DDC /* logo.jpg in Resources */,
 				0469B5EE1B3BA0BA00DBD666 /* AlipaySDK.bundle in Resources */,
+				046FFBB51D2F594D005F8BE2 /* OpenSans-Light.ttf in Resources */,
 				042B5C581D2CDE5500B91DDC /* jiantou.png in Resources */,
 				04B8A4BC1B7B34A50086D1EB /* zbar-samples.png in Resources */,
 				04B8A4BB1B7B34A50086D1EB /* zbar-helpicons.png in Resources */,
@@ -4351,9 +4342,9 @@
 				26C06B451C5E37AF0023517C /* mapapi.bundle in Resources */,
 				049E03AB1D2E08100068C759 /* imageCell.xib in Resources */,
 				049E04541D2E4C960068C759 /* right_no@2x.png in Resources */,
-				26E128A11C3DF1D9004A3CDD /* AlipaySDK.bundle in Resources */,
 				049E045B1D2E4C960068C759 /* store_location@2x.png in Resources */,
 				042B5C5D1D2CDE5500B91DDC /* touxiang01.jpg in Resources */,
+				046FFBB41D2F594D005F8BE2 /* Aller_Lt.ttf in Resources */,
 				042B5C541D2CDE5500B91DDC /* fenxiang.png in Resources */,
 				049E045A1D2E4C960068C759 /* store_classify_no@2x.png in Resources */,
 				049E04531D2E4C960068C759 /* right_no.png in Resources */,
@@ -4381,6 +4372,7 @@
 				042B5C551D2CDE5500B91DDC /* index.css in Resources */,
 				04B8A3A91B7ADC890086D1EB /* Chat_record_circle.png in Resources */,
 				049E03121D2DF8060068C759 /* chack.png in Resources */,
+				046FFBB31D2F594D005F8BE2 /* Abberancy.ttf in Resources */,
 				042B5C561D2CDE5500B91DDC /* index2.css in Resources */,
 				042B5D0C1D2CE0B100B91DDC /* XMNPhotoPicker.xib in Resources */,
 				042B5C5B1D2CDE5500B91DDC /* phone.png in Resources */,
@@ -4406,7 +4398,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		21B6418353B7F0E306AA76FD /* 📦 Embed Pods Frameworks */ = {
+		538BF881585354577A07DCCF /* 📦 Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -4421,22 +4413,7 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-MallO2O/Pods-MallO2O-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		345803DC8A5DCF7BD3472232 /* 📦 Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "📦 Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-MallO2O/Pods-MallO2O-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		DE36EB2DDEE737CE42CFD318 /* 📦 Check Pods Manifest.lock */ = {
+		B1FB403D61A0E1EDE5A15740 /* 📦 Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -4449,6 +4426,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		C917AAB0F70203E66CD3E18C /* 📦 Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "📦 Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-MallO2O/Pods-MallO2O-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
